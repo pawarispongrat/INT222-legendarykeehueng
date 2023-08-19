@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.announcement.dtos.AnnouncementDTO;
-import sit.int221.announcement.dtos.AnnouncementRequestDTO;
+import sit.int221.announcement.dtos.request.AnnouncementRequestDTO;
 import sit.int221.announcement.dtos.PageDTO;
 import sit.int221.announcement.models.Announcement;
 import sit.int221.announcement.services.AnnouncementService;
@@ -30,8 +30,8 @@ public class AnnouncementController {
         return service.getAll();
     }
     @GetMapping("/{id}")
-    public Announcement getAnnouncementById(@PathVariable Integer id,@RequestParam (defaultValue = "false") boolean count) {
-        return count ? service.addView(id): service.getAnnouncementById(id)  ;
+    public Announcement getAnnouncementById(@PathVariable Integer id, @RequestParam (defaultValue = "false") boolean count) {
+        return count ? service.addView(id): service.getAnnouncementById(id);
     }
     @PostMapping("")
     public Announcement addAnnouncement(@Valid @RequestBody AnnouncementRequestDTO announcement) {

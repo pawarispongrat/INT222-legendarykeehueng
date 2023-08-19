@@ -14,5 +14,4 @@ public @interface CloseAfterPublish {
     String message() default "must be later than publish date";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
-    String field() default "closeDate";
 }

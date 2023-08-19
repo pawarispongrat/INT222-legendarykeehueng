@@ -3,17 +3,15 @@ package sit.int221.announcement.services;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import sit.int221.announcement.dtos.AnnouncementDTO;
-import sit.int221.announcement.dtos.AnnouncementRequestDTO;
+import sit.int221.announcement.dtos.request.AnnouncementRequestDTO;
 import sit.int221.announcement.dtos.PageDTO;
 import sit.int221.announcement.exceptions.list.ItemNotFoundException;
 import sit.int221.announcement.models.Announcement;
 import sit.int221.announcement.models.Category;
 import sit.int221.announcement.repositories.AnnouncementRepository;
-import sit.int221.announcement.utils.Display;
+import sit.int221.announcement.utils.enums.Display;
 import sit.int221.announcement.utils.ListMapper;
 import sit.int221.announcement.utils.Modes;
 
@@ -46,7 +44,7 @@ public class AnnouncementService {
     }
 
     public Announcement getAnnouncementById(Integer id) {
-        return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("announcementId", id + " does not exists"));
+        return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("announcementId"));
     }
     public Announcement addAnnouncement(AnnouncementRequestDTO post){
         return updateAnnouncement(null,post);
@@ -63,7 +61,6 @@ public class AnnouncementService {
         Category category = categories.getCategoryById(post.getCategoryId());
         announcement.setId(id);
         announcement.setCategory(category);
-        System.out.println(announcement.getViewCount());
         return repository.saveAndFlush(announcement);
     }
     public PageDTO<AnnouncementDTO> getAnnouncementPage(int page, int size, Modes mode, int category){

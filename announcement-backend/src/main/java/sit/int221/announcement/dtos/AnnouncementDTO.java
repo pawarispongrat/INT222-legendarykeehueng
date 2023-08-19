@@ -2,7 +2,7 @@ package sit.int221.announcement.dtos;
 
 import lombok.Getter;
 import lombok.Setter;
-import sit.int221.announcement.utils.Display;
+import sit.int221.announcement.utils.enums.Display;
 
 import java.time.ZonedDateTime;
 

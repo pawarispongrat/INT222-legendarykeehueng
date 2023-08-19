@@ -2,11 +2,9 @@ package sit.int221.announcement.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import sit.int221.announcement.utils.Display;
+import sit.int221.announcement.utils.enums.Display;
 
 import java.time.ZonedDateTime;
 
