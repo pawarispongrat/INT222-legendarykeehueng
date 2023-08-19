@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 25.38.200.142",
     "build": "vite build --base=/kp1/",
     "preview": "vite preview",
     "cypress:open": "cypress open"

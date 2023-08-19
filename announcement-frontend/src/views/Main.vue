@@ -6,7 +6,7 @@ import { formatDate, TIMEZONE } from '../assets/utils';
 import { displays } from '../assets/data/announcement';
 import { modes,useAnnounces } from '../assets/pinia';
 import Pagination from '../assets/components/Pagination.vue';
-
+import Sidebar from '../assets/components/Sidebar.vue';
 const announcements = ref([])
 const count = ref('')
 const announces = useAnnounces()
@@ -30,9 +30,12 @@ const computedDisplayColor = (display) => computed(() => display === displays.Y 
 
 </script>
 <template>
+   
   <div v-show="loaded" class="max-w-[65rem]">
+    
     <Header>SIT Announcement System (SAS)</Header>
     <div class="flex items-center justify-between py-5">
+      <Sidebar class="absolute inset-y-0 left-0 w-3/12"></Sidebar>
       <h2 class="text-xl font-bold text-[#C1A696] py-3">
         Date/Time shown in Timezone: <span class="kanit-light text-base-content">{{ TIMEZONE }}</span>
       </h2>
@@ -100,6 +103,13 @@ const computedDisplayColor = (display) => computed(() => display === displays.Y 
     <div v-else class="flex justify-center items-center h-96 w-full">
       <div class="text-error text-3xl">No Announcement</div>
     </div>
+
   <div class="py-6"></div>
-</div></template>
-<style scoped></style>
+</div>
+ </template>
+<style scoped>
+/* .absolute-item {
+  position: absolute;
+  pointer-events: none;
+} */
+</style>
