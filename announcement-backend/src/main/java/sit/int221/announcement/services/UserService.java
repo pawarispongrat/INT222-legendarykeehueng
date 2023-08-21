@@ -40,6 +40,11 @@ public class UserService {
     public User updateUser(Integer id,UserRequestDTO post){
         User user = mapper.map(post,User.class);
         user.setId(id);
+        if (id !=  null) {
+            User res = getUserById(id);
+            user.setUpdatedOn(res.getUpdatedOn());
+            user.setCreatedOn(res.getCreatedOn());
+        }
         return repository.saveAndFlush(user);
     }
 }

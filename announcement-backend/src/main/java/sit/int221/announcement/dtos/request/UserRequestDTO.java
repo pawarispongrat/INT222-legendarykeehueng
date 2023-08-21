@@ -22,4 +22,11 @@ public class UserRequestDTO {
     @EnumValidator(enumClass = Role.class,message = "must be either Role enum")
     private String role;
 
+    public void setRole(String role) { this.role = role.trim(); }
+
+    public void setName(String name) { this.name = name.trim();}
+
+    public void setEmail(String email) { this.email = email.trim(); }
+
+    public void setUsername(String username) { this.username = username.trim(); }
 }

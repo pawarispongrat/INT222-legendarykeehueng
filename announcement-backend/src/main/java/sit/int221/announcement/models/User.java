@@ -4,8 +4,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import sit.int221.announcement.utils.enums.Role;
 
 import java.time.ZonedDateTime;
@@ -26,7 +29,11 @@ public class User {
     private Role role;
 
     @CreationTimestamp
-    private ZonedDateTime createOn;
+    @Column(insertable = false,updatable = false)
+    private ZonedDateTime createdOn;
+
     @UpdateTimestamp
-    private ZonedDateTime updateOn;
+    @Column(insertable = false,updatable = false)
+    private ZonedDateTime updatedOn;
+
 }
