@@ -14,6 +14,7 @@ const loaded = ref(false)
 onMounted(async () => {
   await fetch()
   loaded.value = true
+  console.log(announcements.value.content[1]);
 })
 const fetch = async () => {
   announcements.value = await getUserAnnouncement(modes.ADMIN, announces.getPage() -1, 0)
@@ -70,7 +71,6 @@ const computedDisplayColor = (display) => computed(() => display === displays.Y 
             <td class="text-center ann-display"><span class="px-2 py-1 bg-opacity-20 rounded-lg text-sm"
                 :class="computedDisplayColor(announcement.announcementDisplay)">{{ announcement.announcementDisplay
                 }}</span></td>
-
             <td class="text-center "> {{ announcement.viewCount }}</td>    
 
             <td class="text-center px-4">

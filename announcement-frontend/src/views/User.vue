@@ -1,49 +1,45 @@
 <script setup>
 import Header from '../assets/components/Header.vue';
-import { ref, onMounted, computed } from 'vue';
-import { getUserAnnouncement, deleteAnnouncement, getAnnouncementById } from '../assets/data/data-handler.js';
+import { ref, onMounted } from 'vue';
+import { getUser,deleteUser } from '../assets/data/data-handler.js';
 import { formatDate, TIMEZONE } from '../assets/utils';
-import { displays } from '../assets/data/announcement';
-import { modes,useAnnounces } from '../assets/pinia';
-import Pagination from '../assets/components/Pagination.vue';
 import Sidebar from '../assets/components/Sidebar.vue';
 
-const announcements = ref([])
-const count = ref('')
-const announces = useAnnounces()
+const users = ref([])
+
 const loaded = ref(false)
 onMounted(async () => {
   await fetch()
   loaded.value = true
+  console.log(users.value);
 })
 const fetch = async () => {
-  announcements.value = await getUserAnnouncement(modes.ADMIN, announces.getPage() -1, 0)
+  users.value = await getUser()
 }
 
-const removeAnnouncement = (id) => {
-  announcements.value.content = announcements.value.content.filter((announcement) => announcement.id !== id)
-  deleteAnnouncement(id)
-  
+const removeUser = (id) => {
+  users.value = users.value.filter((users) => users.id !== id)
+  deleteUser(id)
 }
-const currentAnnouncement = ref('')
-const setAnnouncement = (announcement) => currentAnnouncement.value = announcement
-const computedDisplayColor = (display) => computed(() => display === displays.Y ? 'bg-success text-success' : 'bg-error text-error').value
+const currentUser = ref('')
+const setUser = (user) => currentUser.value = user
+
 </script>
 <template>
- <Sidebar class="absolute"></Sidebar>  
+ <!-- <Sidebar class="fixed"></Sidebar>   -->
  <div v-show="loaded" class="max-w-[65rem]">
     
     <Header>USER MANAGEMENT</Header>
     <div class="flex items-center justify-between py-5">
-      <Sidebar class="absolute inset-y-0 left-0 w-3/12"></Sidebar>
+      <!-- <Sidebar class="absolute inset-y-0 left-0 w-3/12"></Sidebar> -->
       <h2 class="text-xl font-bold text-[#C1A696] py-3">
         Date/Time shown in Timezone: <span class="kanit-light text-base-content">{{ TIMEZONE }}</span>
       </h2>
-      <router-link v-if="announcements && announcements?.content?.length !== 0"
+      <router-link v-if="users && users?.content?.length !== 0"
       class="text-md px-4 py-3 border-0 btn-success text-white ann-button text-center shadow-md shadow-[#C1A696] bg-[#C1A696] hover:bg-[#E4B79D] rounded-md"
-        :to="{ name: 'AddAnnouncement' }">Add User</router-link>
+        :to="{ name: 'AddUser' }">Add User</router-link>
     </div>
-    <div v-if="announcements && announcements?.content?.length !== 0">
+    <div v-if="users && users?.content?.length !== 0">
       <table class="bg-base-100 shadow-md">
         <thead>
           <tr class="bg-[#C1A696] uppercase text-sm text-gray-100">
@@ -52,34 +48,33 @@ const computedDisplayColor = (display) => computed(() => display === displays.Y 
             <th class="text-left w-28">Name</th>
             <th class="text-left  w-32">Email</th>
             <th class="text-left w-32">Role</th>
-            <th class="text-left ">CreatedOn</th>
-            <th class=" w-28">UpdatedOn</th>
+            <th class="text-left w-36 ">CreatedOn</th>
+            <th class=" w-36">UpdatedOn</th>
             <th>Action</th>
            
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(announcement, index) in announcements.content" :key="announcement.id"
+          <tr v-for="(users, index) in users" :key="users.id"
             class="hover border-base-300 border-b kanit-light ann-item">
-            <th class="py-6">{{  index + 1 + (announcements.page * announcements.size) }}</th>
-            <td class="ann-title py-1">{{ announcement.announcementTitle }}</td>
-            <td class="ann-category px-4"><span class="text-[#FAA497] bg-[#FAA497] bg-opacity-20 rounded-lg px-2 py-1 text-sm">{{
-              announcement.announcementCategory }}</span></td>
-            <td class="ann-publish-date px-3">{{ formatDate(announcement.publishDate) }}</td>
-            <td class="ann-close-date px-3">{{ formatDate(announcement.closeDate) }}</td>
-            <td class="text-center ann-display"><span class="px-2 py-1 bg-opacity-20 rounded-lg text-sm"
-                :class="computedDisplayColor(announcement.announcementDisplay)">{{ announcement.announcementDisplay
-                }}</span></td>
-
-            <td class="text-center "> {{ announcement.viewCount }}</td>    
+            <th class="py-6">{{  index + 1 }}</th>
+            <td class="ann-title py-1">{{ users.username }}</td>
+            <td class="ann-category px-4">{{users.name }}</td>
+            <td class="ann-category px-4">{{users.email }}</td>
+            <td class="ann-category px-4">{{users.role }}</td>
+            <td class="ann-publish-date px-4">{{ formatDate(users.createOn) }}</td>
+            <td class="ann-close-date px-4">{{ formatDate(users.updateOn) }}</td> 
+            <!-- <td class="text-center ann-display"><span class="px-2 py-1 bg-opacity-20 rounded-lg text-sm"
+                :class="computedDisplayColor(users.announcementDisplay)">{{ users.announcementDisplay
+                }}</span></td>  -->
 
             <td class="text-center px-4">
               <router-link class="text-sm px-4 py-1 mr-3 rounded-lg btn-outline bg-[#FAA497] hover:bg-[#E4B79D] text-white ann-button"
-                :to="{ name: 'AnnouncementDetails', params: { id: announcement.id } }">view</router-link>
+                :to="{ name: 'AnnouncementDetails', params: { id: users.id } }">edit</router-link>
 
               <label for="delete"
               class="text-sm px-4 py-1  rounded-lg btn-outline  bg-error hover:bg-red-500 text-white ann-button cursor-pointer"
-                @click="setAnnouncement(announcement)">delete</label>
+                @click="setUser(users)">delete</label>
               <input type="checkbox" id="delete" class="modal-toggle" />
               <div class="modal" id="delete">
                 <div class="modal-box rounded-lg w-96 h-72 flex flex-col justify-center">
@@ -88,7 +83,7 @@ const computedDisplayColor = (display) => computed(() => display === displays.Y 
                   <p class="p-2">If yes, press confirm and if you don't want to delete press cancel</p>
                   <div class="modal-action flex justify-center gap-x-3 w-full">
                     <label for="delete" class="btn btn-error hover:bg-red-500 border-0 ann-button rounded-lg w-1/3 text-gray-100"
-                      @click="removeAnnouncement(currentAnnouncement.id)">Confirm</label>
+                      @click="removeUser(currentUser.id)">Confirm</label>
                     <label for="delete" class="btn ann-button rounded-lg w-1/3 btn-outline border-[#C1A696] text-[#C1A696] border-2 hover:bg-[#E4B79D] hover:border-[#E4B79D]">Cancel</label>
                   </div>
                 </div>
@@ -98,7 +93,7 @@ const computedDisplayColor = (display) => computed(() => display === displays.Y 
           </tr>
         </tbody>
       </table>
-      <Pagination @fetch="fetch" :total-pages="announcements?.totalPages" :total-elements="announcements?.totalElements" class="float-right"/>
+      <!-- <Pagination @fetch="fetch" :total-pages="announcements?.totalPages" :total-elements="announcements?.totalElements" class="float-right"/> -->
     </div>
     <div v-else class="flex justify-center items-center h-96 w-full">
       <div class="text-error text-3xl">No Announcement</div>

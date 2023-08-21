@@ -2,6 +2,7 @@ import router from '../../router/index.js';
 
 const API_HOST = import.meta.env.VITE_BASE_URL
 const API_ANNOUCEMENTS = `${API_HOST}/api/announcements`
+const API_USERS = `${API_HOST}/api/users`
 const API_PAGES = `${API_HOST}/api/announcements/pages`
 
 function requestPage(user) {
@@ -34,6 +35,26 @@ async function getAnnouncement() {
         if (res.ok) return res.json()
         else throw new Error('Error, data is error!')
     } catch (error) {}
+}
+async function getUser() {
+    try {
+        const res = await fetch(`${API_USERS}`)
+        if (res.ok) return res.json()
+        else throw new Error('Error, data is error!')
+    } catch (error) {}
+}
+async function createUser(user)  {
+    try {
+        const res = await fetch(`${API_USERS}`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(user)
+        })
+        if (res.ok) return res.json()
+        else throw new Error('Error, cannot add!')
+    } catch (err) {        
+    } finally { router.push("/admin/user/") }
+    
 }
 async function getAnnouncementById(id,count=false) {
     try {
@@ -75,4 +96,12 @@ async function deleteAnnouncement(id) {
         } else throw new Error('cannot delete!')
     } catch (err) {}
 }
-export { getAnnouncement,getAnnouncementById,putAnnouncement,createAnnouncement,deleteAnnouncement,isLoaded, getUserAnnouncement }
+async function deleteUser(id) {
+    try {
+        const res = await fetch(`${API_USERS}/${id}`, {method: 'DELETE'} )
+        if (res.ok) {
+            // console.log("Delete Successfully")
+        } else throw new Error('cannot delete!')
+    } catch (err) {}
+}
+export { getAnnouncement,getAnnouncementById,putAnnouncement,createAnnouncement,deleteAnnouncement,isLoaded, getUserAnnouncement,getUser,createUser,deleteUser }
