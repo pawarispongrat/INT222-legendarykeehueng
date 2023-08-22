@@ -28,11 +28,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @CreationTimestamp
     @Column(insertable = false,updatable = false)
     private ZonedDateTime createdOn;
 
-    @UpdateTimestamp
     @Column(insertable = false,updatable = false)
     private ZonedDateTime updatedOn;
 

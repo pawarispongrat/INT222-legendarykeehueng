@@ -2,10 +2,11 @@ package sit.int221.announcement;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import sit.int221.announcement.repositories.impl.EntityRepositoryImpl;
 
 @SpringBootApplication
+@EnableJpaRepositories(repositoryBaseClass = EntityRepositoryImpl.class )
 public class AnnouncementApplication {
 
     public static void main(String[] args) {
