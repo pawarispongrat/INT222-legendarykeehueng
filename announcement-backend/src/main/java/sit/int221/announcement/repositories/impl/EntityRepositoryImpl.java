@@ -1,25 +1,20 @@
 package sit.int221.announcement.repositories.impl;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import sit.int221.announcement.repositories.EntityRepository;
 
-import java.io.Serializable;
+public class EntityRepositoryImpl<T> implements EntityRepository<T> {
 
-public class EntityRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements EntityRepository<T,ID> {
-
+    @PersistenceContext
     private EntityManager manager;
-
-    public EntityRepositoryImpl(JpaEntityInformation information, EntityManager manager) {
-        super(information,manager);
-        this.manager = manager;
-    }
 
 
     @Override
-    public void refresh(T t) {
-        manager.refresh(t);
+    @Transactional
+    public <S extends T> void refresh(S o) {
+        manager.refresh(o);
     }
 }

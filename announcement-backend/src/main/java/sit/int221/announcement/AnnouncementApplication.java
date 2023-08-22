@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import sit.int221.announcement.repositories.impl.EntityRepositoryImpl;
 
 @SpringBootApplication
-@EnableJpaRepositories(repositoryBaseClass = EntityRepositoryImpl.class )
 public class AnnouncementApplication {
 
     public static void main(String[] args) {

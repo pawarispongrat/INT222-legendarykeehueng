@@ -3,12 +3,10 @@ package sit.int221.announcement.services;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sit.int221.announcement.dtos.request.AnnouncementRequestDTO;
 import sit.int221.announcement.dtos.request.UserRequestDTO;
 import sit.int221.announcement.exceptions.list.ItemNotFoundException;
-import sit.int221.announcement.models.Announcement;
-import sit.int221.announcement.models.Category;
 import sit.int221.announcement.models.User;
+import sit.int221.announcement.repositories.EntityRepository;
 import sit.int221.announcement.repositories.UserRepository;
 
 import java.util.List;

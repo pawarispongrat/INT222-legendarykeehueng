@@ -1,12 +1,7 @@
 package sit.int221.announcement.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.NoRepositoryBean;
 
-import java.io.Serializable;
+public interface EntityRepository<T> {
 
-@NoRepositoryBean
-public interface EntityRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
-
-        void refresh(T t);
+    <S extends T> void refresh(S t);
 }
