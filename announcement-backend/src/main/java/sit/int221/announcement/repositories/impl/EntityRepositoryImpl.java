@@ -14,7 +14,7 @@ public class EntityRepositoryImpl<T> implements EntityRepository<T> {
 
     @Override
     @Transactional
-    public <S extends T> void refresh(S o) {
+    public void refresh(T o) {
         manager.refresh(o);
     }
 }
