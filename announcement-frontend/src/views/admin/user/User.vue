@@ -3,7 +3,7 @@ import Header from '@/assets/components/Header.vue';
 import { ref, onMounted } from 'vue';
 import { getUser,deleteUser } from '@/assets/data/data-handler.js';
 import { formatDate, TIMEZONE } from '@/assets/utils';
-import Sidebar from '@/assets/components/Sidebar.vue';
+import Sidebar from '@/assets/components/sidebar/Sidebar.vue';
 
 const users = ref([])
 
@@ -27,13 +27,13 @@ const setUser = (user) => currentUser.value = user
 </script>
 <template>
  <!-- <Sidebar class="fixed"></Sidebar>   -->
+ <Sidebar class="absolute inset-y-0 left-0 w-3/12"></Sidebar>
  <div v-show="loaded" class="max-w-[65rem]">
     
     <Header>USER MANAGEMENT</Header>
     <div class="flex items-center justify-between py-5">
-      <Sidebar class="absolute inset-y-0 left-0 w-3/12"></Sidebar>
       <h2 class="text-xl font-bold text-[#C1A696] py-3">
-        Date/Time shown in Timezone: <span class="kanit-light text-base-content ann-timezone">{{ TIMEZONE }}</span>
+        Date/Time shown in Timezone: <span class="kanit-light text-base-content">{{ TIMEZONE }}</span>
       </h2>
       <router-link v-if="users && users?.content?.length !== 0"
       class="text-md px-4 py-3 border-0 btn-success text-white ann-button text-center shadow-md shadow-[#C1A696] bg-[#C1A696] hover:bg-[#E4B79D] rounded-md"
@@ -58,12 +58,12 @@ const setUser = (user) => currentUser.value = user
           <tr v-for="(users, index) in users" :key="users.id"
             class="hover border-base-300 border-b kanit-light ann-item">
             <th class="py-6">{{  index + 1 }}</th>
-            <td class="ann-username py-1">{{ users.username }}</td>
-            <td class="ann-name px-4">{{users.name }}</td>
-            <td class="ann-email px-4">{{users.email }}</td>
-            <td class="ann-role px-4">{{users.role }}</td>
-            <td class="ann-created-on px-4">{{ formatDate(users.createdOn) }}</td>
-            <td class="ann-updated-on px-4">{{ formatDate(users.updatedOn) }}</td> 
+            <td class="ann-title py-1">{{ users.username }}</td>
+            <td class="ann-category px-4">{{users.name }}</td>
+            <td class="ann-category px-4">{{users.email }}</td>
+            <td class="ann-category px-4">{{users.role }}</td>
+            <td class="ann-publish-date px-4">{{ formatDate(users.createdOn) }}</td>
+            <td class="ann-close-date px-4">{{ formatDate(users.updatedOn) }}</td> 
             <!-- <td class="text-center ann-display"><span class="px-2 py-1 bg-opacity-20 rounded-lg text-sm"
                 :class="computedDisplayColor(users.announcementDisplay)">{{ users.announcementDisplay
                 }}</span></td>  -->

@@ -1,13 +1,14 @@
 import { createRouter,createWebHistory } from "vue-router";
-import Main from "../views/Main.vue"
-import Details from "../views/Details.vue"
+import Announcement from "../views/admin/announcement/Announcement.vue"
+import AnnouncementDetails from "../views/admin/announcement/Details.vue"
 import PageNotFound from "../views/PageNotFound.vue"
-import AddAnnouncement from "../views/AddAnnouncement.vue"
-import EditAnnouncement from "../views/EditAnnouncement.vue"
+import AddAnnouncement from "../views/admin/announcement/AddAnnouncement.vue"
+import EditAnnouncement from "../views/admin/announcement/EditAnnouncement.vue"
 import UserAnnouncement from "../views/user/Announcement.vue"
-import UserDetails from "../views/user/Details.vue"
-import User from "../views/User.vue"
-import AddUser from "../views/AddUser.vue"
+import UserDetails from "../views/admin/user/Details.vue"
+import User from "../views/admin/user/User.vue"
+import AddUser from "../views/admin/user/AddUser.vue"
+import EditUser from "../views/admin/user/EditUser.vue"
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes:[
@@ -28,12 +29,12 @@ const router = createRouter({
         {
             path: '/admin/announcement/',
             name: 'Announcement',
-            component: Main,
+            component: Announcement,
         },
         {
             path: '/admin/announcement/:id',
             name: 'AnnouncementDetails',
-            component: Details,
+            component: AnnouncementDetails,
         },
         {
             path: '/:notfoundpath(.*)',
@@ -59,6 +60,11 @@ const router = createRouter({
             path: '/admin/user/add',
             name: 'AddUser',
             component: AddUser,
+        },
+        {
+            path: '/admin/user/:id/edit',
+            name: 'EditUser',
+            component: EditUser, 
         }
     
 ]

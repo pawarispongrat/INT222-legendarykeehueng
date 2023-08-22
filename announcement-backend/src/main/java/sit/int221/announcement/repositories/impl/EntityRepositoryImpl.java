@@ -17,4 +17,5 @@ public class EntityRepositoryImpl<T> implements EntityRepository<T> {
     public void refresh(T o) {
         manager.refresh(o);
     }
+
 }

@@ -7,7 +7,7 @@ class User {
         this.name = name ?? ''
         this.username = username ?? ''
         this.email = email ?? ''
-        this.role = role ?? ''
+        this.role = role ?? 'announcer'
         this.createdOnDate = createdOnDate ?? ''
         this.createdOnTime = createdOnTime ?? ''
         this.updateOnDate = updateOnDate ?? ''
@@ -15,13 +15,13 @@ class User {
     }
     getCreatedOn() { return getDateTime(this.createdOnDate,this.createdOnTime) }
     getUpdateOn() { return getDateTime(this.updateOnDate,this.updateOnTime) }
-    getUTCCreatedOn() { return this.getCreatedOn() ? getCreatedOn().toISOString() : null }
+    getUTCCreatedOn() { return this.getCreatedOn() ? this.getCreatedOn().toISOString() : null }
     getUTCUpdateOn() { return this.getUpdateOn() ? this.getUpdateOn().toISOString() : null}
     
     
     fromJSON(user) {
         const create = formatDateString(user.createdOn)?.split(' ')
-        const update = formatDateString(user.updateOn)?.split(' ')
+        const update = formatDateString(user.updatedOn)?.split(' ')
         this.id = user.id
         this.username = user.username
         this.name = user.name
@@ -30,7 +30,8 @@ class User {
         this.createdOnTime = create?.[1] ?? null
         this.updateOnDate = update?.[0] ?? null
         this.updateOnTime = update?.[1] ?? null
-        this.role = user.role
+        this.role = user.role 
+        console.log(this.createdOnTime);
         return this
     }
     toJSON() {

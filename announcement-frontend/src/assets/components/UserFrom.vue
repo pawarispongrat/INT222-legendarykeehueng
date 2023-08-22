@@ -86,8 +86,8 @@ const validateEmail = () => {
     <div class="space-y-2">
       <p>role</p>
       <select v-model="user.role" class="select select-bordered w-full ann-category">
-        <option value="admin">admin</option>
-        <option value="announcer">announcer</option>
+         <option value="admin">admin</option>
+         <option value="announcer" selected>announcer</option>
       </select>
     </div>
 

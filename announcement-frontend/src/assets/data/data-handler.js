@@ -63,6 +63,13 @@ async function getAnnouncementById(id,count=false) {
         else throw new Error('Error, data is error!')
     } catch (error) {}
 }
+async function getUserById(id) {
+    try {
+        const res = await fetch(`${API_USERS}/${id}`)
+        if (res.ok) return res.json()
+        else throw new Error('Error, data is error!')
+    } catch (error) {}
+}
 async function createAnnouncement(announcement)  {
     try {
         const res = await fetch(`${API_ANNOUCEMENTS}`, {
@@ -88,6 +95,20 @@ async function putAnnouncement(announcement)  {
     } catch (err) {    
     } finally { router.push("/admin/announcement/") }
 }
+
+async function putUser(user)  {
+    try {
+        const res = await fetch(`${API_USERS}/${user.id}`, {
+            method: 'PUT',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(user)
+        })
+        if (res.ok) {}
+        else throw new Error('Error, cannot update!')
+    } catch (err) {    
+    } finally { router.push("/admin/user/") }
+}
+
 async function deleteAnnouncement(id) {
     try {
         const res = await fetch(`${API_ANNOUCEMENTS}/${id}`, {method: 'DELETE'} )
@@ -104,4 +125,4 @@ async function deleteUser(id) {
         } else throw new Error('cannot delete!')
     } catch (err) {}
 }
-export { getAnnouncement,getAnnouncementById,putAnnouncement,createAnnouncement,deleteAnnouncement,isLoaded, getUserAnnouncement,getUser,createUser,deleteUser }
+export { getAnnouncement,getAnnouncementById,putAnnouncement,createAnnouncement,deleteAnnouncement,isLoaded, getUserAnnouncement,getUser,createUser,deleteUser,getUserById,putUser }
