@@ -58,16 +58,12 @@ const setUser = (user) => currentUser.value = user
           <tr v-for="(users, index) in users" :key="users.id"
             class="hover border-base-300 border-b kanit-light ann-item">
             <th class="py-6">{{  index + 1 }}</th>
-            <td class="ann-title py-1">{{ users.username }}</td>
-            <td class="ann-category px-4">{{users.name }}</td>
-            <td class="ann-category px-4">{{users.email }}</td>
-            <td class="ann-category px-4">{{users.role }}</td>
-            <td class="ann-publish-date px-4">{{ formatDate(users.createdOn) }}</td>
-            <td class="ann-close-date px-4">{{ formatDate(users.updatedOn) }}</td> 
-            <!-- <td class="text-center ann-display"><span class="px-2 py-1 bg-opacity-20 rounded-lg text-sm"
-                :class="computedDisplayColor(users.announcementDisplay)">{{ users.announcementDisplay
-                }}</span></td>  -->
-
+            <td class="ann-username py-1">{{ users.username }}</td>
+            <td class="ann-name px-4">{{users.name }}</td>
+            <td class="ann-email px-4">{{users.email }}</td>
+            <td class="ann-role px-4">{{users.role }}</td>
+            <td class="ann-created-on px-4">{{ formatDate(users.createdOn) }}</td>
+            <td class="ann-updated-on px-4">{{ formatDate(users.updatedOn) }}</td> 
             <td class="text-center px-4">
               <router-link class="text-sm px-4 py-1 mr-3 rounded-lg btn-outline bg-[#FAA497] hover:bg-[#E4B79D] text-white ann-button"
                 :to="{ name: 'EditUser', params: { id: users.id } }">edit</router-link>

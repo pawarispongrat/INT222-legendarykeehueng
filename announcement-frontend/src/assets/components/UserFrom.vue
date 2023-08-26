@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from "vue";
 import router from "../../router";
+import { formatDate } from '@/assets/utils';
+
 
 
 const props = defineProps({
@@ -56,11 +58,11 @@ const validateEmail = () => {
     <div class="-mt-6">
       <p>
         Username
-        <span class="text-sm text-gray-500">({{ user.username?.length }}/{{ MAX_TITLE }})</span>
+        <span class="text-sm text-gray-500 ">({{ user.username?.length }}/{{ MAX_TITLE }})</span>
         <span v-show="!validates.username" class="text-sm text-red-500">{{ ` ${errorText.username}` }}</span>
       </p>
       <input @click="validates.username = true" type="text" :maxlength="MAX_TITLE" v-model="user.username"
-        class="input input-bordered w-full ann-title placeholder:text-gray-500"
+        class="ann-username input  input-bordered w-full ann-title placeholder:text-gray-500"
         :class="{ 'outline outline-red-500': !validates.username }" />
     </div>
     <div class="-mt-6">
@@ -70,7 +72,7 @@ const validateEmail = () => {
         <span v-show="!validates.name" class="text-sm text-red-500">{{ ` ${errorText.name}` }}</span>
       </p>
       <input @click="validates.name = true" type="text" :maxlength="MAX_TITLE" v-model="user.name"
-        class="input input-bordered w-full ann-title placeholder:text-gray-500"
+        class="ann-name input input-bordered w-full  placeholder:text-gray-500"
         :class="{ 'outline outline-red-500': !validates.name }" />
     </div>
     <div class="-mt-6">
@@ -80,17 +82,19 @@ const validateEmail = () => {
         <span v-show="!validates.email" class="text-sm text-red-500">{{ ` ${errorText.email}` }}</span>
       </p>
       <input @click="validates.email = true" type="text" :maxlength="MAX_TITLE" v-model="user.email"
-        class="input input-bordered w-full ann-title placeholder:text-gray-500"
+        class="ann-email input input-bordered w-full placeholder:text-gray-500"
         :class="{ 'outline outline-red-500': !validates.email }" />
     </div>
     <div class="space-y-2">
       <p>role</p>
-      <select v-model="user.role" class="select select-bordered w-full ann-category">
+      <select v-model="user.role" class="select select-bordered w-full ann-role">
          <option value="admin">admin</option>
          <option value="announcer" selected>announcer</option>
       </select>
     </div>
+    <div>
 
+    </div>
 
     <div class="flex  w-full">
       <button class="btn border-0 bg-[#C1A696] ann-button text-gray-100 w-44 hover:bg-[#E4B79D] disabled:bg-base-100"

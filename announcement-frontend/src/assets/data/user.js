@@ -1,4 +1,4 @@
-import { formatDateString,getDateTime } from "../utils"
+import { formatDateString,getDateTime,formatDate } from "../utils"
 
 class User {
 
@@ -13,8 +13,10 @@ class User {
         this.updateOnDate = updateOnDate ?? ''
         this.updateOnTime = updateOnTime ?? ''
     }
-    getCreatedOn() { return getDateTime(this.createdOnDate,this.createdOnTime) }
-    getUpdateOn() { return getDateTime(this.updateOnDate,this.updateOnTime) }
+    getCreatedOnFormat() { return formatDate(getDateTime(this.createdOnDate,this.createdOnTime)) ?? null}
+    getUpdateOnFormat() { return formatDate(getDateTime(this.updateOnDate,this.updateOnTime)) ?? null}
+    getCreatedOn() { return getDateTime(this.createdOnDate,this.createdOnTime)}
+    getUpdateOn() { return getDateTime(this.updateOnDate,this.updateOnTime)}
     getUTCCreatedOn() { return this.getCreatedOn() ? this.getCreatedOn().toISOString() : null }
     getUTCUpdateOn() { return this.getUpdateOn() ? this.getUpdateOn().toISOString() : null}
     
@@ -32,6 +34,8 @@ class User {
         this.updateOnTime = update?.[1] ?? null
         this.role = user.role 
         console.log(this.createdOnTime);
+        console.log(this.createdOnDate);
+        console.log(this.getCreatedOn());
         return this
     }
     toJSON() {
