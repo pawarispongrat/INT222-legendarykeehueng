@@ -1,5 +1,5 @@
 <script setup>
-import Header from '@/assets/components/Header.vue';
+import Header from '@/assets/components/text/Header.vue';
 import { ref, onMounted, computed } from 'vue';
 import { getUserAnnouncement, deleteAnnouncement, getAnnouncementById } from '@/assets/data/data-handler.js';
 import { formatDate, TIMEZONE } from '@/assets/utils';

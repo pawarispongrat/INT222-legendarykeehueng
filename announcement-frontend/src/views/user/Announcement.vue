@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue';
 
-import Header from '@/assets/components/Header.vue';
+import Header from '@/assets/components/text/Header.vue';
 import { getUserAnnouncement } from '@/assets/data/data-handler';
 import { categories } from '@/assets/data/announcement';
 import { TIMEZONE,formatDate } from '@/assets/utils';

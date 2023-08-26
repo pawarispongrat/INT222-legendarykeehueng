@@ -3,7 +3,7 @@ import Header from '@/assets/components/text/Header.vue';
 import { ref, onMounted } from 'vue';
 import { getUser,deleteUser } from '@/assets/data/data-handler.js';
 import { formatDate, TIMEZONE } from '@/assets/utils';
-import Sidebar from '@/assets/components/Sidebar.vue';
+import Sidebar from '@/assets/components/sidebar/Sidebar.vue';
 
 const users = ref([])
 
@@ -31,9 +31,8 @@ const setUser = (user) => currentUser.value = user
     
     <Header>USER MANAGEMENT</Header>
     <div class="flex items-center justify-between py-5">
-      <Sidebar class="absolute inset-y-0 left-0 w-3/12"></Sidebar>
       <h2 class="text-xl font-bold text-[#C1A696] py-3">
-        Date/Time shown in Timezone: <span class="kanit-light text-base-content ann-timezone">{{ TIMEZONE }}</span>
+        Date/Time shown in Timezone: <span class="kanit-light text-base-content">{{ TIMEZONE }}</span>
       </h2>
       <router-link v-if="users && users?.content?.length !== 0"
       class="text-md px-4 py-3 border-0 btn-success text-white ann-button text-center shadow-md shadow-[#C1A696] bg-[#C1A696] hover:bg-[#E4B79D] rounded-md"
@@ -64,10 +63,6 @@ const setUser = (user) => currentUser.value = user
             <td class="ann-role px-4">{{users.role }}</td>
             <td class="ann-created-on px-4">{{ formatDate(users.createdOn) }}</td>
             <td class="ann-updated-on px-4">{{ formatDate(users.updatedOn) }}</td> 
-            <!-- <td class="text-center ann-display"><span class="px-2 py-1 bg-opacity-20 rounded-lg text-sm"
-                :class="computedDisplayColor(users.announcementDisplay)">{{ users.announcementDisplay
-                }}</span></td>  -->
-
             <td class="text-center px-4">
               <router-link class="text-sm px-4 py-1 mr-3 rounded-lg btn-outline bg-[#FAA497] hover:bg-[#E4B79D] text-white ann-button"
                 :to="{ name: 'EditUser', params: { id: users.id } }">edit</router-link>

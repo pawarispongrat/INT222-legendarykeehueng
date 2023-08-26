@@ -1,5 +1,5 @@
 <script setup>
-import Header from "@/assets/components/Header.vue";
+import Header from "@/assets/components/text/Header.vue";
 import UserFrom from "@/assets/components/UserFrom.vue"
 import User from "@/assets/data/user.js";
 import { ref } from "vue";

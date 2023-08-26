@@ -3,12 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite --host 25.38.200.142",
+    "dev": "vite",
     "build": "vite build --base=/kp1/",
     "preview": "vite preview",
     "cypress": "cypress open"
   },
   "dependencies": {
+    "@jamescoyle/vue-icon": "^0.1.2",
+    "@mdi/js": "^7.2.96",
     "@vaadin/time-picker": "^24.0.4",
     "@vueup/vue-quill": "^1.2.0",
     "daisyui": "^2.51.6",

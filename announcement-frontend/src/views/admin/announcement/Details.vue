@@ -1,5 +1,5 @@
 <script setup>
-import Header from '@/assets/components/Header.vue';
+import Header from '@/assets/components/text/Header.vue';
 import { onBeforeMount, ref, computed } from 'vue';
 import { getAnnouncementById, isLoaded } from '@/assets/data/data-handler.js';
 import { formatDate } from '@/assets/utils';

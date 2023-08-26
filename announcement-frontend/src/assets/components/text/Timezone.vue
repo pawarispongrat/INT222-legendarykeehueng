@@ -1,0 +1,12 @@
+<script setup>
+import { TIMEZONE } from '../../utils';
+const props = defineProps({
+    text: { type: String, default: "Date/Time shown in Timezone:"}
+})
+
+</script>
+<template>
+    <h2 class="text-base font-bold">
+       {{ text }} <span class="kanit-light text-base-content">{{ TIMEZONE }}</span>
+    </h2>
+</template>

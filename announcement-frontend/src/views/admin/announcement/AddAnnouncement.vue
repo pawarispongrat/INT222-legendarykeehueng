@@ -1,5 +1,5 @@
 <script setup>
-import Header from "@/assets/components/Header.vue";
+import Header from "@/assets/components/text/Header.vue";
 import AnnouncementForm from "@/assets/components/AnnouncementForm.vue";
 import Announcement from "@/assets/data/announcement.js"
 import { ref } from "vue";
