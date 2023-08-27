@@ -1,6 +1,8 @@
 <script setup>
 import { computed } from 'vue';
+import { mdiChevronRight, mdiChevronLeft } from "@mdi/js"
 import { useAnnounces } from '../pinia';
+import SvgIcon from '@jamescoyle/vue-icon';
 const announces = useAnnounces()
 const props = defineProps({totalPages: { required: true} ,totalElements: {  required: true} })
 const emits = defineEmits(["fetch"])
@@ -28,14 +30,18 @@ const selectedPage = (pageIndex) => computed(() => pageIndex === announces.getPa
 
 </script>
 <template>
-    <div class="btn-group mt-12" v-if="totalElements > 5">
-        <button class="btn bg-[#C1A696] border-0 hover:bg-[#E4B79D] shadow-md text-gray-100 ann-page-prev disabled:bg-gray"
-            :disabled="announces.getPage() === 1" @click="previous()">prev</button>
-        <button class="btn bg-base-100 border-0 hover:bg-[#FFF0E7] shadow-md text-base-content w-12"
-            v-for="[index, i] of pages().entries()" @click="number(i)"
-            :class="`disabled:bg-[#C1A696] disabled:text-gray-100 ann-page-${index}`" :disabled="selectedPage(i)">{{ i }}
+    <div class="btn-group flex-wrap mt-8" v-if="totalElements > 5">
+        <button class="btn bg-blue-700 border-0 hover:bg-blue-800 shadow-mdann-page-prev disabled:bg-slate-500 disabled:text-white"
+            :disabled="announces.getPage() === 1" @click="previous()">
+            <svg-icon type="mdi" :path="mdiChevronLeft" :size="24"/>
         </button>
-        <button class="btn bg-[#C1A696] border-0 hover:bg-[#E4B79D] shadow-md text-gray-100 ann-page-next disabled:bg-gray"
-            :disabled="announces.getPage() === totalPages" @click="next()">next</button>
+        <button class="btn bg-base-100 border-0 shadow-md text-base-content w-12 hover:bg-blue-700 hover:text-white"
+            v-for="[index, i] of pages().entries()" @click="number(i)"
+            :class="`disabled:bg-blue-700 disabled:text-white ann-page-${index}`" :disabled="selectedPage(i)">{{ i }}
+        </button>
+        <button class="btn bg-blue-700 border-0 hover:bg-blue-800 shadow-md text-gray-100 ann-page-next disabled:bg-gray"
+            :disabled="announces.getPage() === totalPages" @click="next()">
+            <svg-icon type="mdi" :path="mdiChevronRight" :size="24"/>
+        </button>
     </div>
 </template>

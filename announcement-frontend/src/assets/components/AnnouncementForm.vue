@@ -41,8 +41,8 @@ const sendErrorText = (type, text, byValidate) => {
   errorText.value[type] = byValidate ? "" : text
 }
 const validateText = () => {
-  const title = props.announcement.title.trim()
-  const description = validateDesc.value.trim()
+  const title = props.announcement.title?.trim()
+  const description = validateDesc.value?.trim()
 
   if (!title) sendErrorText("title", "Please fill the title", Boolean(title))
   else sendErrorText("title", "Title size must lower than 200", title.length <= 200)
@@ -123,7 +123,6 @@ const changeText = (e) => validateDesc.value = quilEditor.value.getQuill().getTe
         <h3>Check to show this announcement</h3>
       </div>
     </div>
-
 
     <div class="flex  w-full">
       <button class="btn border-0 bg-[#C1A696] ann-button text-gray-100 w-44 hover:bg-[#E4B79D] disabled:bg-base-100"

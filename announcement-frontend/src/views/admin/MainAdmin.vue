@@ -8,4 +8,5 @@ import { RouterView } from 'vue-router';
             <router-view/>
         </Suspense>
     </Sidebar>
+    <div id="modals"></div>
 </template>

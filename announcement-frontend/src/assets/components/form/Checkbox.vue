@@ -6,7 +6,6 @@ const props = defineProps({
     subLabel: { type: String, required: false },
     field: { type: String, required: false },
     modelValue: { type: String },
-    placeholder: String,
     labelType: String,
 })
 defineEmits(['update'])
@@ -19,12 +18,14 @@ const isError = computed(() => error.value?.length > 0)
     <div class="flex flex-col w-full max-w-xl">
         <label class="label justify-start gap-x-2">
             {{label}}
-            <span class="text-secondary" :v-show="subLabel">{{subLabel}}</span>
             <span class="text-error" v-if="isError">{{error.join(' ')}}</span>
         </label>
-        <input :type="labelType" :placeholder="placeholder"  
-            :value="modelValue" 
-            @input="$emit('update', $event.target.value)" 
-            class="input input-bordered rounded-lg w-full max-w-xl " :class="isError? 'border-error' : ''" />
+        <div class="flex items-center gap-x-2">
+            <input type="checkbox" 
+                :value="modelValue" 
+                @input="$emit('update', $event.target.value)" 
+                class="ann-display checkbox" :class="isError? 'border-error' : ''" />
+            <p>{{ subLabel }}</p>
+        </div>
     </div>
 </template>

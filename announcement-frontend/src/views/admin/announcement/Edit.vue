@@ -1,5 +1,5 @@
 <script setup>
-import Header from "@/assets/components/Header.vue";
+import Header from "@/assets/components/text/Header.vue";
 import AnnouncementForm from "@/assets/components/AnnouncementForm.vue";
 import Announcement from "@/assets/data/announcement.js"
 import { ref, onBeforeMount, watch } from "vue";
@@ -22,8 +22,10 @@ const edit = (announcement,validate) => {
 }
 </script>
 <template>
-    <Header>Edit Announcement Detail</Header>
-    <AnnouncementForm :announcement="announcement" @submit="edit" submit-text="Edit" :disabled-submit="edited <= 0"/>
+    <div class="flex flex-col justify-center items-center">
+        <Header class-name="py-8">Edit Announcement Detail</Header>
+        <AnnouncementForm :announcement="announcement" @submit="edit" submit-text="Edit" :disabled-submit="edited <= 0"/>
+    </div>
 </template>
  
 <style scoped></style>

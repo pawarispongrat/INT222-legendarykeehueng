@@ -5,14 +5,14 @@ const API_ANNOUCEMENTS = `${API_HOST}/api/announcements`
 const API_USERS = `${API_HOST}/api/users`
 const API_PAGES = `${API_HOST}/api/announcements/pages`
 
-function requestPage(user) {
+function sendPage(page) {
     alert("The request page is not available")
-    router.push(user ? "/announcement/" : "/admin/announcement")
+    router.push(page)
 }
 
-function isLoaded(data,user = false,alert = true) {
+function isLoaded(data,page = "/announcement/",alert = true) {
     if (!data) {
-        if (alert) requestPage(user)
+        if (alert) sendPage(page)
         return false
     } 
     return true
@@ -50,10 +50,8 @@ async function createUser(user)  {
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify(user)
         })
-        if (res.ok) return res.json()
-        else throw new Error('Error, cannot add!')
-    } catch (err) {        
-    } finally { router.push("/admin/user/") }
+        return res.json()
+    } catch (err) {   }  
     
 }
 async function getAnnouncementById(id,count=false) {
@@ -77,10 +75,8 @@ async function createAnnouncement(announcement)  {
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify(announcement)
         })
-        if (res.ok) return res.json()
-        else throw new Error('Error, cannot add!')
-    } catch (err) {        
-    } finally { router.push("/admin/announcement/") }
+        return res.json()
+    } catch (err) {}
     
 }
 async function putAnnouncement(announcement)  {
@@ -103,10 +99,8 @@ async function putUser(user)  {
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify(user)
         })
-        if (res.ok) {}
-        else throw new Error('Error, cannot update!')
-    } catch (err) {    
-    } finally { router.push("/admin/user/") }
+        return res.json()
+    } catch (err) {}
 }
 
 async function deleteAnnouncement(id) {

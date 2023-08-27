@@ -15,8 +15,8 @@ onBeforeMount(async () => {
 })
 </script>
 <template>
-    <div v-if="loaded" class="ann-item">
-        <Header> User Detail</Header>
+    <div v-if="loaded" class="h-screen w-screen flex flex-col justify-center items-center ann-item">
+        <Header class="p-8"> User Detail</Header>
         <div class="overflow-hidden bg-base-100 shadow-lg">
             <p class="font-bold text-xl text-gray-100 py-5 w-96 px-4 bg-[#C1A696] ann-title">
                 {{ announcement.announcementTitle }}
@@ -25,7 +25,7 @@ onBeforeMount(async () => {
                 Closed on: <span class="ann-close-date">{{ formatDate(announcement.closeDate) }}</span>
             </p>
             <p  class="text-gray-500 mb-4 kanit-light px-6 ann-description" v-html="announcement.announcementDescription">
-        
+
             </p>
             <div class="px-5 pt-4 pb-5 rounded-lg">
                 <span class="inline-block px-3 py-2 text-sm mr-2 text-[#FAA497] bg-[#FAA497] bg-opacity-20 rounded-lg ann-category">

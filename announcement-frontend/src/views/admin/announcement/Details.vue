@@ -17,8 +17,8 @@ const computedDisplayColor = computed(() => announcement.value.announcementDispl
 
 </script>
 <template>
-  <div v-if="loaded" class="ann-item">
-    <Header>Announcement Detail</Header>
+  <div v-if="loaded" class="ann-item flex flex-col justify-center items-center">
+    <Header class="py-8">Announcement Detail</Header>
 
     <div class="max-w-lg overflow-hidden bg-base-100 shadow-lg">
       <div class="flex justify-between items-center font-bold text-xl text-gray-100 py-3 px-4 mb-4 bg-[#C1A696] ann-title">

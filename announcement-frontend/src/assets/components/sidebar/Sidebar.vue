@@ -8,7 +8,7 @@ import { mdiMenu } from '@mdi/js';
 <template>
   <div class="drawer">
       <input id="sidebar" type="checkbox" class="drawer-toggle" />
-      <div class="drawer-content p-12">
+      <div class="drawer-content p-12 ">
         <label htmlFor="sidebar"
           class="drawer-button inline-flex items-center p-3 cursor-pointer text-sm rounded-lg lg:hidden focus:outline-none hover:bg-slate-200">
           <svg-icon type="mdi" :path="mdiMenu" :size="24"/>
