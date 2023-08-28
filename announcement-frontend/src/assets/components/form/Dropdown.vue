@@ -21,8 +21,7 @@ const isError = computed(() => error.value?.length > 0)
             {{label}}
             <span class="text-error" v-if="isError">{{error.join(' ')}}</span>
         </label>
-        <select id="namePrefix" 
-            class="input input-bordered text-md px-4 h-[3rem] rounded-lg" 
+        <select class="input input-bordered text-md px-4 h-[3rem] rounded-lg" 
             :class="`${isFull && 'w-full'} ${isError ? 'border-error' : ''}`"
              @change="$emit('update',$event.target.value)">
             <option v-for="(option,index) in options" :key="index" :value="index" :selected="option === select">{{option}}</option>

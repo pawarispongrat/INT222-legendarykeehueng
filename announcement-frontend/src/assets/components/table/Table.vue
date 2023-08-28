@@ -7,7 +7,6 @@ import { isIsoDate, humanizeDate } from "../../utils/dateUtils";
 const props = defineProps({
     head: Array,
     body: Array,
-    useIndex: { type: Boolean , default: false },
     emptyText: String,
     createPath: String,
 })
@@ -26,17 +25,15 @@ const computedDateBody = (value) => (isIsoDate(value) ? humanizeDate(value) : va
         <div class="overflow-x-auto">
             <table class="table table-auto text-base z-1 w-full">
                 <thead class="text-white h-12">
-                    <tr>
+                    <tr >
                         <td v-for="(section, index) in head" :key="index" class="bg-blue-700 text-base text-center">
                             {{ section }}
                         </td>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(items, index) of body" :key="index">
-                        <td v-for="(value, key, indexKey) in items" class="text-center" :key="key">
-                            {{ useIndex && indexKey === 0 ? index+1 : (value || '-') }}
-                        </td>
+                    <tr v-for="(items, index) of body" :key="index" class="text-center">
+                        <slot name="column" :items="items,index"></slot>
                         <td class="flex gap-x-3 justify-center">
                             <slot name="action" :id="items.id"></slot>
                             

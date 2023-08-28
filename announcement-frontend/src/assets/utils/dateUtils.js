@@ -9,6 +9,7 @@ function isIsoDate(str) {
     return true // valid date 
 }
 function humanizeDate(str) {
+    if (!str) return "-"
     const localeDate = new Date(str).toLocaleString('en-US', { timeZone: TIMEZONE })
     const timeZoneDate = new Date(localeDate)
     const day = timeZoneDate.toLocaleString('default', { day: 'numeric' })

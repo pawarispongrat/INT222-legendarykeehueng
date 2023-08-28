@@ -9,6 +9,7 @@ import Modal from '@/assets/components/modal/Modal.vue';
 import ModalButton from '@/assets/components/modal/ModalButton.vue';
 import { mdiAlertCircleOutline } from '@mdi/js';
 import { Teleport } from 'vue';
+import { humanizeDate } from '../../../assets/utils/dateUtils';
 
 const users = ref([])
 const fetch = async () => { users.value = await getUser() }
@@ -26,16 +27,22 @@ const userEditRoute = (id) => `/admin/user/${id}/edit`
     <Timezone />
   </div>
   <Table create-path="/admin/user/add"  :head="userSections" :body="users" emptyText="No User">
-    <template #action="{ id }">
+    <template #column="{ items,index }">
+        <td>{{ index+1 }}</td>
+        <td>{{ items.username }}</td>
+        <td>{{ items.name }}</td>
+        <td>{{ items.email }}</td>
+        <td>{{ items.role }}</td>
+        <td>{{ humanizeDate(items.createdOn) }}</td>
+        <td>{{ humanizeDate(items.updatedOn) }}</td>
+      </template>
+      <template #action="{ id }">
         <Button name="Edit" :to="userEditRoute(id)"  class="bg-blue-700 px-6 hover:bg-blue-800"/>
         <ModalButton :modal-id="`userDeleteConfirm-${id}`" name="Delete" class-name="bg-error hover:bg-red-500 px-6"/>
-        <Teleport to="#modals">
-          <Modal 
-            :modal-id="`userDeleteConfirm-${id}`" 
+        <Modal :modal-id="`userDeleteConfirm-${id}`" 
             @confirm="() => userDelete(id)" :icon="mdiAlertCircleOutline" 
             :title="`Do you want to delete user ${id}?`"
-          />
-        </Teleport>
+        />
     </template>
   </Table>
 </template>

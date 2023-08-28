@@ -10,6 +10,7 @@ import Pagination from '@/assets/components/Pagination.vue';
 import ModalButton from '@/assets/components/modal/ModalButton.vue';
 import Modal from '@/assets/components/modal/Modal.vue';
 import { mdiAlertCircleOutline } from '@mdi/js';
+import { humanizeDate } from '../../../assets/utils/dateUtils';
 
 const announces = useAnnounces()
 const announcement = ref([])
@@ -19,7 +20,6 @@ const fetch = async () => {
 await fetch()
 
 const announcementDelete = async (id) => {
-  console.log(announcement.value.content);
   announcement.value.content = announcement.value.content.filter((announce) => announce.id !== id)
   await deleteAnnouncement(id)
 } 
@@ -32,16 +32,23 @@ const announcementEditRoute = (id) => `/admin/announcement/${id}/details`
     <Header>Announcement Table</Header>
     <Timezone />
   </div>
-  <Table :createPath="'/admin/announcement/add'"  :head="announcementSections" :body="announcement.content" emptyText="No Announcement" :useIndex="true">
+  <Table :createPath="'/admin/announcement/add'"  :head="announcementSections" :body="announcement.content" emptyText="No Announcement">
+    <template #column="{ items,index }">
+        <td>{{ index+1 }}</td>
+        <td>{{ items.announcementTitle }}</td>
+        <td>{{ humanizeDate(items.publishDate) }}</td>
+        <td>{{ humanizeDate(items.closeDate) }}</td>
+        <td >{{ items.announcementDisplay }}</td>
+        <td>{{ items.announcementCategory }}</td>
+        <td>{{ items.viewCount }}</td>
+      </template>
     <template #action="{ id }">
         <Button name="Edit" :to="announcementEditRoute(id)"  class=" bg-blue-700 px-6 hover:bg-blue-800"/>
         <ModalButton :modal-id="`annDeleteConfirm-${id}`" name="Delete" class-name="bg-error hover:bg-red-500 px-6"/>
-        <Teleport to="#modals">
-          <Modal :modal-id="`annDeleteConfirm-${id}`" 
+        <Modal :modal-id="`annDeleteConfirm-${id}`" 
             @confirm="() => announcementDelete(id)" :icon="mdiAlertCircleOutline" 
             :title="`Do you want to delete announcement ${id}?`"
-          />
-        </Teleport>
+        />
     </template>
   </Table>
   <Pagination @fetch="fetch" :total-pages="announcement?.totalPages" :total-elements="announcement?.totalElements" class="float-right"/>
