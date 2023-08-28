@@ -1,6 +1,9 @@
 import { createRouter,createWebHistory } from "vue-router";
 import MainAdmin from "@/views/admin/MainAdmin.vue"
 import PageNotFound from "@/views/PageNotFound.vue"
+import UserAnnouncement from "@/views/user/Announcement.vue"
+import UserDetails from "@/views/admin/user/Details.vue"
+
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes:[
@@ -11,12 +14,12 @@ const router = createRouter({
         {
             path: '/announcement/',
             name: 'UserAnnouncement',
-            component: import("@/views/user/Announcement.vue")
+            component: UserAnnouncement
         },
         {
             path: '/announcement/:id',
             name: 'UserDetails',
-            component: import("@/views/admin/user/Details.vue")
+            component: UserDetails
         },
         {
             path: '/admin/',
