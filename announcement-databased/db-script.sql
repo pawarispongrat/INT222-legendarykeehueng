@@ -1,4 +1,20 @@
--- MySQL Workbench Forward Engineering
+USE announcement;
+CREATE TABLE IF NOT EXISTS user (
+  id INT NOT NULL AUTO_INCREMENT,
+  username VARCHAR(45) NOT NULL UNIQUE,
+  name VARCHAR(100) NOT NULL UNIQUE,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  role ENUM("admin","announcer") DEFAULT "announcer",
+  createdOn DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updatedOn DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id));
+  
+  insert into user VALUES (1,'sanit','Sanit Sirisawatvatana','sanit.sir@kmutt.ac.th','admin','2023-08-15 08:00:00+07:00','2023-08-15 08:00:00+07:00');
+insert into user VALUES(2,'pornthip','Pornthip Sirijutikul','pornthip.sri@kmutt.ac.th','announcer','2023-08-15 09:30:00+07:00','2023-08-15 09:30:00+07:00');
+insert into user VALUES(3,'jaruwan_w','Jaruwan Maneesart','jaruwan.wee@kmutt.ac.th','announcer','2023-08-16 08:00:00+07:00','2023-08-16 08:00:00+07:00');
+insert into user VALUES(4,'vichchuda','Vichchuda Tedoloh','vichchuda.ted@kmutt.ac.th','announcer','2023-08-16 09:30:00+07:00','2023-08-16 09:30:00+07:00');
+
+
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
@@ -29,13 +45,14 @@ DEFAULT CHARACTER SET = utf8mb3;
 -- Table `announcement`.`announcement`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `announcement`.`announcement` (
-  `announcementID` INT NOT NULL,
+  `announcementId` INT NOT NULL auto_increment,
   `announcementTitle` VARCHAR(200) NOT NULL,
   `announcementDescription` VARCHAR(10000) NOT NULL,
   `publishDate` DATETIME NULL,
   `closeDate` DATETIME NULL,
   `announcementDisplay` ENUM('Y', 'N') NOT NULL DEFAULT 'N',
   `categoryId` INT NOT NULL,
+  `viewCount` INT default 0,
   PRIMARY KEY (`announcementID`),
   INDEX `fk_Announcement_Category_idx` (`categoryId` ASC) VISIBLE,
   CONSTRAINT `fk_Announcement_Category`
@@ -51,33 +68,10 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 
 
-insert into category values(1,'ทั่วไป'),(2,'ทุนการศึกษา'),(3,'หางาน'),(4,'ฝึกงาน');
-
-insert into announcement values
-(1,
-'บริษัท เน็ตเซอร์พลัส จำกัด รับสมัครงาน 2 ตำแหน่ง',
-'บริษัท เน็ตเซอร์พลัส จำกัด เปิดรับสมังาน 2 ตำแหน่ง Application Support และ Customer Support',
-null,
-null,
-'N',
-3),
-(2,
-'รายชื่อนักศึกษาที่ได้รับทุนการศึกษาประเภท "ทุนจ้างงาน" 2/2565',
-'คณะ ฯประกาศรายชื่อนักศึกษาที่ได้รับทุนการศึกษาประเภท "ทุนจ้างงาน" ประจําภาคการศึกษา 2/2565',
-null,
-'2023-05-31T11:00:00',
-'Y',
-2),
-(3,
-'แนวปฎิบัติการสอบออนไลน์ พ.ศ. 2565',
-'ประกาศมหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี เรื่องแนวทางปฎิบัติการสอบออนไลน์ พ.ศ. 2565',
-'2023-01-26T23:00:00',
-null,
-'Y',
-1),
-(4,'กิจกรรมพี่อ้อย พี่ฉอด On Tour 2566',
-'ขอเชิญนักศึกษาทุกชั้นปี เข้าร่วมกิจกรรมพี่อ้อย พี่ฉอด On Tour',
-'2023-04-18T23:00:00',
-'2023-05-08T11:00:00',
-'Y',
-1);
+insert into announcement  values 
+(3,'(PBI10) Title 0','(PBI10) Description 0','2023-05-01 06:00:00+07:00','2023-12-31 18:00:00+07:00','Y',1,1),
+(4,'(PBI10) Title 1','(PBI10) Description 1','2023-05-01 06:00:00+07:00','2023-12-31 18:00:00+07:00','Y',2,1),
+(5,'(PBI10) Title 2','(PBI10) Description 2','2023-05-01 06:00:00+07:00','2023-12-31 18:00:00+07:00','Y',1,1),
+(6,'(PBI10) Title 3','(PBI10) Description 3','2023-05-01 06:00:00+07:00','2023-12-31 18:00:00+07:00','Y',2,1),
+(7,'(PBI10) Title 4','(PBI10) Description 4','2023-05-01 06:00:00+07:00','2023-12-31 18:00:00+07:00','Y',1,1),
+(8,'(PBI10) Title 5','(PBI10) Description 5','2023-05-01 06:00:00+07:00','2023-12-31 18:00:00+07:00','Y',2,1)
