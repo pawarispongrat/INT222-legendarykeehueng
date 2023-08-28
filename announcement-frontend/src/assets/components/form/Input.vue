@@ -6,6 +6,7 @@ const props = defineProps({
     subLabel: { type: String, required: false },
     field: { type: String, required: false },
     modelValue: { type: String },
+    className: { type: String, required: String },
     placeholder: String,
     labelType: String,
 })
@@ -22,9 +23,10 @@ const isError = computed(() => error.value?.length > 0)
             <span class="text-secondary" :v-show="subLabel">{{subLabel}}</span>
             <span class="text-error" v-if="isError">{{error.join(' ')}}</span>
         </label>
-        <input :type="labelType" :placeholder="placeholder"  
+        <input :type="labelType" :placeholder="placeholder"
             :value="modelValue" 
             @input="$emit('update', $event.target.value)" 
-            class="input input-bordered rounded-lg w-full max-w-xl " :class="isError? 'border-error' : ''" />
+            class="input input-bordered rounded-lg w-full max-w-xl " 
+            :class="`${isError? 'border-error' : ''} ${className}`" />
     </div>
 </template>

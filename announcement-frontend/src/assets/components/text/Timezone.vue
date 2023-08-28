@@ -6,7 +6,7 @@ const props = defineProps({
 
 </script>
 <template>
-    <h2 class="text-base font-bold">
+    <h2 class="text-base font-bold ann-timezone">
        {{ text }} <span class="kanit-light text-base-content">{{ TIMEZONE }}</span>
     </h2>
 </template>

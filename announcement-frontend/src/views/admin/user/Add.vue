@@ -18,7 +18,7 @@ provide("errors",errors)
  
 <template>
         <Header class-name="flex justify-center py-8">Add User</Header>
-        <UserForm :user="user" @submit="onCreate"/>
+        <UserForm :user="user" @submit="onCreate" :disabled-date="true"/>
 </template>
  
 <style scoped>

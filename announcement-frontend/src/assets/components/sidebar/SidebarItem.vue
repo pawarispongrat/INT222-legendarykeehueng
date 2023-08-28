@@ -11,10 +11,10 @@ const items = ref([
 </script>
 <template>
     <ul class="h-full w-80 px-6 py-6 overflow-y-auto bg-slate-950 text-white">
-        <div class="text-4xl p-6 inline-flex gap-x-4">SAS APP</div>
+        <div class="ann-app-title text-4xl p-6 inline-flex gap-x-4">SAS</div>
         <li v-for="(item,index) in items" :key="index">
             <router-link :to="item.path" 
-                class="flex items-center py-4 px-5 rounded-lg transition ease-in-out  text-white"
+                class="ann-menu flex items-center py-4 px-5 rounded-lg transition ease-in-out  text-white"
                 :class="HOVER_CLASS"
                 :active-class="'pointer-events-none'">
                 <svg-icon type="mdi" :size="24" :path="item.icon"/>

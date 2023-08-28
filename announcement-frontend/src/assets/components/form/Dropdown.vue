@@ -7,6 +7,7 @@ const props = defineProps({
     isFull: { type: Boolean, required: false },
     field: { type: String, required: false },
     select: { type: String ,required: false },
+    className: { type: String, required: String },
     options: Array
 })
 defineEmits(["update"])
@@ -22,7 +23,7 @@ const isError = computed(() => error.value?.length > 0)
             <span class="text-error" v-if="isError">{{error.join(' ')}}</span>
         </label>
         <select class="input input-bordered text-md px-4 h-[3rem] rounded-lg" 
-            :class="`${isFull && 'w-full'} ${isError ? 'border-error' : ''}`"
+            :class="`${isFull && 'w-full'} ${isError ? 'border-error' : ''} ${className}`"
              @change="$emit('update',$event.target.value)">
             <option v-for="(option,index) in options" :key="index" :value="index" :selected="option === select">{{option}}</option>
         </select>
