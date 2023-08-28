@@ -37,7 +37,7 @@ describe('TC-PBI17-VIEW-USER-DETAIL-NO-AUTHORIZATION-CONTROL-1', () => {
       it('Show the detail of user "sanit".".',()=>{
         cy.visit('/admin/user/1/edit')
         
-        cy.wait(200) ;
+        cy.wait(500) ;
         cy.get('.ann-username').should('have.value','sanit')
         cy.get('.ann-name').should('have.value','Sanit Sirisawatvatana')
         cy.get('.ann-email').should('have.value','sanit.sir@kmutt.ac.th')

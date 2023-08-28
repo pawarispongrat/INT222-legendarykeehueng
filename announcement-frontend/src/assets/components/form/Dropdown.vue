@@ -25,7 +25,7 @@ const isError = computed(() => error.value?.length > 0)
         <select class="input input-bordered text-md px-4 h-[3rem] rounded-lg" 
             :class="`${isFull && 'w-full'} ${isError ? 'border-error' : ''} ${className}`"
              @change="$emit('update',$event.target.value)">
-            <option v-for="(option,index) in options" :key="index" :value="index" :selected="option === select">{{option}}</option>
+            <option v-for="(option,index) in options" :key="index" :value="option" :selected="option === select">{{option}}</option>
         </select>
     </div>
 </template>

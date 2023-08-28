@@ -66,7 +66,7 @@ describe('TC-PBI20-EDIT-USER-NO-AUTHORIZATION-CONTROL-6\n Senario : normal - no 
         cy.wait(200)
         cy.get('.ann-username').contains('jaruwan_w').parent('.ann-item').as('ann-1')
 
-        cy.wait(200) ;
+        cy.wait(500) ;
         cy.get('@ann-1').contains('.ann-username','jaruwan_w')
         cy.get('@ann-1').contains('.ann-name','Jaruwan Maneesart')
         cy.get('@ann-1').contains('.ann-email','jaruwan.wee@kmutt.ac.th')

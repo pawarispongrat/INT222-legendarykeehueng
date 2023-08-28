@@ -12,7 +12,9 @@ import { Teleport } from 'vue';
 import { humanizeDate } from '../../../assets/utils/dateUtils';
 
 const users = ref([])
-const fetch = async () => { users.value = await getUser() }
+const fetch = async () => { users.value = await getUser()
+                           users.value = users.value.sort((a, b) => a.role?.localeCompare(b.role)||a.username.localeCompare(b.username))
+                            }
 await fetch()
 const userDelete = async (id) => {
   users.value = users.value.filter((user) => user.id !== id)
@@ -37,8 +39,8 @@ const userEditRoute = (id) => `/admin/user/${id}/edit`
         <td class="ann-updated-on">{{ humanizeDate(items.updatedOn) }}</td>
       </template>
       <template #action="{ id }">
-        <Button name="Edit" :to="userEditRoute(id)"  class="ann-button bg-blue-700 px-6 hover:bg-blue-800"/>
-        <ModalButton :modal-id="`userDeleteConfirm-${id}`" name="Delete" class-name="ann-button bg-error hover:bg-red-500 px-6"/>
+        <Button name="edit" :to="userEditRoute(id)"  class="ann-button bg-blue-700 px-6 hover:bg-blue-800"/>
+        <ModalButton :modal-id="`userDeleteConfirm-${id}`" name="delete" class-name="ann-button bg-error hover:bg-red-500 px-6"/>
         <Modal :modal-id="`userDeleteConfirm-${id}`" 
             @confirm="() => userDelete(id)" :icon="mdiAlertCircleOutline" 
             :title="`Do you want to delete user ${id}?`"
