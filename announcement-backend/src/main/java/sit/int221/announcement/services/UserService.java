@@ -64,18 +64,6 @@ public class UserService {
         return getResponse(save);
     }
 
-    public void trim(User user) {
-        user.setName(user.getName().trim());
-        user.setEmail(user.getEmail().trim());
-        user.setUsername(user.getUsername().trim());
-        user.setPassword(user.getPassword().trim());
-    }
-    public void trim(UserEditDTO user) {
-        user.setName(user.getName().trim());
-        user.setEmail(user.getEmail().trim());
-        user.setUsername(user.getUsername().trim());
-    }
-
     public void deleteUser(Integer id){
         User user = getUserById(id);
         repository.delete(user);
@@ -97,5 +85,12 @@ public class UserService {
     }
     public User getUserByUsername(String username) {
         return repository.findByUsername(username).orElseThrow(() -> new ItemNotFoundException("username","The specified username does not exist"));
+    }
+
+    public void trim(User user) {
+        user.setName(user.getName().trim());
+        user.setEmail(user.getEmail().trim());
+        user.setUsername(user.getUsername().trim());
+        user.setPassword(user.getPassword().trim());
     }
 }

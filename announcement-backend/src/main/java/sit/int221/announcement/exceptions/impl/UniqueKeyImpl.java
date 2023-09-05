@@ -13,7 +13,9 @@ import sit.int221.announcement.exceptions.utils.NodeBuilder;
 import sit.int221.announcement.exceptions.validator.UniqueKey;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -54,10 +56,11 @@ public class UniqueKeyImpl implements ConstraintValidator<UniqueKey, Object> {
     private boolean isUnique(CriteriaBuilder builder,Object target,String field,Object id) {
         CriteriaQuery<Object> query = builder.createQuery();
         Root<?> root = query.from(entityClass);
-        Predicate[] predicates = new Predicate[2];
-        predicates[0] = builder.notEqual(root.get(this.primaryKey), id);
-        predicates[1] = builder.equal(root.get(field), getValue(target,field));
-        query.where(builder.or(predicates));
+        List<Predicate> predicates = new ArrayList<>();
+        // SELECT u FROM User u WHERE id <> :id AND username = :username
+        if (id != null) predicates.add(builder.notEqual(root.get(this.primaryKey), id));
+        predicates.add(builder.equal(root.get(field), getValue(target,field)));
+        query.where(predicates.toArray(new Predicate[0]));
         return manager.createQuery(query).getResultList().isEmpty();
     }
 
