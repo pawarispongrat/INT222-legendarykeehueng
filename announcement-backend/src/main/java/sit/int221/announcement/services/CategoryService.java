@@ -17,6 +17,7 @@ public class CategoryService {
         return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("categoryId"));
     }
 
+
     public boolean hasCategory(Integer id) {
         return repository.findById(id).orElse(null) != null;
     }

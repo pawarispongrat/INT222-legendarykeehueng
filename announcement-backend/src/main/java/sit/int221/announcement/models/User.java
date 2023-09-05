@@ -3,12 +3,6 @@ package sit.int221.announcement.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import sit.int221.announcement.utils.enums.Role;
 
 import java.time.ZonedDateTime;
@@ -24,6 +18,7 @@ public class User {
     private String username;
     private String name;
     private String email;
+    private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;

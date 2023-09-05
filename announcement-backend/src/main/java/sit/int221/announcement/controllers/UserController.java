@@ -3,14 +3,11 @@ package sit.int221.announcement.controllers;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import sit.int221.announcement.dtos.AnnouncementDTO;
-import sit.int221.announcement.dtos.request.AnnouncementRequestDTO;
-import sit.int221.announcement.dtos.request.UserRequestDTO;
-import sit.int221.announcement.models.Announcement;
-import sit.int221.announcement.models.User;
-import sit.int221.announcement.services.AnnouncementService;
+import sit.int221.announcement.dtos.request.UserLoginDTO;
+import sit.int221.announcement.dtos.request.UserRegisterDTO;
+import sit.int221.announcement.dtos.request.UserEditDTO;
+import sit.int221.announcement.dtos.response.UserResponseDTO;
 import sit.int221.announcement.services.UserService;
-import sit.int221.announcement.utils.Modes;
 
 import java.util.List;
 
@@ -22,23 +19,28 @@ public class UserController {
     private UserService service;
 
     @GetMapping("")
-    public List<User> getUser() {
+    public List<UserResponseDTO> getUser() {
         return service.getUser();
     }
+
+    @PostMapping("/match")
+    public UserResponseDTO matchPassword(@Valid @RequestBody UserLoginDTO user) {
+        return service.matchPassword(user);
+    }
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Integer id) {
-        return service.getUserById(id);
+    public UserResponseDTO getUserById(@PathVariable Integer id) {
+        return service.getResponseById(id);
     }
     @PostMapping("")
-    public User addUser(@Valid @RequestBody UserRequestDTO User) {
-        return service.addUser(User);
+    public UserResponseDTO addUser(@Valid @RequestBody UserRegisterDTO user) {
+        return service.addUser(user);
     }
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Integer id){
         service.deleteUser(id);
     }
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable Integer id,@Valid @RequestBody UserRequestDTO User) {
-        return service.updateUser(id,User);
+    public UserResponseDTO updateUser(@PathVariable Integer id,@Valid @RequestBody UserEditDTO user) {
+        return service.updateUser(id,user);
     }
 }
