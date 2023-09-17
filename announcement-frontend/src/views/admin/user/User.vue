@@ -8,14 +8,15 @@ import Timezone from "@/assets/components/text/Timezone.vue"
 import Modal from '@/assets/components/modal/Modal.vue';
 import ModalButton from '@/assets/components/modal/ModalButton.vue';
 import { mdiAlertCircleOutline } from '@mdi/js';
-import { Teleport } from 'vue';
 import { humanizeDate } from '../../../assets/utils/dateUtils';
 
 const users = ref([])
-const fetch = async () => { users.value = await getUser()
-                           users.value = users.value.sort((a, b) => a.role?.localeCompare(b.role)||a.username.localeCompare(b.username))
-                            }
+const fetch = async () => { 
+    users.value = await getUser()
+    users.value = users.value.sort((a, b) => a.role?.localeCompare(b.role) || a.username.localeCompare(b.username))
+}
 await fetch()
+
 const userDelete = async (id) => {
   users.value = users.value.filter((user) => user.id !== id)
   await deleteUser(id)

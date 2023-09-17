@@ -34,6 +34,7 @@ const router = createRouter({
                 { path: '/admin/user/',name: 'User',component: () => import('@/views/admin/user/User.vue'), },
                 { path: '/admin/user/add',name: 'AddUser',component: () => import('@/views/admin/user/Add.vue'), },
                 { path: '/admin/user/:id/edit',name: 'EditUser',component: () => import('@/views/admin/user/Edit.vue'), },
+                { path: '/admin/MatchPassword',name: 'MatchPassword',component: () => import('@/views/admin/MatchPassword.vue'), },
             ]
         },
         {

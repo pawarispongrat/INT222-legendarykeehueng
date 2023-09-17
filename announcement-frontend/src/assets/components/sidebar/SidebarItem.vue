@@ -6,7 +6,8 @@ import { mdiFolderAccount ,mdiListBox } from '@mdi/js'
 const HOVER_CLASS = "hover:bg-slate-900"
 const items = ref([
     { path: "/admin/announcement", name: "Annoucement",icon: mdiListBox },
-    { path: "/admin/user", name: "User",icon: mdiFolderAccount }
+    { path: "/admin/user", name: "User",icon: mdiFolderAccount },
+    { path: "/admin/MatchPassword", name: "MatchPassword",icon: mdiFolderAccount}
 ])
 </script>
 <template>

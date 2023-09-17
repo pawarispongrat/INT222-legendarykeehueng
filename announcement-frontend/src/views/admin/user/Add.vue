@@ -12,8 +12,8 @@ const onCreate = async () => {
     if (!json?.status) router.push("/admin/user/")
     else errors.value = json.detail
 }
-const errors = ref()
-provide("errors",errors)
+// const errors = ref()
+// provide("errors",errors)
 </script>
  
 <template>

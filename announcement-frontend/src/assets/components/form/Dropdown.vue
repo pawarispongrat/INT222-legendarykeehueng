@@ -5,16 +5,17 @@ import { computed, inject } from 'vue';
 const props = defineProps({
     label: { type: String, required: false },
     isFull: { type: Boolean, required: false },
-    field: { type: String, required: false },
+    // field: { type: String, required: false },
     select: { type: String ,required: false },
     className: { type: String, required: String },
-    options: Array
+    options: Array,
+    errors: { type: Array, default: [] },
 })
 defineEmits(["update"])
 
-const errors = inject("errors")
-const error = computed(() => errors?.value?.filter((error) => error.field === props.field))
-const isError = computed(() => error.value?.length > 0)
+// const errors = inject("errors")
+// const error = computed(() => errors?.value?.filter((error) => error.field === props.field))
+const isError = computed(() => errors.value?.length > 0)
 </script>
 <template>
     <div :class="isFull && 'w-full'">
