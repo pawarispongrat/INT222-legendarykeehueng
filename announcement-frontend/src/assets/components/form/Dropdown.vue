@@ -7,15 +7,15 @@ const props = defineProps({
     isFull: { type: Boolean, required: false },
     // field: { type: String, required: false },
     select: { type: String ,required: false },
-    className: { type: String, required: String },
+    className: { type: String, required: false },
     options: Array,
-    errors: { type: Array, default: [] },
+    errors: { type: Array, default: [],required: false },
 })
 defineEmits(["update"])
 
 // const errors = inject("errors")
 // const error = computed(() => errors?.value?.filter((error) => error.field === props.field))
-const isError = computed(() => errors.value?.length > 0)
+const isError = computed(() => props.errors?.length > 0)
 </script>
 <template>
     <div :class="isFull && 'w-full'">

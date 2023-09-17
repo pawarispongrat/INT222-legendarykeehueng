@@ -119,4 +119,19 @@ async function deleteUser(id) {
         } else throw new Error('cannot delete!')
     } catch (err) {}
 }
-export { getAnnouncement,getAnnouncementById,putAnnouncement,createAnnouncement,deleteAnnouncement,isLoaded, getUserAnnouncement,getUser,createUser,deleteUser,getUserById,putUser }
+async function matchPassword(user)  {
+    try {
+        const res = await fetch(`${API_USERS}/match`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(user)
+        })
+        if (res.status === 200) {
+            return 'match';
+          } else {
+            return 'fail'; // Handle other status codes as needed
+          }
+    } catch (err) {}
+    
+}
+export { getAnnouncement,matchPassword,getAnnouncementById,putAnnouncement,createAnnouncement,deleteAnnouncement,isLoaded, getUserAnnouncement,getUser,createUser,deleteUser,getUserById,putUser }

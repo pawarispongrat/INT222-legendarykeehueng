@@ -15,9 +15,7 @@ const props = defineProps({
 defineEmits(["submit"])
 const computedDate = (date) => computed(() => (humanizeDate(date ? date : new Date()))).value
 
-const isUsername = () => {
 
-}
 </script>
 <template>
     <div class="space-y-8">

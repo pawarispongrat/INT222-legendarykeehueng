@@ -3,7 +3,7 @@ import MainAdmin from "@/views/admin/MainAdmin.vue"
 import PageNotFound from "@/views/PageNotFound.vue"
 import UserAnnouncement from "@/views/user/Announcement.vue"
 import UserDetails from "@/views/admin/user/Details.vue"
-
+import MatchPassword from "@/views/admin/MatchPassword.vue"
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes:[
@@ -34,7 +34,7 @@ const router = createRouter({
                 { path: '/admin/user/',name: 'User',component: () => import('@/views/admin/user/User.vue'), },
                 { path: '/admin/user/add',name: 'AddUser',component: () => import('@/views/admin/user/Add.vue'), },
                 { path: '/admin/user/:id/edit',name: 'EditUser',component: () => import('@/views/admin/user/Edit.vue'), },
-                { path: '/admin/MatchPassword',name: 'MatchPassword',component: () => import('@/views/admin/MatchPassword.vue'), },
+                { path: '/admin/user/match',name: 'MatchPassword',component: MatchPassword }
             ]
         },
         {
