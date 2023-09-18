@@ -119,19 +119,30 @@ async function deleteUser(id) {
         } else throw new Error('cannot delete!')
     } catch (err) {}
 }
-async function matchPassword(user)  {
-    try {
-        const res = await fetch(`${API_USERS}/match`, {
-            method: 'POST',
-            headers: { 'content-type': 'application/json' },
-            body: JSON.stringify(user)
-        })
-        if (res.status === 200) {
-            return 'match';
-          } else {
-            return 'fail'; // Handle other status codes as needed
-          }
-    } catch (err) {}
+// async function matchPassword(user)  {
+//     try {
+//         const res = await fetch(`${API_USERS}/match`, {
+//             method: 'POST',
+//             headers: { 'content-type': 'application/json' },
+//             body: JSON.stringify(user)
+//         })
+//         return await res.status
+
+//     } catch (err) {}
     
+// }
+
+async function matchPassword(user)  {
+    return await fetch(`${API_USERS}/match`,{
+        method: "POST",
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(user)})
+    .then(res => {
+        return res.status;
+    })
+    .catch((error) => console.error("Error:",error))
 }
+
+
+
 export { getAnnouncement,matchPassword,getAnnouncementById,putAnnouncement,createAnnouncement,deleteAnnouncement,isLoaded, getUserAnnouncement,getUser,createUser,deleteUser,getUserById,putUser }

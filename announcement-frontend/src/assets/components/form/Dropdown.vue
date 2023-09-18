@@ -7,6 +7,7 @@ const props = defineProps({
     isFull: { type: Boolean, required: false },
     // field: { type: String, required: false },
     select: { type: String ,required: false },
+    errorClassName: { type: String, required: false },
     className: { type: String, required: false },
     options: Array,
     errors: { type: Array, default: [],required: false },
@@ -21,7 +22,7 @@ const isError = computed(() => props.errors?.length > 0)
     <div :class="isFull && 'w-full'">
         <label class="label justify-start gap-x-2">
             {{label}}
-            <span class="text-error" v-if="isError">{{error.join(' ')}}</span>
+            <span :class="`text-error ${errorClassName}`" v-if="isError">{{error.join(' ')}}</span>
         </label>
         <select class="input input-bordered text-md px-4 h-[3rem] rounded-lg" 
             :class="`${isFull && 'w-full'} ${isError ? 'border-error' : ''} ${className}`"

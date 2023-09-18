@@ -6,6 +6,7 @@ defineEmits(["click"])
 
 const props = defineProps({
     name: String,
+    type: { type: String, required: false },
     icon: { type: String, required: false },
     to: { type: String, required: false },
     className: { required: false },
@@ -19,7 +20,7 @@ const CLASSES = `inline-flex items-center border-opacity-20 justify-center round
         <svg-icon v-if="icon" type="mdi" :path="icon" :size="24"/>
         <span>{{name}}</span>
     </RouterLink>
-    <button v-else @click="$emit('click',$event)" :class="`${CLASSES} ${className}`" :disabled="disabled">
+    <button :type="type" v-else @click="$emit('click',$event)" :class="`${CLASSES} ${className}`" :disabled="disabled">
         <svg-icon v-if="icon" type="mdi" :path="icon" :size="24"/>
         <span>{{name}}</span>
     </button>

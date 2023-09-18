@@ -2,15 +2,17 @@
 import { computed } from 'vue';
 const props = defineProps({
     label: { type: String, required: false },
+    type: { type: String, required: false, default: "text" },
     subLabel: { type: String, required: false },
     required: { type: Boolean, default: false },
     // field: { type: String, required: false },
     modelValue: { type: String },
     className: { type: String, required: false },
     placeholder: String,
-    labelType: String,
     errors: { type: Array, default: [] , required: false },
-    errorClassName: { type: String, required: false }
+    errorClassName: { type: String, required: false },
+    min: { type: Number, required: false },
+    max: { type: Number, required: false }
 })
 defineEmits(['update'])
 
@@ -25,7 +27,7 @@ const isError = computed(() => props.errors?.length > 0)
             <span class="text-secondary" :v-show="subLabel">{{subLabel}}</span>
             <span :class="`text-error ${errorClassName}`" v-if="isError">{{error.join(' ')}}</span>
         </label>
-        <input :type="labelType" :placeholder="placeholder"
+        <input :type="type" :placeholder="placeholder" :minlength="min" :maxlength="max"
             :value="modelValue" 
             @input="$emit('update', $event.target.value)" 
             class="input input-bordered rounded-lg w-full max-w-xl " 

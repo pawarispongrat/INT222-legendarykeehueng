@@ -13,7 +13,7 @@ import { humanizeDate } from '../../../assets/utils/dateUtils';
 const users = ref([])
 const fetch = async () => { 
     users.value = await getUser()
-    users.value = users.value.sort((a, b) => a.role?.localeCompare(b.role) || a.username.localeCompare(b.username))
+    users.value = users?.value?.sort((a, b) => a.role?.localeCompare(b.role) || a.username.localeCompare(b.username))
 }
 await fetch()
 

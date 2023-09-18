@@ -4,7 +4,7 @@ import UserForm from "@/assets/components/form/list/UserForm.vue"
 import { provide, ref } from "vue";
 import { createUser } from '@/assets/data/data-handler';
 import { useRouter } from "vue-router";
-
+// const errors = ref([])
 const router = useRouter()
 const user = ref({})
 const onCreate = async () => { 

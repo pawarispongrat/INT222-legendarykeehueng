@@ -43,7 +43,7 @@ const computedDateBody = (value) => (isIsoDate(value) ? humanizeDate(value) : va
             </table>
 
         </div>
-        <div v-if="body.length === 0" class="flex flex-col items-center justify-center pt-40 space-y-6 text-slate-400">
+        <div v-if="body?.length === 0" class="flex flex-col items-center justify-center pt-40 space-y-6 text-slate-400">
             <svg-icon type="mdi" :path="mdiIsland" :size="128" />
             <div>{{ emptyText }}</div>
         </div>
