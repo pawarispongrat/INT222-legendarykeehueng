@@ -39,9 +39,9 @@ const validateInput = () => {
                 <Input label="Username" placeholder="RewLegendary" class-name="ann-username" error-class-name="ann-error-username" :required="true" 
                         v-model.trim="user.username" :max="45" :errors="errors.username" />
                 <Input label="Password" placeholder="MyPasswordIsCool123!@" class-name="ann-password" type="password" error-class-name="ann-error-password" :required="true"
-                        v-model.trim="user.password" :errors="errors.password"/>
-                <Input label="Confirm password" placeholder="MyPasswordIsCool123!@" type="password" class-name="ann-confirm-password" error-class-name="ann-error-confirm-password" :required="true"
-                        v-model.trim="confirm" :errors="errors.confirmPassword"/>                
+                        v-model.trim="user.password"  :max="14" :errors="errors.password"/>
+                <Input label="Confirm password"  placeholder="MyPasswordIsCool123!@" type="password" class-name="ann-confirm-password" error-class-name="ann-error-confirm-password" :required="true"
+                        v-model.trim="confirm" :max="14" :errors="errors.confirmPassword"/>                
                 <Input label="Name" placeholder="Duangcharoen Siwasutum" class-name="ann-name" error-class-name="ann-error-name" :required="true"
                         v-model.trim="user.name" :max="100" :errors="errors.name"/>
                 <Input label="Email" placeholder="rewlegendary@email.com" type="email" class-name="ann-email" error-class-name="ann-error-email" :required="true"
