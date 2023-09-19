@@ -47,7 +47,7 @@ const validateInput = () => {
                 <Input label="Email" placeholder="rewlegendary@email.com" type="email" class-name="ann-email" error-class-name="ann-error-email" :required="true"
                         v-model.trim="user.email" :max="150" :errors="errors.email"/>
                 <Dropdown label="Role" :options="ROLE_ENUM" :isFull="true" class-name="ann-role" error-class-name="ann-error-role"
-                        :select="user.role ?? ROLE_ENUM[0]" :errors="errors.role" />
+                        :select="user.role ?? ROLE_ENUM[0]" @update="(value) => user.role = value" :errors="errors.role"/>
             </div>
         </div>
         <div class="flex justify-end gap-x-4 border-t border-slate-400">

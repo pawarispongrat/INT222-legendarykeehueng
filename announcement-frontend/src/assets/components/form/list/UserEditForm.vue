@@ -42,14 +42,14 @@ onBeforeMount(async () => { await fetchUserId() })
     <form class="space-y-8" @submit.prevent="onSave">
         <div class="flex justify-center">
             <div class="form-control w-[30rem]">
-                <Input label="Username" placeholder="RewLegendary" :sub-label="user.username === undefined" class-name="ann-username" error-class-name="ann-error-username" :required="true" 
+                <Input label="Username" placeholder="RewLegendary" class-name="ann-username" error-class-name="ann-error-username" :required="true" 
                         v-model.trim="user.username" :max="45" :errors="errors.username"/>         
                 <Input label="Name" placeholder="Duangcharoen Siwasutum" class-name="ann-name" error-class-name="ann-error-name" :required="true"
                         v-model.trim="user.name" :max="100" :errors="errors.name"/>
                 <Input label="Email" placeholder="rewlegendary@email.com" type="email" class-name="ann-email" error-class-name="ann-error-email" :required="true"
                         v-model.trim="user.email" :max="150" :errors="errors.email"/>
                 <Dropdown label="Role" :options="ROLE_ENUM" :isFull="true" class-name="ann-role" error-class-name="ann-error-role"
-                        :select="user.role ?? ROLE_ENUM[0]" :errors="errors.role"/>
+                        :select="user.role ?? ROLE_ENUM[0]" @update="(value) => user.role = value" :errors="errors.role"/>
                 <div class="pt-8 space-y-1">
                     <p>Created on: <span class="ann-created-on"> {{ computedDate(user.createdOn) }}</span></p>
                     <p>Updated on: <span class="ann-updated-on"> {{ computedDate(user.updatedOn) }}</span></p>

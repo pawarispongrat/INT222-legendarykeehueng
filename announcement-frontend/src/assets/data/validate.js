@@ -1,13 +1,12 @@
-
 function isUniqueUser(detail,errors) {
-    if (!detail) return true
+    if (!detail) return false
     const uniqueMessage = "does not unique"
     const unique = detail?.filter((error) => error.errorMessage === uniqueMessage).map((unique) => unique.field)
     if (unique.includes("username")) errors.value.username.push(uniqueMessage)
     if (unique.includes("name")) errors.value.name.push(uniqueMessage)
     if (unique.includes("email")) errors.value.email.push(uniqueMessage)
-    if (unique.length === 0) return true
-    return false
+    if (unique.length === 0) return false
+    return true
 }
 function isEmptyUser(user,errors) {
     const username = user.value?.username
