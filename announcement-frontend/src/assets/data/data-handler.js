@@ -119,29 +119,29 @@ async function deleteUser(id) {
         } else throw new Error('cannot delete!')
     } catch (err) {}
 }
-// async function matchPassword(user)  {
-//     try {
-//         const res = await fetch(`${API_USERS}/match`, {
-//             method: 'POST',
-//             headers: { 'content-type': 'application/json' },
-//             body: JSON.stringify(user)
-//         })
-//         return await res.status
-
-//     } catch (err) {}
-    
-// }
-
 async function matchPassword(user)  {
-    return await fetch(`${API_USERS}/match`,{
-        method: "POST",
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(user)})
-    .then(res => {
-        return res.status;
-    })
-    .catch((error) => console.error("Error:",error))
+    try {
+        const res = await fetch(`${API_USERS}/match`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(user)
+        })
+        return res.status
+
+    } catch (err) {}
+    
 }
+
+// async function matchPassword(user)  {
+//     return await fetch(`${API_USERS}/match`,{
+//         method: "POST",
+//         headers: { 'content-type': 'application/json' },
+//         body: JSON.stringify(user)})
+//     .then(res => {
+//         return res.status;
+//     })
+//     .catch((error) => console.error("Error:",error))
+// }
 
 
 

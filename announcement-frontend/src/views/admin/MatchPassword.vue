@@ -6,7 +6,7 @@ import MatchForm from "@/assets/components/form/list/MatchForm.vue"
 <template>
 <div>
     <Header class-name="flex justify-center py-8">Match Password</Header>
-    <MatchForm :user="user" @submit="check" />
+    <MatchForm />
 </div>
 </template>
  

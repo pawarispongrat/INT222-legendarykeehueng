@@ -3,39 +3,29 @@ import Button from '../Button.vue';
 import Input from '../Input.vue';
 import { ref } from 'vue';
 import {matchPassword} from '@/assets/data/data-handler.js';
-const matching = ref(String)
+
+const status = ref(undefined)
 const check = ref({
-      username:"",
-      password:""
+      username: "",
+      password: ""
 })
-const match = async () => {
-    console.log(check.value.password);
-    await matchPassword(check.value)
-    .then((status) => {
-      console.log(status);
-      if ( status === 200) matching.value = "match" 
-      else if(status === 401) matching.value = "wrong"
-      else if(status === 404) matching.value = "wrong username"
-    })
-}
+const match = () => matchPassword(check.value).then((result) =>  status.value = result )
 
 </script>
  
 <template>
        
-  <form class="space-y-8" @submit.prevent="match()">
-   
+  <form class="space-y-8" @submit.prevent="match">
         <div class="flex justify-center">
             <div class="form-control w-[30rem]">
-                <div v-if="matching !== undefined && matching === 'match'" class="ann-message justify-center text-center rounded-md bg-emerald-400">Password Matched</div>
-                <div v-if="matching !== undefined && matching === 'wrong'" class="ann-message justify-center text-center rounded-md bg-rose-400">Password NOT Matched</div>
-                <div v-if="matching !== undefined && matching === 'wrong username'" class="ann-message justify-center text-center rounded-md bg-rose-400">The specified username DOES NOT exist</div>
-                <Input label="Username" placeholder="RewLegendary" class-name="ann-username" error-class-name="ann-error-username" :required="true"
-                  :model-value="check.username"
-                  @update="(input) => check.username = input"/>
-                <Input label="Password" placeholder="" type="password" class-name="ann-password"
-                  :model-value="check.password" 
-                  @update="(input) => check.password = input.trim()"/>
+                <div v-if="status === 200" class="ann-message text-center rounded-md bg-emerald-400 text-white p-2">Password Matched</div>
+                <div v-else-if="status === 401" class="ann-message text-center rounded-md bg-rose-400 text-white p-2">Password NOT Matched</div>
+                <div v-else-if="status === 404" class="ann-message text-center rounded-md bg-rose-400 text-white p-2">The specified username DOES NOT exist</div>
+                <div v-else-if="status !== undefined" class="ann-message text-center rounded-md bg-rose-400 text-white p-2">Something went wrong!</div>
+                <Input label="Username" placeholder="RewLegendary" class-name="ann-username" error-class-name="ann-error-username" 
+                  v-model.trim="check.username" :required="true"/>
+                <Input label="Password" placeholder="MyPasswordIsCool123!@" type="password" class-name="ann-password"
+                  v-model.trim="check.password" :required="true"/>
             </div>
         </div>
         <div class="flex justify-end gap-x-4 border-t border-slate-400">

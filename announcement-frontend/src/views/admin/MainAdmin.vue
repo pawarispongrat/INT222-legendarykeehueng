@@ -4,9 +4,7 @@ import { RouterView } from 'vue-router';
 </script>
 <template>
     <Sidebar>
-        <Suspense>
-            <router-view/>
-        </Suspense>
+        <router-view/>
     </Sidebar>
     <div id="modals"></div>
 </template>

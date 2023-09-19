@@ -1,5 +1,5 @@
 <script setup>
-import { Teleport, ref } from 'vue';
+import { Teleport, onBeforeMount, ref } from 'vue';
 import { getUserAnnouncement,deleteAnnouncement } from '@/assets/data/data-handler.js';
 import Table from "@/assets/components/table/Table.vue"
 import Button from '@/assets/components/form/Button.vue';
@@ -17,7 +17,10 @@ const announcement = ref([])
 const fetch = async () => {
    announcement.value = await getUserAnnouncement(modes.ADMIN, announces.getPage() -1, 0)
    }
-await fetch()
+onBeforeMount(async () => {
+  await fetch()
+})
+
 
 const announcementDelete = async (id) => {
   announcement.value.content = announcement.value.content.filter((announce) => announce.id !== id)

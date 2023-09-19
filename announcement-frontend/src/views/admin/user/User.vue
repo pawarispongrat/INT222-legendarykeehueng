@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import { getUser,deleteUser } from '@/assets/data/data-handler.js';
 import Table from "@/assets/components/table/Table.vue"
 import Button from '@/assets/components/form/Button.vue';
@@ -15,7 +15,9 @@ const fetch = async () => {
     users.value = await getUser()
     users.value = users?.value?.sort((a, b) => a.role?.localeCompare(b.role) || a.username.localeCompare(b.username))
 }
-await fetch()
+onBeforeMount(async () => {
+  await fetch()
+})
 
 const userDelete = async (id) => {
   users.value = users.value.filter((user) => user.id !== id)

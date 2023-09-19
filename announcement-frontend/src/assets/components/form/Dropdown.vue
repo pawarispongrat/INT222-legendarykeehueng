@@ -22,7 +22,7 @@ const isError = computed(() => props.errors?.length > 0)
     <div :class="isFull && 'w-full'">
         <label class="label justify-start gap-x-2">
             {{label}}
-            <span :class="`text-error ${errorClassName}`" v-if="isError">{{error.join(' ')}}</span>
+            <span :class="`text-error ${errorClassName}`" v-if="isError">{{error[0]}}</span>
         </label>
         <select class="input input-bordered text-md px-4 h-[3rem] rounded-lg" 
             :class="`${isFull && 'w-full'} ${isError ? 'border-error' : ''} ${className}`"
