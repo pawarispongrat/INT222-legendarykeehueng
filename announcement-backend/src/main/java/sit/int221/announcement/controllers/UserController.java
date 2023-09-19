@@ -12,8 +12,8 @@ import sit.int221.announcement.services.UserService;
 import java.util.List;
 
 @CrossOrigin(origins={"http://localhost:5173",
-        "https://intproj22.sit.kmutt.ac.th/kp1",
-        "http://intproj22.sit.kmutt.ac.th/kp1",
+        "https://intproj22.sit.kmutt.ac.th/",
+        "http://intproj22.sit.kmutt.ac.th/",
         "http://25.38.200.142:5173",
         "http://25.37.174.170:5173"})
 @RestController
