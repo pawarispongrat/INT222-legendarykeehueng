@@ -9,5 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class JwtProperties {
 
     private String secretKey;
-    private Integer tokenIntervalInHour;
+    private Integer tokenIntervalInMinutes;
+    private Integer refreshTokenIntervalInHours;
 }

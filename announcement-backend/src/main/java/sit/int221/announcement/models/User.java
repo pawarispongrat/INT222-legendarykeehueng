@@ -31,10 +31,6 @@ public class User {
     @Column(insertable = false,updatable = false)
     private ZonedDateTime updatedOn;
 
-    public void encode() {
-        Argon argon = new Argon();
-        this.password = argon.encode(this.password);
-    }
 
     public void trim() {
         this.name = name.trim();
@@ -43,9 +39,5 @@ public class User {
         this.password = password.trim();
     }
 
-    public String getEncodedPassword() {
-        Argon argon = new Argon();
-        return argon.encode(this.password);
-    }
 
 }

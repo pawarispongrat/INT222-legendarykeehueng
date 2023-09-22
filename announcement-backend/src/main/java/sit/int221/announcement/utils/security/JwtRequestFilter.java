@@ -1,4 +1,4 @@
-package sit.int221.announcement.filter;
+package sit.int221.announcement.utils.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import io.jsonwebtoken.ExpiredJwtException;
-import sit.int221.announcement.services.JwtUserDetailsService;
+import sit.int221.announcement.utils.security.JwtUserDetailsService;
 import sit.int221.announcement.utils.security.JwtTokenUtil;
 
 import java.io.IOException;
@@ -30,24 +30,25 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
             String header = request.getHeader("Authorization");
+            if (header == null || !header.startsWith("Bearer ")) { chain.doFilter(request,response); return; }
+            else logger.warn("JWT Token does not begin with Bearer String");
+            String token = header.substring(7).trim();
             String username = null;
-            String token = null;
-            if (header != null && header.startsWith("Bearer ")) {
-                token = header.substring(7);
-                try {  username = util.getUsernameFromToken(token); }
-                catch (IllegalArgumentException e) { System.out.println("Unable to get JWT Token"); }
-                catch (ExpiredJwtException e) { System.out.println("JWT Token has expired"); }
-            } else logger.warn("JWT Token does not begin with Bearer String");
 
+            try {  username = util.getUsernameFromToken(token); }
+            catch (IllegalArgumentException e) { System.out.println("Unable to get JWT Token"); }
+            catch (ExpiredJwtException e) { System.out.println("JWT Token has expired"); }
             SecurityContext context = SecurityContextHolder.getContext();
-            if (username == null && context.getAuthentication() == null) {
-                UserDetails user = service.loadUserByUsername(username);
-                if (util.validateToken(token, user.getUsername())) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    context.setAuthentication(authToken);
-                }
-            }
+            System.out.println(username);
+            if (username == null || context.getAuthentication() != null) { chain.doFilter(request, response); return; }
+            UserDetails user = service.loadUserByUsername(username);
+            if (!util.validateToken(token,user)) { chain.doFilter(request, response); return; }
+
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            context.setAuthentication(auth);
+
             chain.doFilter(request, response);
     }
 }

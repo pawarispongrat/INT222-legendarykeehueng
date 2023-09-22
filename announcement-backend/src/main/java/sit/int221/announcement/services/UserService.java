@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import sit.int221.announcement.dtos.request.UserLoginDTO;
 import sit.int221.announcement.dtos.request.UserRegisterDTO;
@@ -30,6 +31,8 @@ public class UserService {
     private ModelMapper mapper;
     @Autowired
     private ListMapper mappers;
+    @Autowired
+    private PasswordEncoder encoder;
 
     private UserResponseDTO getResponse(User users) {
         return mapper.map(users,UserResponseDTO.class);
@@ -47,16 +50,14 @@ public class UserService {
 
     public UserResponseDTO matchPassword(UserLoginDTO post) {
         User user = getUserByUsername(post.getUsername());
-        boolean isMatch = new Argon().match(post.getPassword(),user.getPassword());
+        boolean isMatch = encoder.matches(post.getPassword(),user.getPassword());
         if (!isMatch) throw new AuthorizedException("user","Password not matched");
         else return getResponse(user);
     }
 
     public UserResponseDTO addUser(UserRegisterDTO post){
-        Argon argon = new Argon();
-        String encoded = argon.encode(post.getPassword());
-        post.setPassword(encoded);
         User user = mapper.map(post,User.class);
+        user.setPassword(encoder.encode(user.getPassword()));
         user.trim();
         User save = repository.saveAndFlush(user);
         repository.refresh(save);

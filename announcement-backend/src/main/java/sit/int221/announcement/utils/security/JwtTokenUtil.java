@@ -8,13 +8,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
-public class JwtTokenUtil implements Serializable {
+public class JwtTokenUtil {
 
     @Autowired
     private JwtProperties properties;
@@ -31,21 +29,26 @@ public class JwtTokenUtil implements Serializable {
         return resolver.apply(claims);
     }
 
-    public Boolean validateToken(String token, String username) {
+    public Boolean validateToken(String token, UserDetails details) {
         String usernameFromToken = getUsernameFromToken(token);
-        return  usernameFromToken.equals(username) && !isTokenExpired(token);
+        return  usernameFromToken.equals(details.getUsername()) && !isTokenExpired(token);
     }
     public String generateToken(UserDetails user) {
         Map<String, Object> claims = new HashMap<>();
-        return generateToken(claims, user.getUsername());
+        return generateToken(claims,user.getUsername(),properties.getTokenIntervalInMinutes() * 60 * 1000); // per 1 minutes
     }
 
-    private String generateToken(Map<String, Object> claims,String subject) {
+    public String generateRefreshToken(String token) {
+        Map<String, Object> claims = new HashMap<>();
+        return generateToken(claims,token,properties.getRefreshTokenIntervalInHours() * 60 * 60 * 1000); // per 1 hours
+    }
+
+    private String generateToken(Map<String, Object> claims,String subject, long interval) {
         return  Jwts.builder().setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + (properties.getTokenIntervalInHour() * 30 * 60 * 1000))) //30 minutes expired
-                .signWith(SignatureAlgorithm.ES512, properties.getSecretKey()).compact();
+                .setExpiration(new Date(System.currentTimeMillis() + interval)) //per 1 minutes expired
+                .signWith(SignatureAlgorithm.HS512, properties.getSecretKey()).compact();
     }
 
     private boolean isTokenExpired(String token) {
