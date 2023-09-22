@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import sit.int221.announcement.exceptions.validator.CloseAfterPublish;
 import sit.int221.announcement.exceptions.validator.EnumValidator;
-import sit.int221.announcement.utils.Display;
+import sit.int221.announcement.utils.enums.Display;
 
 import java.time.ZonedDateTime;
 @Getter @Setter

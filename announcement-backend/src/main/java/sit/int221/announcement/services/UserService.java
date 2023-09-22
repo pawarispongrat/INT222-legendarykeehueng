@@ -46,9 +46,8 @@ public class UserService {
     }
 
     public UserResponseDTO matchPassword(UserLoginDTO post) {
-        Argon argon = new Argon();
         User user = getUserByUsername(post.getUsername());
-        boolean isMatch = argon.match(post.getPassword(),user.getPassword());
+        boolean isMatch = new Argon().match(post.getPassword(),user.getPassword());
         if (!isMatch) throw new AuthorizedException("user","Password not matched");
         else return getResponse(user);
     }
@@ -58,7 +57,7 @@ public class UserService {
         String encoded = argon.encode(post.getPassword());
         post.setPassword(encoded);
         User user = mapper.map(post,User.class);
-        trim(user);
+        user.trim();
         User save = repository.saveAndFlush(user);
         repository.refresh(save);
         return getResponse(save);
@@ -74,7 +73,7 @@ public class UserService {
 //        map.setPropertyCondition(Conditions.isNotNull());
         User user = getUserById(id);
         mapper.map(post,user);
-        trim(user);
+        user.trim();
         User save = repository.saveAndFlush(user);
         repository.refresh(save);
         return getResponse(save);
@@ -87,10 +86,4 @@ public class UserService {
         return repository.findByUsername(username).orElseThrow(() -> new ItemNotFoundException("username","The specified username does not exist"));
     }
 
-    public void trim(User user) {
-        user.setName(user.getName().trim());
-        user.setEmail(user.getEmail().trim());
-        user.setUsername(user.getUsername().trim());
-        user.setPassword(user.getPassword().trim());
-    }
 }

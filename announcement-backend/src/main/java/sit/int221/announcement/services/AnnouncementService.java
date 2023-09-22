@@ -13,7 +13,7 @@ import sit.int221.announcement.models.Category;
 import sit.int221.announcement.repositories.AnnouncementRepository;
 import sit.int221.announcement.utils.enums.Display;
 import sit.int221.announcement.utils.ListMapper;
-import sit.int221.announcement.utils.Modes;
+import sit.int221.announcement.utils.enums.Modes;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;

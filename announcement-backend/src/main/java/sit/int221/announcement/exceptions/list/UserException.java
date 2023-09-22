@@ -6,15 +6,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Getter
 @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-public class AuthorizedException extends FieldException {
+public class UserException extends FieldException {
 
 
-    public AuthorizedException(String field) {
-        super(field,"unauthorized");
+    public UserException(String field) {
+        super(field,"unauthentication");
     }
-    public AuthorizedException(String field,String message) {
+    public UserException(String field,String message) {
         super(field,message);
     }
-
 
 }

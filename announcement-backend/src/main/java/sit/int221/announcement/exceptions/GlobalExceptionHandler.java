@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import sit.int221.announcement.exceptions.list.FieldException;
 import sit.int221.announcement.exceptions.list.ItemNotFoundException;
 import sit.int221.announcement.exceptions.list.AuthorizedException;
+import sit.int221.announcement.exceptions.list.UserException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -27,13 +29,6 @@ public class GlobalExceptionHandler {
         });
         return ResponseEntity.status(BAD_REQUEST).body(response);
     }
-    @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handleNotFound(ConstraintViolationException e , WebRequest request){
-        ErrorResponse response = new ErrorResponse(BAD_REQUEST.value(),getSimpleName(e),getUri(request)) ;
-        System.out.println(e.getConstraintName());
-        return ResponseEntity.status(BAD_REQUEST).body(response) ;
-    }
 
     @ExceptionHandler(ItemNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -43,13 +38,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(NOT_FOUND).body(response) ;
     }
 
-    @ExceptionHandler(AuthorizedException.class)
+    @ExceptionHandler({AuthorizedException.class, UserException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public  ResponseEntity<ErrorResponse> handleUnauthorized(AuthorizedException e , WebRequest request){
+    public  ResponseEntity<ErrorResponse> handleUnauthorized(FieldException e , WebRequest request){
         ErrorResponse response = new ErrorResponse(UNAUTHORIZED.value(),getSimpleName(e),getUri(request)) ;
         response.addValidationError(e.getField(),e.getCause().getMessage());
         return ResponseEntity.status(UNAUTHORIZED).body(response) ;
     }
+
 
     private String getSimpleName(Object object) { return object.getClass().getSimpleName(); }
     private String getUri(WebRequest request) {

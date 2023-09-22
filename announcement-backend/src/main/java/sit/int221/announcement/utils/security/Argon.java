@@ -1,11 +1,13 @@
 package sit.int221.announcement.utils.security;
 
+import lombok.Getter;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 
+@Getter
 public class Argon {
 
     private final Argon2PasswordEncoder encoder;
-    private final int SALT_LENGTH = 16;
+    private static final int SALT_LENGTH = 16;
 
     public Argon() {
         int ITERATIONS = 2;
@@ -23,6 +25,7 @@ public class Argon {
     }
 
     public boolean match(String rawPassword,String encodedPassword) {
-        return this.encoder.matches(rawPassword,encodedPassword);
+        return this.encoder.matches(rawPassword, encodedPassword);
     }
+
 }

@@ -16,7 +16,7 @@ public class UserLoginDTO {
     @Size(min = 8,max = 14)
     private String password;
 
-    public void setPassword(String password) { this.password = password.trim(); }
+    public void setPassword(String password) { this.password = password != null ? password.trim() : null; }
 
-    public void setUsername(String username) { this.username = username.trim(); }
+    public void setUsername(String username) { this.username = username != null ? username.trim() : null; }
 }
