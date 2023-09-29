@@ -1,13 +1,13 @@
 package sit.int221.announcement.utils.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 
@@ -17,6 +17,12 @@ public class JwtTokenUtil {
     @Autowired
     private JwtProperties properties;
 
+    public String getTokenFromRefreshToken(String token) {
+        return getClaimFromToken(token,(claims) -> (String) claims.get("oldToken"));
+    }
+    public String getUsernameFromRefreshToken(String token) {
+        return getClaimFromToken(token,(claims) -> (String) claims.get("username"));
+    }
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
@@ -31,15 +37,17 @@ public class JwtTokenUtil {
 
     public Boolean validateToken(String token, UserDetails details) {
         String usernameFromToken = getUsernameFromToken(token);
-        return  usernameFromToken.equals(details.getUsername()) && !isTokenExpired(token);
+        return  usernameFromToken.equals(details.getUsername()) && isTokenExpired(token);
     }
     public String generateToken(UserDetails user) {
         Map<String, Object> claims = new HashMap<>();
         return generateToken(claims,user.getUsername(),properties.getTokenIntervalInMinutes() * 60 * 1000); // per 1 minutes
     }
 
-    public String generateRefreshToken(String token) {
+    public String generateRefreshToken(String token,String username) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("oldToken",token);
+        claims.put("username",username);
         return generateToken(claims,token,properties.getRefreshTokenIntervalInHours() * 60 * 60 * 1000); // per 1 hours
     }
 
@@ -51,9 +59,9 @@ public class JwtTokenUtil {
                 .signWith(SignatureAlgorithm.HS512, properties.getSecretKey()).compact();
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         Date expiration = getExpirationFromToken(token);
-        return  expiration.before(new Date());
+        return !expiration.before(new Date());
     }
 
     private Claims getClaimsFromToken(String token) {

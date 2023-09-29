@@ -1,6 +1,6 @@
 package sit.int221.announcement.services;
 
-import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,6 +13,7 @@ import sit.int221.announcement.dtos.request.RefreshTokenRequest;
 import sit.int221.announcement.dtos.request.UserLoginDTO;
 import sit.int221.announcement.dtos.response.RefreshTokenResponse;
 import sit.int221.announcement.dtos.response.TokenResponse;
+import sit.int221.announcement.exceptions.list.AuthorizedException;
 import sit.int221.announcement.exceptions.list.UserException;
 import sit.int221.announcement.utils.security.JwtTokenUtil;
 
@@ -31,13 +32,18 @@ public class AuthenticationService {
         authenticate(request.getUsername(),request.getPassword());
         UserDetails details = service.loadUserByUsername(request.getUsername());
         String token = jwt.generateToken(details);
-        String refreshToken = jwt.generateRefreshToken(token);
+        String refreshToken = jwt.generateRefreshToken(token,details.getUsername());
         return new TokenResponse(token,refreshToken);
     }
 
     public RefreshTokenResponse getTokenFromRefreshToken(RefreshTokenRequest request) {
-        String oldToken = jwt.getClaimFromToken(request.getRefreshToken(), Claims::getSubject);
-        String username = jwt.getUsernameFromToken(oldToken);
+        String refreshToken = request.getRefreshToken();
+        String oldToken = jwt.getTokenFromRefreshToken(refreshToken);
+        boolean isExpired;
+        try { isExpired = jwt.isTokenExpired(oldToken); System.out.println(isExpired); }
+        catch (ExpiredJwtException e) { isExpired = true; }
+        if (!isExpired) throw new AuthorizedException("TOKEN IS NOT EXPIRED");
+        String username = jwt.getUsernameFromRefreshToken(refreshToken);
         UserDetails details = service.loadUserByUsername(username);
         String token = jwt.generateToken(details);
         return new RefreshTokenResponse(token);
