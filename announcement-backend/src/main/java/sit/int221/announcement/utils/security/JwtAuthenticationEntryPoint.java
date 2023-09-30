@@ -25,13 +25,13 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         int status = HttpServletResponse.SC_UNAUTHORIZED;
         ErrorResponse error = new ErrorResponse(status,e.getClass().getSimpleName(), request.getRequestURI());
         if (e instanceof AuthorizedException) error.addValidationError(e.getMessage(),e.getCause().getMessage());
-        sendResponse(status,response,error);
+        sendResponse(error,response);
     }
 
-    private void sendResponse(int status, HttpServletResponse response,ErrorResponse error) throws IOException {
+    private void sendResponse(ErrorResponse error,HttpServletResponse response) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(status);
+        response.setStatus(error.getStatus());
         response.getWriter().write(mapper.writeValueAsString(error));
     }
 }
