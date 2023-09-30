@@ -49,9 +49,7 @@ public class SecurityConfig {
                         .authenticationProvider(authenticationProvider())
                         .exceptionHandling().authenticationEntryPoint(entryPoint).and()
                         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                        .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
-                        .addFilterAfter(filter, ExceptionTranslationFilter.class)
-                        .httpBasic();
+                        .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
     @Bean

@@ -1,9 +1,6 @@
 package sit.int221.announcement.utils.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -27,9 +24,7 @@ public class JwtTokenUtil {
     }
 
     public Token getTokenType(String token) {
-        String type;
-        try { type = getClaimFromToken(token, (claims) -> (String) claims.get("type")); }
-        catch (ExpiredJwtException e) { type = (String) e.getClaims().get("type"); }
+        String type = getClaimFromToken(token, (claims) -> (String) claims.get("type"));
         boolean exists = Utils.existsEnum(Token.class,type);
         return exists ? Token.valueOf(type) : Token.NULL;
     }
@@ -44,18 +39,15 @@ public class JwtTokenUtil {
 
     public Boolean validateToken(String token, UserDetails details) {
         String usernameFromToken = getUsernameFromToken(token);
-        return  usernameFromToken.equals(details.getUsername()) && isTokenExpired(token);
+        return usernameFromToken.equals(details.getUsername()) && !isTokenExpired(token);
     }
     public String generateToken(String subject, Token type) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("type",type);
         Integer interval = 1;
-        if (type == Token.REFRESH_TOKEN) {
-            claims.put("username",subject);
-            interval = properties.getRefreshTokenIntervalInMinutes();
-        } else if (type == Token.ACCESS_TOKEN) {
-            interval = properties.getTokenIntervalInMinutes();
-        }
+        if (type == Token.REFRESH_TOKEN)  interval = properties.getRefreshTokenIntervalInMinutes();
+        else if (type == Token.ACCESS_TOKEN)  interval = properties.getTokenIntervalInMinutes();
+
         return generateToken(claims,subject,interval); // per 1 minutes
     }
 
