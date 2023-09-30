@@ -2,6 +2,7 @@ package sit.int221.announcement.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -39,9 +40,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({AuthorizedException.class, UserException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public  ResponseEntity<ErrorResponse> handleUnauthorized(FieldException e , WebRequest request){
+    public  ResponseEntity<ErrorResponse> handleUnauthorized(AuthenticationException e , WebRequest request){
         ErrorResponse response = new ErrorResponse(UNAUTHORIZED.value(),getSimpleName(e), Utils.getUri(request)) ;
-        response.addValidationError(e.getField(),e.getCause().getMessage());
+        response.addValidationError(e.getMessage(),e.getCause().getMessage());
         return ResponseEntity.status(UNAUTHORIZED).body(response) ;
     }
 

@@ -1,9 +1,6 @@
 package sit.int221.announcement.utils.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -27,9 +24,7 @@ public class JwtTokenUtil {
     }
 
     public Token getTokenType(String token) {
-        String type;
-        try { type = getClaimFromToken(token, (claims) -> (String) claims.get("type")); }
-        catch (ExpiredJwtException e) { type = (String) e.getClaims().get("type"); }
+        String type = getClaimFromToken(token, (claims) -> (String) claims.get("type"));
         boolean exists = Utils.existsEnum(Token.class,type);
         return exists ? Token.valueOf(type) : Token.NULL;
     }

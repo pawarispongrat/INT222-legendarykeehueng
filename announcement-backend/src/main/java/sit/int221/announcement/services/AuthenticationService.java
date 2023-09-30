@@ -30,7 +30,7 @@ public class AuthenticationService {
 
     public TokenResponse createToken(UserLoginDTO request) {
         UserDetails details = service.loadUserByUsername(request.getUsername());
-        if (details == null) throw new ItemNotFoundException("username");
+        if (details == null) throw new ItemNotFoundException("INVALID_CREDENTIALS");
         authenticate(request.getUsername(),request.getPassword());
         String username = details.getUsername();
         String token = jwt.generateToken(username, Token.ACCESS_TOKEN);
@@ -39,9 +39,9 @@ public class AuthenticationService {
     }
 
     public RefreshTokenResponse createRefreshToken(String refreshToken) {
-        if (jwt.isTokenExpired(refreshToken)) throw new AuthorizedException("refreshToken","Expired");
+        if (jwt.isTokenExpired(refreshToken)) throw new AuthorizedException(Token.REFRESH_TOKEN.toString(),"Expired Token");
         Token type = jwt.getTokenType(refreshToken);
-        if (type == Token.ACCESS_TOKEN) throw new AuthorizedException("refreshToken");
+        if (type == Token.ACCESS_TOKEN) throw new AuthorizedException(Token.REFRESH_TOKEN.toString(),"Token is invalid");
         String username = jwt.getUsernameFromToken(refreshToken);
         String token = jwt.generateToken(username,Token.ACCESS_TOKEN);
         return new RefreshTokenResponse(token);

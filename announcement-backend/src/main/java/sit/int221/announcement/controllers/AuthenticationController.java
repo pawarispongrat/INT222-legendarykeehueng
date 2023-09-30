@@ -22,7 +22,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("")
-    public RefreshTokenResponse getTokenByRefreshToken(@RequestHeader(value = "Authorization", required = false) String header) {
+    public RefreshTokenResponse getTokenByRefreshToken(@RequestHeader(value = "Authorization") String header) {
         if (JwtUtil.isNotBearer(header)) throw new AuthorizedException("header");
         String refreshToken = JwtUtil.getTokenFromHeader(header);
         return service.createRefreshToken(refreshToken);
