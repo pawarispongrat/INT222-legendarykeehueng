@@ -14,11 +14,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import io.jsonwebtoken.ExpiredJwtException;
-import sit.int221.announcement.exceptions.list.AuthorizedException;
-import sit.int221.announcement.exceptions.list.ItemNotFoundException;
 import sit.int221.announcement.utils.enums.Token;
-import sit.int221.announcement.utils.security.JwtUserDetailsService;
-import sit.int221.announcement.utils.security.JwtTokenUtil;
 
 import java.io.IOException;
 
@@ -34,8 +30,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
             String header = request.getHeader("Authorization");
-            if (!JwtUtil.isBearer(header)) { chain.doFilter(request,response); return; }
-
+            if (JwtUtil.isNotBearer(header)) { chain.doFilter(request,response); return; }
             String token = JwtUtil.getTokenFromHeader(header);
             Token type = util.getTokenType(token);
             String username = null;

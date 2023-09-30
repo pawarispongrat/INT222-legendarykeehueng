@@ -50,7 +50,6 @@ public class SecurityConfig {
                         .exceptionHandling().authenticationEntryPoint(entryPoint).and()
                         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                         .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
-                        .addFilterAfter(filter, ExceptionTranslationFilter.class)
                         .httpBasic();
         return http.build();
     }

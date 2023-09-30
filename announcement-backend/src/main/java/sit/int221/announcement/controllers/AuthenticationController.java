@@ -22,8 +22,8 @@ public class AuthenticationController {
     }
 
     @GetMapping("")
-    public RefreshTokenResponse getTokenByRefreshToken(@RequestHeader("Authorization") String header) {
-        if (!JwtUtil.isBearer(header)) throw new AuthorizedException("header");
+    public RefreshTokenResponse getTokenByRefreshToken(@RequestHeader(value = "Authorization", required = false) String header) {
+        if (JwtUtil.isNotBearer(header)) throw new AuthorizedException("header");
         String refreshToken = JwtUtil.getTokenFromHeader(header);
         return service.createRefreshToken(refreshToken);
     }
