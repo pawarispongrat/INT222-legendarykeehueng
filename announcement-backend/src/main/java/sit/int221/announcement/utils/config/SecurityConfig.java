@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import sit.int221.announcement.utils.security.Argon;
 import sit.int221.announcement.utils.security.JwtAuthenticationEntryPoint;
@@ -49,6 +50,7 @@ public class SecurityConfig {
                         .exceptionHandling().authenticationEntryPoint(entryPoint).and()
                         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                         .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+                        .addFilterAfter(filter, ExceptionTranslationFilter.class)
                         .httpBasic();
         return http.build();
     }

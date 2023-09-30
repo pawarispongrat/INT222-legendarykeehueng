@@ -3,6 +3,7 @@ package sit.int221.announcement.exceptions.impl;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import sit.int221.announcement.exceptions.validator.EnumValidator;
+import sit.int221.announcement.utils.Utils;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -14,9 +15,7 @@ public class EnumValidatorImpl implements ConstraintValidator<EnumValidator, Str
 
     @Override
     public void initialize(EnumValidator constraintAnnotation) {
-        enums = Arrays.stream(constraintAnnotation.enumClass().getEnumConstants())
-                .map(Enum::name)
-                .collect(Collectors.toSet());
+        enums = Utils.getEnumSet(constraintAnnotation.enumClass());
     }
 
     @Override

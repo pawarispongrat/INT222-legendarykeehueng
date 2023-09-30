@@ -1,7 +1,5 @@
 package sit.int221.announcement.exceptions;
 
-import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,7 +11,7 @@ import sit.int221.announcement.exceptions.list.FieldException;
 import sit.int221.announcement.exceptions.list.ItemNotFoundException;
 import sit.int221.announcement.exceptions.list.AuthorizedException;
 import sit.int221.announcement.exceptions.list.UserException;
-import sit.int221.announcement.utils.WebUtils;
+import sit.int221.announcement.utils.Utils;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -24,7 +22,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e,WebRequest request) {
-        ErrorResponse response = new ErrorResponse(BAD_REQUEST.value(),getSimpleName(e),WebUtils.getUri(request));
+        ErrorResponse response = new ErrorResponse(BAD_REQUEST.value(),getSimpleName(e), Utils.getUri(request));
         e.getBindingResult().getFieldErrors().forEach((field) -> {
             response.addValidationError(field.getField(),field.getDefaultMessage());
         });
@@ -34,7 +32,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ItemNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public  ResponseEntity<ErrorResponse> handleNotFound(ItemNotFoundException e , WebRequest request){
-        ErrorResponse response = new ErrorResponse(NOT_FOUND.value(),getSimpleName(e), WebUtils.getUri(request)) ;
+        ErrorResponse response = new ErrorResponse(NOT_FOUND.value(),getSimpleName(e), Utils.getUri(request)) ;
         response.addValidationError(e.getField(),e.getCause().getMessage());
         return ResponseEntity.status(NOT_FOUND).body(response) ;
     }
@@ -42,7 +40,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({AuthorizedException.class, UserException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public  ResponseEntity<ErrorResponse> handleUnauthorized(FieldException e , WebRequest request){
-        ErrorResponse response = new ErrorResponse(UNAUTHORIZED.value(),getSimpleName(e), WebUtils.getUri(request)) ;
+        ErrorResponse response = new ErrorResponse(UNAUTHORIZED.value(),getSimpleName(e), Utils.getUri(request)) ;
         response.addValidationError(e.getField(),e.getCause().getMessage());
         return ResponseEntity.status(UNAUTHORIZED).body(response) ;
     }
