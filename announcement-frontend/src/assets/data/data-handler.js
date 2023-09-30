@@ -132,17 +132,30 @@ async function matchPassword(user)  {
     
 }
 
-// async function matchPassword(user)  {
-//     return await fetch(`${API_USERS}/match`,{
-//         method: "POST",
-//         headers: { 'content-type': 'application/json' },
-//         body: JSON.stringify(user)})
-//     .then(res => {
-//         return res.status;
-//     })
-//     .catch((error) => console.error("Error:",error))
-// }
+const createNewToken = async (data) => {
+    try {
+      const res = await fetch(`${API_HOST}/api/token`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+      })
+      if (res.ok) {
+        const token = await res.json()
+        localStorage.setItem("accessToken", token.accessToken)
+        console.log(token.accessToken);
+        localStorage.setItem("refreshToken", token.refreshToken)
+      }
+      else if (res.status === 401 || res.status === 404) {
+        throw res.status
+      }
+        else { throw new error(Error, `${res.status}`) }
+    } catch (error) {
+        throw error
+    }
+  }
 
 
 
-export { getAnnouncement,matchPassword,getAnnouncementById,putAnnouncement,createAnnouncement,deleteAnnouncement,isLoaded, getUserAnnouncement,getUser,createUser,deleteUser,getUserById,putUser }
+export { createNewToken,getAnnouncement,matchPassword,getAnnouncementById,putAnnouncement,createAnnouncement,deleteAnnouncement,isLoaded, getUserAnnouncement,getUser,createUser,deleteUser,getUserById,putUser }

@@ -6,12 +6,18 @@ import UserDetails from "@/views/admin/user/Details.vue"
 import MatchPassword from "@/views/admin/MatchPassword.vue"
 import AddUser from "@/views/admin/user/Add.vue"
 import EditUser from "@/views/admin/user/Edit.vue"
+import Login from "@/views/Login.vue"
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes:[
         {
+            path: '/login',
+            name: 'Login',
+            component: Login
+        },
+        {
             path: '/',
-            redirect: { name: 'UserAnnouncement' }
+            redirect: { name: 'Login' }
         },
         {
             path: '/announcement/',
