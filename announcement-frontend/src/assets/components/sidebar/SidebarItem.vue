@@ -1,13 +1,19 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import router from '@/router';
 import SvgIcon from '@jamescoyle/vue-icon'
-import { mdiFolderAccount ,mdiListBox, mdiShieldKey  } from '@mdi/js'
-
+import { mdiFolderAccount ,mdiListBox,mdiAlertCircleOutline  } from '@mdi/js'
+import ModalButton from '@/assets/components/modal/ModalButton.vue';
+import Modal from '@/assets/components/modal/Modal.vue';
+const logOut = () =>{
+    localStorage.clear();
+    router.push({ name: 'Login' })
+}
+onMounted
 const HOVER_CLASS = "hover:bg-slate-900"
 const items = ref([
     { path: "/admin/announcement", name: "Annoucement",icon: mdiListBox },
-    { path: "/admin/user", name: "User",icon: mdiFolderAccount },
-    { path: "/admin/user/match", name: "Match Password",icon: mdiShieldKey }
+    { path: "/admin/user", name: "User",icon: mdiFolderAccount }
 ])
 </script>
 <template>
@@ -21,6 +27,13 @@ const items = ref([
                 <svg-icon type="mdi" :size="24" :path="item.icon"/>
                 <span class="ml-3">{{ item.name }}</span>
             </router-link>
+        </li>
+        <li>
+        <ModalButton :modal-id="`ann`" name="Logout" class-name="bg-error hover:bg-red-500 px-6"/>
+        <Modal :modal-id="`ann`" 
+            @confirm="logOut()" :icon="mdiAlertCircleOutline" 
+            :title="`Do you want to Logout?`"
+        />
         </li>
     </ul>
 </template>

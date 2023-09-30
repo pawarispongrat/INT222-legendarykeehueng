@@ -10,7 +10,7 @@ export const useModal = defineStore("modal",() => {
             modals.value.map((modal) =>  modal.id === id ? { ...modal, open: !modal.open } : modal) : 
             [ ...modals.value, { id: id, open: true } ]
     } 
-    const findModalById = (id) => modals.value.find((modal) => modal.id === id)
+    const findModalById = (id) => modals?.value.find((modal) => modal.id === id)
     const isOpen = (id) => findModalById(id)?.open
     return { setModal,setOpen,isOpen,getModals }
 })

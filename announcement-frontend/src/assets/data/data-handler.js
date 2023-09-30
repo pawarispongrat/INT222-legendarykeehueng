@@ -23,7 +23,10 @@ async function getUserAnnouncement(mode,page,category,size) {
         const SIZE = size ? `size=${size}` : ''
         const MODE = mode ? `mode=${mode}` : ''
         const CATEGORY = category ? `category=${category}` : ''
-        const res = await fetch(`${API_PAGES}?${PAGE}&${SIZE}&${MODE}&${CATEGORY}`)
+        const res = await fetch(`${API_PAGES}?${PAGE}&${SIZE}&${MODE}&${CATEGORY}`
+        ,{
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` },
+        })
         if (res.ok) return res.json()
         else throw new Error('Error, data is error!')
     } catch (error) {}
@@ -38,7 +41,10 @@ async function getAnnouncement() {
 }
 async function getUser() {
     try {
-        const res = await fetch(`${API_USERS}`)
+        const res = await fetch(`${API_USERS}`
+        ,{
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` },
+        })
         if (res.ok) return res.json()
         else throw new Error('Error, data is error!')
     } catch (error) {}
@@ -56,14 +62,20 @@ async function createUser(user)  {
 }
 async function getAnnouncementById(id,count=false) {
     try {
-        const res = await fetch(`${API_ANNOUCEMENTS}/${id}?count=${count}`)
+        const res = await fetch(`${API_ANNOUCEMENTS}/${id}?count=${count}`
+        ,{
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` },
+        })
         if (res.ok) return res.json()
         else throw new Error('Error, data is error!')
     } catch (error) {}
 }
 async function getUserById(id) {
     try {
-        const res = await fetch(`${API_USERS}/${id}`)
+        const res = await fetch(`${API_USERS}/${id}`
+        ,{
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` },
+        })
         if (res.ok) return res.json()
         else throw new Error('Error, data is error!')
     } catch (error) {}
@@ -141,11 +153,16 @@ const createNewToken = async (data) => {
         },
         body: JSON.stringify(data)
       })
+      const tokenDetail = await res.json()
       if (res.ok) {
-        const token = await res.json()
-        localStorage.setItem("accessToken", token.accessToken)
-        console.log(token.accessToken);
-        localStorage.setItem("refreshToken", token.refreshToken)
+        const accessToken = tokenDetail.token
+        const refreshToken = tokenDetail.refreshToken
+
+        console.log(accessToken);
+        console.log(refreshToken);
+
+        localStorage.setItem("accessToken", accessToken)
+        localStorage.setItem("refreshToken", refreshToken)
       }
       else if (res.status === 401 || res.status === 404) {
         throw res.status
@@ -155,6 +172,7 @@ const createNewToken = async (data) => {
         throw error
     }
   }
+  
 
 
 

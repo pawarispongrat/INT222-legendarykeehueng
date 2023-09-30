@@ -5,7 +5,7 @@ import { Teleport } from 'vue';
 
 const { setModal, isOpen, setOpen } = useModal()
 const props = defineProps({
-    modalId: String,
+    modalId: { type: String, default: false },
     icon: String,
     isSlot: { type: Boolean, default: false },
     title: { type: String, required: false },
@@ -29,7 +29,7 @@ defineEmits(["confirm"])
                             <p v-show="body" class="text-slate-500">{{ body }}</p>
                         </div>
                         <div class="bg-slate-100 p-3 flex justify-end max-lg:flex-col gap-x-4 gap-y-4">
-                            <button v-if="!isSlot" type="button" @click="$emit('confirm', $event)"
+                            <button v-if="!isSlot" type="button" @click="setOpen(modalId),$emit('confirm', $event)"
                                 class="btn btn-error text-white hover:bg-red-500">Confirm</button>
                             <button v-if="!isSlot" type="button" @click="setOpen(modalId)"
                                 class="btn btn-outline">Cancel</button>

@@ -17,14 +17,12 @@ const check = ref({
       username: "",
       password: ""
 })
-const test = () =>{
- console.log(check.value);
-}
+
 </script>
  
 <template>
-<div class="bg-gray-100 flex justify-center items-center h-screen">
-<div class="w-1/2 h-screen hidden lg:block">
+<div class=" bg-slate-50  flex justify-center items-center h-screen">
+<div class="w-1/2 h-screen hidden lg:block ">
   <img src="https://campus.campus-star.com/app/uploads/2020/10/lx-bu.jpg" alt="Placeholder Image" class="object-cover w-full h-full">
 </div>
 <!-- Right: Login Form -->
@@ -41,7 +39,7 @@ const test = () =>{
         <Input label="Passname"  class-name="ann-password" error-class-name="ann-error-password" 
         v-model.trim="check.password" :required="true"/>
     </div>
-    <Button type="submit" name="LOGIN"  class="ann-button my-6 px-8 bg-blue-700 hover:bg-success" />
+    <Button type="submit" name="LOGIN"  class="ann-button my-6 px-8 bg-orange-700 hover:bg-success" />
   </form>
 </div>
 </div>
