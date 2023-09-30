@@ -18,7 +18,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-
+        if (username == null) return null;
         sit.int221.announcement.models.User user = repository.findByUsername(username).orElse(null);
         if (user == null) return null;
         return new User(user.getUsername(),user.getPassword(),new ArrayList<>());

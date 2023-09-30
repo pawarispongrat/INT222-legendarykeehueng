@@ -10,5 +10,5 @@ public class JwtProperties {
 
     private String secretKey;
     private Integer tokenIntervalInMinutes;
-    private Integer refreshTokenIntervalInHours;
+    private Integer refreshTokenIntervalInMinutes;
 }
