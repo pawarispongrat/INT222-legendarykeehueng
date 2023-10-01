@@ -29,7 +29,7 @@ const onSave = async () => {
     errors.value = { username: [], name: [], email: [], role: []}
     if (!isEmptyUser(user,errors)) return
     const json = await putUser(user.value)
-    if (!isUniqueUser(json?.detail,errors)) router.push("/admin/user/")
+    if (!isUniqueUser(json?.detail,errors)) router.push("/login")
 }
 
 

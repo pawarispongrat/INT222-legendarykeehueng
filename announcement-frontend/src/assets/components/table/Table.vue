@@ -19,14 +19,14 @@ const computedDateBody = (value) => (isIsoDate(value) ? humanizeDate(value) : va
                 <svg-icon type="mdi" :path="mdiMagnify" :size="24" />
                 <input type="text" placeholder="ต้องการหาอะไร เช่น นาย..., อินทร..." class="w-full" />
             </div>
-            <Button :to="createPath" :icon="mdiFileDocumentPlusOutline" name="ADD" class-name="ann-button bg-blue-700 px-5 py-3 hover:bg-blue-800" />
+            <Button :to="createPath" :icon="mdiFileDocumentPlusOutline" name="ADD" class-name="ann-button bg-[#E2C593] px-5 py-3 hover:bg-[#E68572]" />
 
         </div>
         <div class="overflow-x-auto">
             <table class="table table-auto text-base z-1 w-full">
                 <thead class="text-white h-12">
                     <tr  >
-                        <td v-for="(section, index) in head" :key="index" class="bg-blue-700 text-base text-center">
+                        <td v-for="(section, index) in head" :key="index" class="bg-[#E2C593] text-base text-center">
                             {{ section }}
                         </td>
                     </tr>

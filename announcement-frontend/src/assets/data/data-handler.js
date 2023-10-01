@@ -53,7 +53,10 @@ async function createUser(user)  {
     try {
         const res = await fetch(`${API_USERS}`, {
             method: 'POST',
-            headers: { 'content-type': 'application/json' },
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+            },
             body: JSON.stringify(user)
         })
         return res.json()
@@ -84,7 +87,10 @@ async function createAnnouncement(announcement)  {
     try {
         const res = await fetch(`${API_ANNOUCEMENTS}`, {
             method: 'POST',
-            headers: { 'content-type': 'application/json' },
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+            },
             body: JSON.stringify(announcement)
         })
         return res.json()
@@ -95,7 +101,10 @@ async function putAnnouncement(announcement)  {
     try {
         const res = await fetch(`${API_ANNOUCEMENTS}/${announcement.id}`, {
             method: 'PUT',
-            headers: { 'content-type': 'application/json' },
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+            },
             body: JSON.stringify(announcement)
         })
         if (res.ok) {}
@@ -108,7 +117,10 @@ async function putUser(user)  {
     try {
         const res = await fetch(`${API_USERS}/${user.id}`, {
             method: 'PUT',
-            headers: { 'content-type': 'application/json' },
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+            },
             body: JSON.stringify(user)
         })
         return res.json()
@@ -157,19 +169,16 @@ const createNewToken = async (data) => {
       if (res.ok) {
         const accessToken = tokenDetail.token
         const refreshToken = tokenDetail.refreshToken
-
-        console.log(accessToken);
-        console.log(refreshToken);
-
         localStorage.setItem("accessToken", accessToken)
         localStorage.setItem("refreshToken", refreshToken)
+        return res.status
       }
       else if (res.status === 401 || res.status === 404) {
-        throw res.status
+        return res.status
       }
         else { throw new error(Error, `${res.status}`) }
     } catch (error) {
-        throw error
+         error
     }
   }
   
