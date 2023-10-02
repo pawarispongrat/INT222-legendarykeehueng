@@ -55,7 +55,8 @@ public class JwtTokenUtil {
         Instant issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS);
         Instant expiration = issuedAt.plus(minutes, ChronoUnit.MINUTES);
 
-        return  Jwts.builder().setClaims(claims)
+        return  Jwts.builder()
+                .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(Date.from(issuedAt))
                 .setExpiration(Date.from(expiration)) //per 1 minutes expired
