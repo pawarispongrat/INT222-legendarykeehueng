@@ -8,6 +8,7 @@ const props = defineProps({
     // field: { type: String, required: false },
     modelValue: { type: String },
     className: { type: String, required: false },
+    headerClassName: { type: String, required: false },
     placeholder: String,
     errors: { type: Array, default: [] , required: false },
     errorClassName: { type: String, required: false },
@@ -27,7 +28,7 @@ const handleInput = (event) => {
 }
 </script>
 <template>
-    <div class="flex flex-col w-full max-w-xl">
+    <div class="flex flex-col w-full max-w-xl" :class="headerClassName">
         <label class="label justify-start gap-x-2">
             {{label}}
             <span class="text-secondary" :v-show="subLabel">{{subLabel}}</span>
@@ -36,7 +37,7 @@ const handleInput = (event) => {
         <input :type="type" :placeholder="placeholder" :minlength="min" :maxlength="max"
             :value="modelValue" 
             @input="handleInput" 
-            class="input input-bordered rounded-lg w-full max-w-xl " 
+            class="input input-bordered rounded-lg w-full" 
             :class="`${isError? 'border-error' : ''} ${className}`" :required="required" />
     </div>
 </template>
