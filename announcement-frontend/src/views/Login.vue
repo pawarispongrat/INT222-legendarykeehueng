@@ -10,9 +10,7 @@ const status = ref(undefined)
 const submitForm = async () => {
        const result = await createNewToken(check.value);
        status.value = result; // Assign the HTTP status code
-       if(status.value === 200){
-        router.push({ name: 'Announcement' });
-       }
+       if (status.value === 200) router.push({ name: 'Announcement' });
 }
 const check = ref({
       username: "",
@@ -33,9 +31,11 @@ const check = ref({
       <h1 class="text-3xl font-semibold mb-3">Welcome back</h1>
       <form @submit.prevent="submitForm">
             <!-- <div v-if="status === 200" class="ann-message w-full text-center rounded-md bg-emerald-400 text-white p-2">Password Matched</div> -->
-            <div v-if="status === 401" class="ann-message text-center rounded-md bg-rose-400 text-white p-2">Password NOT Matched</div>
-            <div v-else-if="status === 404" class="ann-message text-center rounded-md bg-rose-400 text-white p-2">The specified username DOES NOT exist</div>
-            <div v-else-if="status !== undefined" class="ann-message text-center rounded-md bg-rose-400 text-white p-2">Something went wrong!</div>
+            <!-- <div v-if="status === 401" class="ann-message text-center rounded-md bg-rose-400 text-white p-2">Password NOT Matched</div>
+            <div v-else-if="status === 404" class="ann-message text-center rounded-md bg-rose-400 text-white p-2">The specified username DOES NOT exist</div> -->
+            <div v-if="status === 401" class="ann-message text-center rounded-md bg-rose-400 text-white p-2">Incorrect Password</div>
+            <div v-else-if="status === 404" class="ann-message text-center rounded-md bg-rose-400 text-white p-2">Username does not exists</div>
+            <div v-else-if="status !== undefined" class="ann-message text-center rounded-md bg-rose-400 text-white p-2">Please contact admin for the error!</div>
             <!-- Username Input -->
             <Input label="Username" class-name="ann-username" placeholder="RewLegendary" error-class-name="ann-error-username" 
                 v-model.trim="check.username" :required="true"/>
