@@ -2,10 +2,13 @@ package sit.int221.announcement.utils.security;
 
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import sit.int221.announcement.utils.Utils;
-import sit.int221.announcement.utils.enums.Token;
+import sit.int221.announcement.utils.enums.Role;
+import sit.int221.announcement.utils.enums.TokenType;
 
 
 import java.time.Instant;
@@ -23,11 +26,24 @@ public class JwtTokenUtil {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    public Token getTokenType(String token) {
-        String type = getClaimFromToken(token, (claims) -> (String) claims.get("type"));
-        boolean exists = Utils.existsEnum(Token.class,type);
-        return exists ? Token.valueOf(type) : Token.NULL;
+    public  List<String> getAuthoritiesFromToken(String token) {
+        return getClaimFromToken(token, (claims) -> {
+            List<String> claim = claims.get("aut", List.class);
+            return claim != null ? new ArrayList<>(claim) : new ArrayList<>();
+        });
     }
+
+    public Map<String, Object> getClaims(String token) {
+        return getClaimsFromToken(token);
+    }
+    public TokenType getTokenType(String token) {
+        String type = getClaimFromToken(token, (claims) -> (String) claims.get("typ"));
+        boolean exists = Utils.existsEnum(TokenType.class,type);
+        return exists ? TokenType.valueOf(type) : TokenType.NULL;
+    }
+
+
+
     public Date getExpirationFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
     }
@@ -41,22 +57,25 @@ public class JwtTokenUtil {
         String usernameFromToken = getUsernameFromToken(token);
         return usernameFromToken.equals(details.getUsername()) && !isTokenExpired(token);
     }
-    public String generateToken(String subject, Token type) {
+    public String generateToken(String subject, TokenType type, String... authorities) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("type",type);
-        Integer interval = 1;
-        if (type == Token.REFRESH_TOKEN)  interval = properties.getRefreshTokenIntervalInMinutes();
-        else if (type == Token.ACCESS_TOKEN)  interval = properties.getTokenIntervalInMinutes();
+        claims.put("typ",type);
+        if (authorities != null && authorities.length > 0) {
+            claims.put("aut", authorities);
+        }
+        Integer interval = properties.getIntervalInMinutes().get(type);
+        if (interval == null) interval = 1;
 
-        return generateToken(claims,subject,interval); // per 1 minutes
+        return generateToken(claims,subject,interval);
     }
+
+
 
     private String generateToken(Map<String, Object> claims,String subject, int minutes) {
         Instant issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS);
         Instant expiration = issuedAt.plus(minutes, ChronoUnit.MINUTES);
 
-        return  Jwts.builder()
-                .setClaims(claims)
+        return  Jwts.builder().setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(Date.from(issuedAt))
                 .setExpiration(Date.from(expiration)) //per 1 minutes expired
@@ -64,7 +83,7 @@ public class JwtTokenUtil {
     }
 
     public boolean isTokenExpired(String token) {
-        try {  return getExpirationFromToken(token).before(new Date()); }
+        try { return getExpirationFromToken(token).before(new Date()); }
         catch (ExpiredJwtException e) { return true; }
     }
 

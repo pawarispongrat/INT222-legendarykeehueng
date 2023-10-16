@@ -1,16 +1,20 @@
 package sit.int221.announcement.exceptions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +38,13 @@ public class ErrorResponse {
         this.status = status;
         this.message = message;
         this.instance = instance;
+    }
+
+    public void sendResponse(HttpServletResponse response) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(this.getStatus());
+        response.getWriter().write(mapper.writeValueAsString(this));
     }
 
     @Getter @Setter

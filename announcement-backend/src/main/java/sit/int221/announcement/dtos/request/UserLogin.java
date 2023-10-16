@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class UserLoginDTO {
+public class UserLogin {
 
     @NotBlank
     @Size(min = 1,max = 45)

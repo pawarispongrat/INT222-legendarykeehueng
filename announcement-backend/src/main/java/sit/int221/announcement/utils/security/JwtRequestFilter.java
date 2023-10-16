@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +17,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import io.jsonwebtoken.ExpiredJwtException;
 import sit.int221.announcement.exceptions.list.AuthorizedException;
-import sit.int221.announcement.utils.enums.Token;
+import sit.int221.announcement.services.JwtUserDetailsService;
+import sit.int221.announcement.utils.enums.TokenType;
+import sit.int221.announcement.utils.security.entrypoint.JwtAuthenticationEntryPoint;
 
 import java.io.IOException;
 
@@ -40,15 +41,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             String header = request.getHeader("Authorization");
             if (JwtUtil.isNotBearer(header)) { chain.doFilter(request,response); return; }
             String token = JwtUtil.getTokenFromHeader(header);
-            Token type = Token.NULL;
+            TokenType type = TokenType.NULL;
             String username;
             try {
                 type = util.getTokenType(token);
-                username = type == Token.ACCESS_TOKEN ? util.getUsernameFromToken(token) : null;
+                username = type == TokenType.ACCESS_TOKEN ? util.getUsernameFromToken(token) : null;
             }
             catch (MalformedJwtException | SignatureException e) { throw new AuthorizedException("Token","Invalid form token"); }
             catch (IllegalArgumentException e) { throw new AuthorizedException(type.toString(),"Unable to get JWT Token"); }
-            catch (ExpiredJwtException e) { throw new AuthorizedException(e.getClaims().get("type").toString(),"Expired Token"); }
+            catch (ExpiredJwtException e) {
+                Object expiredType = e.getClaims().get("type");
+                throw new AuthorizedException(expiredType != null ? expiredType.toString() : TokenType.NULL.toString(),"Expired Token");
+            }
 
             SecurityContext context = SecurityContextHolder.getContext();
             Authentication auth = context.getAuthentication();

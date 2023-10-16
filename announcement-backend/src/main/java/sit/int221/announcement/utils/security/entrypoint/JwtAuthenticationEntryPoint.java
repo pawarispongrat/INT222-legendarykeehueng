@@ -1,4 +1,4 @@
-package sit.int221.announcement.utils.security;
+package sit.int221.announcement.utils.security.entrypoint;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,13 +25,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         int status = HttpServletResponse.SC_UNAUTHORIZED;
         ErrorResponse error = new ErrorResponse(status,e.getClass().getSimpleName(), request.getRequestURI());
         if (e instanceof AuthorizedException) error.addValidationError(e.getMessage(),e.getCause().getMessage());
-        sendResponse(error,response);
+        error.sendResponse(response);
     }
 
-    private void sendResponse(ErrorResponse error,HttpServletResponse response) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(error.getStatus());
-        response.getWriter().write(mapper.writeValueAsString(error));
-    }
 }

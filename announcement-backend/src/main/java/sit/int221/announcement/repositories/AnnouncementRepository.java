@@ -9,6 +9,8 @@ import sit.int221.announcement.models.Announcement;
 import sit.int221.announcement.utils.enums.Display;
 
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Optional;
 
 public interface AnnouncementRepository extends JpaRepository<Announcement,Integer> {
 
@@ -31,4 +33,6 @@ public interface AnnouncementRepository extends JpaRepository<Announcement,Integ
                                  @Param("current") ZonedDateTime current,
                                  Pageable pageable);
 
+
+    Optional<List<Announcement>> findByAnnouncementOwner(Integer announcementOwner);
 }

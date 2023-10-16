@@ -1,23 +1,17 @@
 package sit.int221.announcement.services;
 
-import jakarta.validation.ConstraintViolationException;
-import org.modelmapper.Conditions;
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import sit.int221.announcement.dtos.request.UserLoginDTO;
-import sit.int221.announcement.dtos.request.UserRegisterDTO;
-import sit.int221.announcement.dtos.request.UserEditDTO;
-import sit.int221.announcement.dtos.response.UserResponseDTO;
+import sit.int221.announcement.dtos.request.UserLogin;
+import sit.int221.announcement.dtos.request.UserRegister;
+import sit.int221.announcement.dtos.request.UserEdit;
+import sit.int221.announcement.dtos.response.UserResponse;
 import sit.int221.announcement.exceptions.list.ItemNotFoundException;
 import sit.int221.announcement.exceptions.list.AuthorizedException;
 import sit.int221.announcement.models.User;
 import sit.int221.announcement.repositories.UserRepository;
-import sit.int221.announcement.utils.security.Argon;
 import sit.int221.announcement.utils.ListMapper;
 
 import java.util.List;
@@ -34,28 +28,29 @@ public class UserService {
     @Autowired
     private PasswordEncoder encoder;
 
-    private UserResponseDTO getResponse(User users) {
-        return mapper.map(users,UserResponseDTO.class);
+
+    private UserResponse getResponse(User users) {
+        return mapper.map(users, UserResponse.class);
     }
-    private List<UserResponseDTO> getResponse(List<User> users) {
-        return mappers.mapList(users,UserResponseDTO.class,mapper);
+    private List<UserResponse> getResponse(List<User> users) {
+        return mappers.mapList(users, UserResponse.class,mapper);
     }
-    public UserResponseDTO getResponseById(Integer id) {
-        return mapper.map(getUserById(id),UserResponseDTO.class);
+    public UserResponse getResponseById(Integer id) {
+        return mapper.map(getUserById(id), UserResponse.class);
     }
 
-    public List<UserResponseDTO> getUser() {
+    public List<UserResponse> getUser() {
         return getResponse(repository.findAll());
     }
 
-    public UserResponseDTO matchPassword(UserLoginDTO post) {
+    public UserResponse matchPassword(UserLogin post) {
         User user = getUserByUsername(post.getUsername());
         boolean isMatch = encoder.matches(post.getPassword(),user.getPassword());
         if (!isMatch) throw new AuthorizedException("user","Password not matched");
         else return getResponse(user);
     }
 
-    public UserResponseDTO addUser(UserRegisterDTO post){
+    public UserResponse addUser(UserRegister post){
         User user = mapper.map(post,User.class);
         user.setPassword(encoder.encode(user.getPassword()));
         user.trim();
@@ -69,9 +64,7 @@ public class UserService {
         repository.delete(user);
     }
 
-    public UserResponseDTO updateUser(Integer id, UserEditDTO post){
-//        TypeMap<UserEditDTO,User> map = mapper.typeMap(UserEditDTO.class,User.class);
-//        map.setPropertyCondition(Conditions.isNotNull());
+    public UserResponse updateUser(Integer id, UserEdit post){
         User user = getUserById(id);
         mapper.map(post,user);
         user.trim();
@@ -79,6 +72,7 @@ public class UserService {
         repository.refresh(save);
         return getResponse(save);
     }
+
 
     public User getUserById(Integer id) {
         return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("User id not found"));

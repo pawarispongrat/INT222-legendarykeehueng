@@ -7,6 +7,7 @@ import sit.int221.announcement.utils.enums.Role;
 import sit.int221.announcement.utils.security.Argon;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Getter @Setter
 @Entity
@@ -24,6 +25,9 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "announcementOwner")
+    private List<Announcement> announcements;
 
     @Column(insertable = false,updatable = false)
     private ZonedDateTime createdOn;

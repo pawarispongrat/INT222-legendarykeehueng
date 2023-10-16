@@ -1,6 +1,9 @@
 package sit.int221.announcement.dtos.request;
 
-import jakarta.validation.constraints.*;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import sit.int221.announcement.exceptions.validator.EnumValidator;
@@ -8,9 +11,10 @@ import sit.int221.announcement.exceptions.validator.UniqueKey;
 import sit.int221.announcement.models.User;
 import sit.int221.announcement.utils.enums.Role;
 
-@Getter @Setter
+@Getter
+@Setter
 @UniqueKey(model = User.class, fields = {"username","name","email"})
-public class UserRegisterDTO {
+public class UserEdit {
 
     @NotBlank
     @Size(min = 1,max = 45)
@@ -28,10 +32,6 @@ public class UserRegisterDTO {
     @EnumValidator(enumClass = Role.class,message = "must be either Role enum")
     private String role;
 
-    @NotBlank
-    @Size(min = 8,max = 14)
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,14}$",message = "must be 8-14 characters long, at least 1 of uppercase, lowercase, number and special characters")
-    private String password;
-    public Role getRole() { return role == null ? Role.announcer : Role.valueOf(role.trim()); }
+    public Role getRole() { return Role.valueOf(role.trim()); }
 
 }

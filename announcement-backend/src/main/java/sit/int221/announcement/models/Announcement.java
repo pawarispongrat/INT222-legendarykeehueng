@@ -34,10 +34,16 @@ public class Announcement {
     @JsonIgnore
     private Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "announcementOwner")
+    @JsonIgnore
+    private User announcementOwner;
+
     public Integer getCategoryId() { return category.getCategoryId(); }
 
     public String getAnnouncementCategory() {
         return category.getCategoryName();
     }
+
 
 }

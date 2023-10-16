@@ -3,11 +3,14 @@ package sit.int221.announcement.controllers;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import sit.int221.announcement.dtos.request.UserLoginDTO;
-import sit.int221.announcement.dtos.request.UserRegisterDTO;
-import sit.int221.announcement.dtos.request.UserEditDTO;
-import sit.int221.announcement.dtos.response.UserResponseDTO;
+import sit.int221.announcement.dtos.request.UserLogin;
+import sit.int221.announcement.dtos.request.UserRegister;
+import sit.int221.announcement.dtos.request.UserEdit;
+import sit.int221.announcement.dtos.response.UserResponse;
+import sit.int221.announcement.services.AnnouncementService;
 import sit.int221.announcement.services.UserService;
+import sit.int221.announcement.utils.security.JwtTokenUtil;
+import sit.int221.announcement.utils.security.JwtUtil;
 
 import java.util.List;
 
@@ -16,30 +19,38 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService service;
+    @Autowired
+    private AnnouncementService announce;
+    @Autowired
+    private JwtTokenUtil jwt;
 
     @GetMapping("")
-    public List<UserResponseDTO> getUser() {
+    public List<UserResponse> getUser() {
         return service.getUser();
     }
 
     @PostMapping("/match")
-    public UserResponseDTO matchPassword(@Valid @RequestBody UserLoginDTO user) {
+    public UserResponse matchPassword(@Valid @RequestBody UserLogin user) {
         return service.matchPassword(user);
     }
     @GetMapping("/{id}")
-    public UserResponseDTO getUserById(@PathVariable Integer id) {
+    public UserResponse getUserById(@PathVariable Integer id) {
         return service.getResponseById(id);
     }
     @PostMapping("")
-    public UserResponseDTO addUser(@Valid @RequestBody UserRegisterDTO user) {
+    public UserResponse addUser(@Valid @RequestBody UserRegister user) {
         return service.addUser(user);
     }
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Integer id){
+    public void deleteUser(@RequestHeader(value = "Authorization") String header, @PathVariable Integer id){
+        String token = JwtUtil.getTokenFromHeader(header);
+        if (token == null) return;
+        String username = jwt.getUsernameFromToken(token);
+        announce.updateAnnouncementOwnerByUserId(id,username);
         service.deleteUser(id);
     }
     @PutMapping("/{id}")
-    public UserResponseDTO updateUser(@PathVariable Integer id,@Valid @RequestBody UserEditDTO user) {
+    public UserResponse updateUser(@PathVariable Integer id, @Valid @RequestBody UserEdit user) {
         return service.updateUser(id,user);
     }
 }

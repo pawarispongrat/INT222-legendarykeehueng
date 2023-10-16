@@ -11,7 +11,7 @@ import sit.int221.announcement.utils.enums.Display;
 import java.time.ZonedDateTime;
 @Getter @Setter
 @CloseAfterPublish
-public class AnnouncementRequestDTO {
+public class AnnouncementRequest {
 
     @NotBlank
     @Size(min = 1, max = 200)
