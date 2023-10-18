@@ -32,8 +32,8 @@ public class UserRegister {
     @Size(min = 8,max = 14)
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,14}$",message = "must be 8-14 characters long, at least 1 of uppercase, lowercase, number and special characters")
     private String password;
-//    public Role getRole() { return role == null ? Role.announcer : Role.valueOf(role.trim()); }
 
+    public Role getRole() { return role == null ? Role.announcer : Role.valueOf(role.trim()); }
     public void setRole(String role) {
         this.role = role == null ? Role.announcer.toString() : role.trim();
     }

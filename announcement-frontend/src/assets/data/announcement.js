@@ -1,5 +1,5 @@
 
-import { formatDateString,getDateTime } from "../utils"
+import { formatDateString,getDateTime } from "@/assets/utils/dateUtils"
 
 const categories = [ 'ทั่วไป','ทุนการศึกษา','หางาน','ฝึกงาน' ]
 const displays = { Y:'Y' , N:'N' }

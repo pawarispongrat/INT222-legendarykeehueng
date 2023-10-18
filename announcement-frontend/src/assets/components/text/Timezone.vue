@@ -1,5 +1,5 @@
 <script setup>
-import { TIMEZONE } from '../../utils';
+import { TIMEZONE } from '@/assets/utils/dateUtils';
 const props = defineProps({
     text: { type: String, default: "Date/Time shown in Timezone:"}
 })

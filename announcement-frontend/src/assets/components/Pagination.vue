@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { mdiChevronRight, mdiChevronLeft } from "@mdi/js"
-import { useAnnounces } from '../pinia';
+import { useAnnounces } from '../stores/useAnnounces';
 import SvgIcon from '@jamescoyle/vue-icon';
 const announces = useAnnounces()
 const props = defineProps({totalPages: { required: true} ,totalElements: {  required: true} })

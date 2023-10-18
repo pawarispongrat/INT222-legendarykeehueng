@@ -5,7 +5,7 @@ import Dropdown from '../Dropdown.vue';
 import { computed,onBeforeMount,ref, watch } from 'vue';
 import { humanizeDate } from '../../../utils/dateUtils';
 import { useRoute, useRouter } from 'vue-router';
-import { getUserById,putUser } from "@/assets/data/data-handler.js"
+import { getUserById,putUser } from "@/assets/data/dataHandler.js"
 import { isUniqueUser,isEmptyUser } from '@/assets/data/validate.js';
 
 defineEmits(["submit"])

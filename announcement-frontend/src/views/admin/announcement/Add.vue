@@ -2,7 +2,7 @@
 import Header from "@/assets/components/text/Header.vue";
 import AnnouncementForm from "@/assets/components/AnnouncementForm.vue";
 import { provide, ref } from "vue";
-import { createAnnouncement } from "@/assets/data/data-handler.js"
+import { createAnnouncement } from "@/assets/data/dataHandler.js"
 import Announcement from "../../../assets/data/announcement";
 import { useRouter } from "vue-router";
 

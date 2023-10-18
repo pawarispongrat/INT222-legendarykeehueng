@@ -2,7 +2,7 @@
 import Button from '../Button.vue';
 import Input from '../Input.vue';
 import { ref } from 'vue';
-import {matchPassword} from '@/assets/data/data-handler.js';
+import {matchPassword} from '@/assets/data/dataHandler.js';
 
 const status = ref(undefined)
 const check = ref({

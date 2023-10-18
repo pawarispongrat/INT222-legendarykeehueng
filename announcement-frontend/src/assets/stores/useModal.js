@@ -2,16 +2,12 @@ import { defineStore, acceptHMRUpdate } from 'pinia'
 import { ref } from 'vue';
 
 export const useModal = defineStore("modal",() => {
-    const modals = ref([])
-    const setModal = (id) => modals.value.push({ id: id, open: false })
-    const getModals = () => modals.value
-    const setOpen = (id) => {
-        modals.value = findModalById(id) ? 
-            modals.value.map((modal) =>  modal.id === id ? { ...modal, open: !modal.open } : modal) : 
-            [ ...modals.value, { id: id, open: true } ]
-    } 
-    const findModalById = (id) => modals?.value.find((modal) => modal.id === id)
-    const isOpen = (id) => findModalById(id)?.open
+    const modals = ref(new Map())
+    const setModal = (id) => modals.value.set(id,false)
+    const getModals = () => modals.value.entries()
+    const setOpen = (id) => modals.value.set(id,!isOpen(id))
+    const getModalById = (id) => modals?.value.get(id)
+    const isOpen = (id) => getModalById(id)
     return { setModal,setOpen,isOpen,getModals }
 })
 

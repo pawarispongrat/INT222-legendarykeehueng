@@ -1,10 +1,11 @@
 <script setup>
 import Header from '@/assets/components/text/Header.vue';
 import { onBeforeMount, ref, computed } from 'vue';
-import { getAnnouncementById, isLoaded } from '@/assets/data/data-handler.js';
-import { formatDate } from '@/assets/utils';
+import { getAnnouncementById, isLoaded } from '@/assets/data/dataHandler.js';
+import { formatDate } from '@/assets/utils/dateUtils';
 import { useRoute } from 'vue-router';
 import { displays } from '@/assets/data/announcement';
+import Loading from "vue-loading-overlay";
 
 const announcement = ref('')
 const loaded = ref(false)
@@ -17,6 +18,7 @@ const computedDisplayColor = computed(() => announcement.value.announcementDispl
 
 </script>
 <template>
+  <loading :active="!loaded" :can-cancel="false" :is-full-page="false"/>
   <div v-if="loaded" class="ann-item flex flex-col justify-center items-center">
     <Header class="py-8">Announcement Detail</Header>
 

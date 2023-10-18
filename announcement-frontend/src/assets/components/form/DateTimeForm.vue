@@ -1,5 +1,5 @@
 <script setup>
-import { getCurrentDate } from "@/assets/utils";
+import { getCurrentDate } from "@/assets/utils/dateUtils";
 import { computed, inject } from "vue";
 const props = defineProps({
     label: String,

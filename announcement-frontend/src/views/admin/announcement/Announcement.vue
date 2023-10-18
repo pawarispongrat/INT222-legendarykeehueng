@@ -1,25 +1,26 @@
 <script setup>
-import { Teleport, onBeforeMount, ref } from 'vue';
-import { getUserAnnouncement,deleteAnnouncement } from '@/assets/data/data-handler.js';
+import { onBeforeMount, ref } from 'vue';
+import { getUserAnnouncement,deleteAnnouncement } from '@/assets/data/dataHandler.js';
 import Table from "@/assets/components/table/Table.vue"
 import Button from '@/assets/components/form/Button.vue';
 import Header from "@/assets/components/text/Header.vue"
 import Timezone from "@/assets/components/text/Timezone.vue"
-import { modes,useAnnounces } from '@/assets/pinia';
+import { modes,useAnnounces } from '@/assets/stores/useAnnounces';
 import Pagination from '@/assets/components/Pagination.vue';
 import ModalButton from '@/assets/components/modal/ModalButton.vue';
 import Modal from '@/assets/components/modal/Modal.vue';
 import { mdiAlertCircleOutline } from '@mdi/js';
-import { humanizeDate } from '../../../assets/utils/dateUtils';
+import { humanizeDate } from '@/assets/utils/dateUtils';
+import Loading from "vue-loading-overlay";
 
+const loaded = ref(false)
 const announces = useAnnounces()
 const announcement = ref([])
 const fetch = async () => {
-   announcement.value = await getUserAnnouncement(modes.ADMIN, announces.getPage() -1, 0)
-   }
-onBeforeMount(async () => {
-  await fetch()
-})
+  announcement.value = await getUserAnnouncement(modes.ADMIN, announces.getPage() -1, 0)
+  loaded.value = true
+}
+onBeforeMount(async () => { await fetch() })
 
 
 const announcementDelete = async (id) => {
@@ -31,12 +32,16 @@ const announcementSections = ["Id", "Title", "Publish Date", "Close Date", "Disp
 const announcementEditRoute = (id) => `/admin/announcement/${id}/details`
 </script>
 <template>
-  <div class="flex max-lg:flex-col items-center justify-between py-6">
-    <Header>Announcement Table</Header>
-    <Timezone />
-  </div>
-  <Table :createPath="'/admin/announcement/add'"  :head="announcementSections" :body="announcement.content" emptyText="No Announcement">
-    <template #column="{ items,index }">
+  <loading :active="!loaded"
+           :can-cancel="false"
+           :is-full-page="false"/>
+  <div v-if="loaded">
+    <div class="flex max-lg:flex-col items-center justify-between py-6">
+      <Header>Announcement Table</Header>
+      <Timezone />
+    </div>
+    <Table :createPath="'/admin/announcement/add'"  :head="announcementSections" :body="announcement.content" emptyText="No Announcement">
+      <template #column="{ items,index }">
         <td>{{ index+1 }}</td>
         <td>{{ items.announcementTitle }}</td>
         <td>{{ humanizeDate(items.publishDate) }}</td>
@@ -45,16 +50,16 @@ const announcementEditRoute = (id) => `/admin/announcement/${id}/details`
         <td>{{ items.announcementCategory }}</td>
         <td>{{ items.viewCount }}</td>
       </template>
-    <template #action="{ id }">
+      <template #action="{ id }">
         <Button name="Edit" :to="announcementEditRoute(id)"  class=" bg-blue-700 px-6 hover:bg-blue-800"/>
         <ModalButton :modal-id="`annDeleteConfirm-${id}`" name="Delete" class-name="bg-error hover:bg-red-500 px-6"/>
-        <Modal :modal-id="`annDeleteConfirm-${id}`" 
-            @confirm="() => announcementDelete(id)" :icon="mdiAlertCircleOutline" 
-            :title="`Do you want to delete announcement ${id}?`"
+        <Modal :modal-id="`annDeleteConfirm-${id}`"
+               @confirm="() => announcementDelete(id)" :icon="mdiAlertCircleOutline"
+               :title="`Do you want to delete announcement ${id}?`"
         />
-    </template>
-  </Table>
-  <Pagination @fetch="fetch" :total-pages="announcement?.totalPages" :total-elements="announcement?.totalElements" class="float-right"/>
-
- </template>
+      </template>
+    </Table>
+    <Pagination @fetch="fetch" :total-pages="announcement?.totalPages" :total-elements="announcement?.totalElements" class="float-right"/>
+  </div>
+</template>
 <style scoped></style>

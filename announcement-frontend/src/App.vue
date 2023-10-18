@@ -5,7 +5,7 @@
 <template>
 
   <!-- <div class="flex flex-col items-center font bg-base-200 bg-cover h-screen w-screen " style="background-image: url(https://media.discordapp.net/attachments/518037078731128832/1105737461621063733/bgF2.jpg?width=1920&height=960)" > -->
-  <div class="flex flex-col items-center font bg-base-200 bg-cover h-screen w-screen " > 
+  <div class="flex flex-col items-center font bg-base-300 bg-cover h-screen w-screen " >
     <router-view></router-view>
   </div>
 </template>

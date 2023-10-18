@@ -33,12 +33,26 @@ public class AnnouncementRequest {
 
     private Integer viewCount;
 
-    public Display getAnnouncementDisplay() {
-        return announcementDisplay == null ? Display.N : Display.valueOf(announcementDisplay);
+    private String getDefaultDisplay(String announcementDisplay) {
+        return announcementDisplay == null ? Display.N.toString() : announcementDisplay;
+    }
+    private Integer getDefaultViewCount(Integer viewCount) {
+        return viewCount == null ? 0 : viewCount;
     }
 
+    public Display getAnnouncementDisplay() {
+        return Display.valueOf(getDefaultDisplay(announcementDisplay));
+    }
+
+    public void setAnnouncementDisplay(String announcementDisplay) {
+        this.announcementDisplay = getDefaultDisplay(announcementDisplay);
+    }
 
     public Integer getViewCount() {
-        return viewCount == null ? 0 : viewCount;
+        return getDefaultViewCount(viewCount);
+    }
+
+    public void setViewCount(Integer viewCount) {
+        this.viewCount = getDefaultViewCount(viewCount);
     }
 }

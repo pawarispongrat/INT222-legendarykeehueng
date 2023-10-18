@@ -15,11 +15,11 @@ import AnnouncementDetails from '@/views/admin/announcement/Details.vue'
 import EditAnnouncement from '@/views/admin/announcement/Edit.vue'
 
 import Login from "@/views/Login.vue"
-import { isAuthenticated } from "../assets/data/data-handler";
+import { isAuthenticated } from "@/assets/data/dataHandler";
 
 const guardRoutes = async (to,from,next) => {
-    const authenicated = await isAuthenticated()
-    if (authenicated) next()
+    const authenticated = await isAuthenticated()
+    if (authenticated) next()
     else next("/login")
 }
 const router = createRouter({

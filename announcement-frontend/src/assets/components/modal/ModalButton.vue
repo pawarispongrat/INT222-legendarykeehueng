@@ -2,7 +2,7 @@
 import { useModal } from '@/assets/stores/useModal';
 import SvgIcon from '@jamescoyle/vue-icon'
 import { mdiFolderAccount ,mdiListBox,mdiAlertCircleOutline,mdiLogout  } from '@mdi/js'
-const { setOpen,isOpen, getModals } = useModal()
+const { setOpen } = useModal()
 const props = defineProps({
     modalId: String,
     className: { required: false, type: String },

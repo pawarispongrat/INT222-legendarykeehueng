@@ -4,7 +4,7 @@ import Input from '../Input.vue';
 import Dropdown from '../Dropdown.vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { createUser } from "@/assets/data/data-handler.js"
+import { createUser } from "@/assets/data/dataHandler.js"
 import { isUniqueUser,isEmptyUser } from '@/assets/data/validate.js';
 
 defineEmits(["submit"])

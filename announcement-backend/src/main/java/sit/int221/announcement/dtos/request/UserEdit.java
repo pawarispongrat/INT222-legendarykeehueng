@@ -32,8 +32,7 @@ public class UserEdit {
     @EnumValidator(enumClass = Role.class,message = "must be either Role enum")
     private String role;
 
-//    public Role getRole() { return Role.valueOf(role.trim()); }
-
+    public Role getRole() { return role == null ? Role.announcer : Role.valueOf(role.trim()); }
     public void setRole(String role) {
         this.role = role == null ? Role.announcer.toString() : role.trim();
     }

@@ -49,7 +49,7 @@ public class AnnouncementService {
     public List<? extends AnnouncementGuestResponse> getAnnouncement(Modes mode,String username, List<String> authorities) {
         Pageable pageable = Pageable.unpaged();
         List<Announcement> announcement = getAnnouncementByAuthorities(pageable,mode,0,username,authorities);
-//      announcement = getAnnouncementByMode(pageable,mode,0).getContent();
+
         Class<? extends AnnouncementGuestResponse> response = isEditor(authorities,Role.admin,Role.announcer) ? AnnouncementAdminResponse.class : AnnouncementGuestResponse.class;
         List<? extends AnnouncementGuestResponse> responses = listMapper.mapList(announcement, response, mapper);
         Collections.reverse(responses);
@@ -85,7 +85,8 @@ public class AnnouncementService {
         announcement.setPublishDate(post.getPublishDate());
         announcement.setCloseDate(post.getCloseDate());
         announcement.setViewCount(post.getViewCount());
-        announcement.setCategory(categories.getCategoryById(post.getCategoryId()));
+        Category category = categories.getCategoryById(post.getCategoryId());
+        announcement.setCategory(category);
 
         Announcement saved = repository.saveAndFlush(announcement);
         return mapper.map(saved,AnnouncementAdminResponse.class);

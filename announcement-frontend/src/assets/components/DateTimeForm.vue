@@ -1,7 +1,7 @@
 <script setup>
 
-import { getCurrentDate } from "../utils";
-import { ref,computed } from "vue";
+import { getCurrentDate } from "@/assets/utils/dateUtils";
+import { computed } from "vue";
 const props = defineProps({ 
     dateText: String,
     date: String,time: String , 

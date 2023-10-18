@@ -2,9 +2,10 @@
 import Header from "@/assets/components/text/Header.vue";
 import { onBeforeMount, ref } from "vue";
 import { useRoute } from "vue-router";
-import { getAnnouncementById, isLoaded } from "@/assets/data/data-handler.js";
-import { formatDate } from "@/assets/utils";
+import { getAnnouncementById, isLoaded } from "@/assets/data/dataHandler.js";
+import { formatDate } from "@/assets/utils/dateUtils";
 import { displays } from "@/assets/data/announcement";
+import Loading from "vue-loading-overlay";
 const loaded = ref(false);
 const announcement = ref("");
 onBeforeMount(async () => {
@@ -15,10 +16,11 @@ onBeforeMount(async () => {
 })
 </script>
 <template>
+    <loading :active="!loaded" :can-cancel="false" :is-full-page="false"/>
     <div v-if="loaded" class="h-screen w-screen flex flex-col justify-center items-center ann-item">
-        <Header class="p-8"> User Detail</Header>
-        <div class="overflow-hidden bg-base-100 shadow-lg">
-            <p class="font-bold text-xl text-gray-100 py-5 w-96 px-4 bg-[#C1A696] ann-title">
+        <Header class="p-8"> User Details</Header>
+        <div class="overflow-hidden bg-base-100 max-w-2xl rounded-md">
+            <p class="font-bold text-xl text-gray-100 py-5 w-full px-4 bg-[#C1A696] ann-title">
                 {{ announcement.announcementTitle }}
             </p>
             <p class="px-6 py-5 text-error">
@@ -28,11 +30,11 @@ onBeforeMount(async () => {
 
             </p>
             <div class="px-5 pt-4 pb-5 rounded-lg">
-                <span class="inline-block px-3 py-2 text-sm mr-2 text-[#FAA497] bg-[#FAA497] bg-opacity-20 rounded-lg ann-category">
+                <span class="inline-block px-3 py-2 text-sm mr-2 text-[#FAA497] bg-[#FAA497] bg-opacity-20 rounded-md ann-category">
                     {{ announcement.announcementCategory }}
                 </span>
                 <router-link
-                    class="inline-block btn-outline btn-error float-right px-3 py-[0.45rem] text-sm border rounded-lg ann-button"
+                    class="inline-block btn-outline btn-error float-right px-6 py-2 text-sm border rounded-md ann-button"
                     to="/announcement">Back</router-link>
             </div>
         </div>

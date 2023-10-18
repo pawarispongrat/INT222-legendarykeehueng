@@ -7,14 +7,18 @@ import { isIsoDate, humanizeDate } from "../../utils/dateUtils";
 const props = defineProps({
     head: Array,
     body: Array,
+    bodyClass: { required: false, type: String },
+    useHeader: { type: Boolean, default: true },
+    useAction: { type: Boolean, default: true },
     emptyText: String,
     createPath: String,
 })
-const computedDateBody = (value) => (isIsoDate(value) ? humanizeDate(value) : value) 
+
+const emits = defineEmits(["sectionClick"])
 </script>
 <template>
     <div class="space-y-5">
-        <div class="flex flex-wrap text-slate-400 md:justify-between max-md:space-y-5">
+        <div class="flex flex-wrap text-slate-400 md:justify-between max-md:space-y-5" v-if="useHeader">
             <div class="inline-flex items-center gap-x-2 input input-bordered w-96 max-md:w-full ">
                 <svg-icon type="mdi" :path="mdiMagnify" :size="24" />
                 <input type="text" placeholder="ต้องการหาอะไร เช่น นาย..., อินทร..." class="w-full" />
@@ -25,16 +29,16 @@ const computedDateBody = (value) => (isIsoDate(value) ? humanizeDate(value) : va
         <div class="overflow-x-auto">
             <table class="table table-auto text-base z-1 w-full">
                 <thead class="text-white h-12">
-                    <tr  >
+                    <tr>
                         <td v-for="(section, index) in head" :key="index" class="bg-[#E2C593] text-base text-center">
                             {{ section }}
                         </td>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(items, index) of body" :key="index" class="text-center ann-item">
+                    <tr v-for="(items, index) of body" :key="index" class="text-center ann-item" :class="bodyClass" @click="$emit('sectionClick',items.id)">
                         <slot name="column" :items="items,index"></slot>
-                        <td class="flex gap-x-3 justify-center">
+                        <td v-if="useAction" class="flex gap-x-3 justify-center">
                             <slot name="action" :id="items.id"></slot>
                             
                         </td>

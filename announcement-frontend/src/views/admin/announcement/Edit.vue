@@ -3,7 +3,7 @@ import Header from "@/assets/components/text/Header.vue";
 import AnnouncementForm from "@/assets/components/AnnouncementForm.vue";
 import Announcement from "@/assets/data/announcement.js"
 import { ref, onBeforeMount, watch } from "vue";
-import { getAnnouncementById, isLoaded, putAnnouncement } from "@/assets/data/data-handler.js"
+import { getAnnouncementById, isLoaded, putAnnouncement } from "@/assets/data/dataHandler.js"
 import { useRoute } from 'vue-router';
 
 const announcement = ref('')

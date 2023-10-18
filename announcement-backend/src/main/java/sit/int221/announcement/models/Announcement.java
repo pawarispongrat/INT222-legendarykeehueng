@@ -47,5 +47,18 @@ public class Announcement {
         return category.getCategoryName();
     }
 
-
+    @Override
+    public String toString() {
+        return "Announcement{" +
+                "id=" + id +
+                ", announcementDescription='" + announcementDescription + '\'' +
+                ", announcementTitle='" + announcementTitle + '\'' +
+                ", announcementDisplay=" + announcementDisplay +
+                ", publishDate=" + publishDate +
+                ", closeDate=" + closeDate +
+                ", viewCount=" + viewCount +
+                ", category=" + category +
+                ", announcementOwner=" + announcementOwner +
+                '}';
+    }
 }

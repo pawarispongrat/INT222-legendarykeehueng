@@ -5,8 +5,8 @@ function isUniqueUser(detail,errors) {
     if (unique.includes("username")) errors.value.username.push(uniqueMessage)
     if (unique.includes("name")) errors.value.name.push(uniqueMessage)
     if (unique.includes("email")) errors.value.email.push(uniqueMessage)
-    if (unique.length === 0) return false
-    return true
+    return unique.length !== 0;
+
 }
 function isEmptyUser(user,errors) {
     const username = user.value?.username
