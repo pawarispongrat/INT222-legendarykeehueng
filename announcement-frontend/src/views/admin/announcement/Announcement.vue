@@ -11,14 +11,18 @@ import ModalButton from '@/assets/components/modal/ModalButton.vue';
 import Modal from '@/assets/components/modal/Modal.vue';
 import { mdiAlertCircleOutline } from '@mdi/js';
 import { humanizeDate } from '@/assets/utils/dateUtils';
+import { isAdmin } from '@/assets/data/tokenStorage';
 import Loading from "vue-loading-overlay";
 
 const loaded = ref(false)
 const announces = useAnnounces()
 const announcement = ref([])
+const sections = ref(["Id", "Title", "Publish Date", "Close Date", "Display", "Category", "Owner", "Action"])
+
 const fetch = async () => {
   announcement.value = await getUserAnnouncement(modes.ADMIN, announces.getPage() -1, 0)
   loaded.value = true
+  if (!isAdmin()) sections.value = sections.value.filter((section) => section !== "Owner")
 }
 onBeforeMount(async () => { await fetch() })
 
@@ -28,7 +32,6 @@ const announcementDelete = async (id) => {
   await deleteAnnouncement(id)
 } 
 
-const announcementSections = ["Id", "Title", "Publish Date", "Close Date", "Display", "Category", "View", "Action"]
 const announcementEditRoute = (id) => `/admin/announcement/${id}/details`
 </script>
 <template>
@@ -40,7 +43,7 @@ const announcementEditRoute = (id) => `/admin/announcement/${id}/details`
       <Header>Announcement Table</Header>
       <Timezone />
     </div>
-    <Table :createPath="'/admin/announcement/add'"  :head="announcementSections" :body="announcement.content" emptyText="No Announcement">
+    <Table :createPath="'/admin/announcement/add'"  :head="sections" :body="announcement.content" emptyText="No Announcement">
       <template #column="{ items,index }">
         <td>{{ index+1 }}</td>
         <td>{{ items.announcementTitle }}</td>
@@ -48,10 +51,10 @@ const announcementEditRoute = (id) => `/admin/announcement/${id}/details`
         <td>{{ humanizeDate(items.closeDate) }}</td>
         <td >{{ items.announcementDisplay }}</td>
         <td>{{ items.announcementCategory }}</td>
-        <td>{{ items.viewCount }}</td>
+        <td v-if="isAdmin()">{{ items.announcementOwner }}</td>
       </template>
       <template #action="{ id }">
-        <Button name="Edit" :to="announcementEditRoute(id)"  class=" bg-blue-700 px-6 hover:bg-blue-800"/>
+        <Button name="Edit" :to="announcementEditRoute(id)"  class=" bg-[#C1A696] px-6 hover:bg-[#E4B79D]"/>
         <ModalButton :modal-id="`annDeleteConfirm-${id}`" name="Delete" class-name="bg-error hover:bg-red-500 px-6"/>
         <Modal :modal-id="`annDeleteConfirm-${id}`"
                @confirm="() => announcementDelete(id)" :icon="mdiAlertCircleOutline"

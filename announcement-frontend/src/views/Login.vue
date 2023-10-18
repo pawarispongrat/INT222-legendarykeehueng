@@ -1,7 +1,7 @@
 <script setup>
-import Input from '../assets/components/form/Input.vue';
+import Input from '@/assets/components/form/Input.vue';
 import {ref} from 'vue';
-import Button from '../assets/components/form/Button.vue';
+import Button from '@/assets/components/form/Button.vue';
 import {createNewToken} from '@/assets/data/dataHandler';
 import router from '@/router';
 import {toast} from "vue3-toastify";

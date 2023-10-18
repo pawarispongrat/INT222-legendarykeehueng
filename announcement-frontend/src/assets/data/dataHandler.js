@@ -27,6 +27,7 @@ async function validateToken() {
     try {
         const refreshToken = getRefreshToken()
         const status = await matchPassword(null) //IS EXPIRED
+
         return (status === 401 && refreshToken !== null) ? revokeToken(refreshToken) : null
     } catch (error) {
         return null
@@ -55,7 +56,7 @@ async function getUserAnnouncement(mode,page,category,size) {
         const SIZE = size ? `size=${size}&` : ''
         const MODE = mode ? `mode=${mode}&` : ''
         const CATEGORY = category ? `category=${category}` : ''
-        const res = await fetch(`${API_PAGES}?${PAGE}${SIZE}${MODE}${CATEGORY}`)
+        const res = await fetch(`${API_PAGES}?${PAGE}${SIZE}${MODE}${CATEGORY}`,{ headers: getAuthorizedToken(), })
         return res.ok ? res.json() : null
     } catch (error) { return null }
 }

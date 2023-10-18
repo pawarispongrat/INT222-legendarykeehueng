@@ -16,11 +16,18 @@ import EditAnnouncement from '@/views/admin/announcement/Edit.vue'
 
 import Login from "@/views/Login.vue"
 import { isAuthenticated } from "@/assets/data/dataHandler";
+import { isEditor,isAdmin } from "@/assets/data/tokenStorage";
 
+const ROLES = ["admin","announcer"]
 const guardRoutes = async (to,from,next) => {
-    const authenticated = await isAuthenticated()
-    if (authenticated) next()
+    await isAuthenticated()
+    
+    if (isEditor()) next()
     else next("/login")
+}
+const guardAdmin = async (to,from,next) => {
+    if (isAdmin()) next()
+    else next("/admin/announcement")
 }
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -54,12 +61,12 @@ const router = createRouter({
                 { path: '/admin/announcement/add', name: 'AddAnnouncement', component: AddAnnouncement,},
                 { path: '/admin/announcement/:id/details', name: 'Details', component: AnnouncementDetails,},
                 { path: '/admin/announcement/:id/edit', name: 'EditAnnouncement', component: EditAnnouncement,},
-                { path: '/admin/user/',name: 'User',component: User, },
-                { path: '/admin/user/add',name: 'AddUser',component: AddUser },
-                { path: '/admin/user/:id/edit',name: 'EditUser',component: EditUser },
-                { path: '/admin/user/match',name: 'MatchPassword',component: MatchPassword }
+                { path: '/admin/user/',name: 'User',component: User, beforeEnter: guardAdmin },
+                { path: '/admin/user/add',name: 'AddUser',component: AddUser, beforeEnter: guardAdmin },
+                { path: '/admin/user/:id/edit',name: 'EditUser',component: EditUser, beforeEnter: guardAdmin },
+                { path: '/admin/user/match',name: 'MatchPassword',component: MatchPassword, beforeEnter: guardAdmin }
             ],
-            beforeEnter: (to,from,next) => guardRoutes(to,from,next)
+            beforeEnter: guardRoutes
         },
         {
             path: '/:notfoundpath(.*)',
