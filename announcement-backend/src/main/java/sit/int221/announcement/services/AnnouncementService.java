@@ -1,6 +1,8 @@
 package sit.int221.announcement.services;
 
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -44,11 +46,11 @@ public class AnnouncementService {
         return authorities.stream().anyMatch(matcher::contains);
     }
 
-    public List<? extends AnnouncementGuestResponse> getAnnouncement(Modes mode, List<String> authorities) {
+    public List<? extends AnnouncementGuestResponse> getAnnouncement(Modes mode,String username, List<String> authorities) {
         Pageable pageable = Pageable.unpaged();
-        List<Announcement> announcement = getAnnouncementByAuthorities(pageable,mode,0,authorities);
+        List<Announcement> announcement = getAnnouncementByAuthorities(pageable,mode,0,username,authorities);
 //      announcement = getAnnouncementByMode(pageable,mode,0).getContent();
-        Class<? extends AnnouncementGuestResponse> response = isEditor(authorities,Role.admin) ? AnnouncementAdminResponse.class : AnnouncementGuestResponse.class;
+        Class<? extends AnnouncementGuestResponse> response = isEditor(authorities,Role.admin,Role.announcer) ? AnnouncementAdminResponse.class : AnnouncementGuestResponse.class;
         List<? extends AnnouncementGuestResponse> responses = listMapper.mapList(announcement, response, mapper);
         Collections.reverse(responses);
         return responses;
@@ -57,13 +59,18 @@ public class AnnouncementService {
     private Announcement getAnnouncementById(Integer id) {
         return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("announcementId"));
     }
-    public AnnouncementAdminResponse getAdminAnnouncementById(Integer id) {
-        return mapper.map(getAnnouncementById(id),AnnouncementAdminResponse.class);
+
+    @SuppressWarnings("unchecked")
+    public <T extends AnnouncementGuestResponse> T getAdminAnnouncementById(Integer id, boolean count,List<String> authorities) {
+        Class<? extends AnnouncementGuestResponse> response = isEditor(authorities,Role.admin,Role.announcer) ? AnnouncementAdminResponse.class : AnnouncementGuestResponse.class;
+        if (count) return addView(id,response);
+        else return (T) mapper.map(getAnnouncementById(id),response);
     }
     public AnnouncementAdminResponse addAnnouncement(AnnouncementRequest post, String username){
         Announcement announcement = mapper.map(post,Announcement.class);
         User owner = users.getUserByUsername(username);
         Category category = categories.getCategoryById(post.getCategoryId());
+        announcement.setId(null);
         announcement.setAnnouncementOwner(owner);
         announcement.setCategory(category);
         Announcement saved = repository.saveAndFlush(announcement);
@@ -71,10 +78,15 @@ public class AnnouncementService {
     }
 
     public AnnouncementAdminResponse updateAnnouncement(Integer id, AnnouncementRequest post){
-        Announcement announcement = mapper.map(post,Announcement.class);
-        Category category = categories.getCategoryById(post.getCategoryId());
-        announcement.setId(id);
-        announcement.setCategory(category);
+        Announcement announcement = getAnnouncementById(id);
+        announcement.setAnnouncementDisplay(post.getAnnouncementDisplay());
+        announcement.setAnnouncementDescription(post.getAnnouncementDescription());
+        announcement.setAnnouncementTitle(post.getAnnouncementTitle());
+        announcement.setPublishDate(post.getPublishDate());
+        announcement.setCloseDate(post.getCloseDate());
+        announcement.setViewCount(post.getViewCount());
+        announcement.setCategory(categories.getCategoryById(post.getCategoryId()));
+
         Announcement saved = repository.saveAndFlush(announcement);
         return mapper.map(saved,AnnouncementAdminResponse.class);
     }
@@ -89,6 +101,7 @@ public class AnnouncementService {
     public List<Announcement> updateAnnouncementOwnerByUserId(Integer ownerId, String newUsername){
         User oldUser = users.getUserById(ownerId);
         User newUser = users.getUserByUsername(newUsername);
+        if (oldUser.equals(newUser)) return null;
         List<Announcement> announcements = oldUser.getAnnouncements();
         announcements.forEach((announcement -> announcement.setAnnouncementOwner(newUser)));
         return repository.saveAllAndFlush(announcements);
@@ -100,11 +113,10 @@ public class AnnouncementService {
         return listMapper.toPageDTO(announcement, AnnouncementGuestResponse.class,mapper);
     }
 
-    public List<Announcement> getAnnouncementByAuthorities(Pageable pageable, Modes mode, int category, List<String> authorities) {
+    public List<Announcement> getAnnouncementByAuthorities(Pageable pageable, Modes mode, int category,String username, List<String> authorities) {
         List<Announcement> announcements = getAnnouncementByMode(pageable,mode,category).getContent();
         if (authorities == null || authorities.contains(Role.admin.toString())) return announcements;
-        return announcements.stream().filter((announcement ->
-                authorities.contains(announcement.getAnnouncementOwner().getRole().toString()))).toList();
+        return announcements.stream().filter((announcement) -> announcement.getAnnouncementOwner().getUsername().equals(username)).toList();
     }
 
     public Page<Announcement> getAnnouncementByMode(Pageable pageable, Modes mode, int category) {
@@ -117,10 +129,11 @@ public class AnnouncementService {
         }
         return announcement;
     }
-    public AnnouncementAdminResponse addView(Integer id) {
+    @SuppressWarnings("unchecked")
+    public <T extends AnnouncementGuestResponse> T addView(Integer id,Class<? extends AnnouncementGuestResponse> response) {
         Announcement announcement = getAnnouncementById(id);
         announcement.setViewCount(announcement.getViewCount()+1);
         repository.saveAndFlush(announcement);
-        return mapper.map(announcement,AnnouncementAdminResponse.class);
+        return (T) mapper.map(announcement,response);
     }
 }

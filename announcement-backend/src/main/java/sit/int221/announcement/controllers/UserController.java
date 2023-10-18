@@ -7,6 +7,7 @@ import sit.int221.announcement.dtos.request.UserLogin;
 import sit.int221.announcement.dtos.request.UserRegister;
 import sit.int221.announcement.dtos.request.UserEdit;
 import sit.int221.announcement.dtos.response.UserResponse;
+import sit.int221.announcement.exceptions.list.ForbiddenException;
 import sit.int221.announcement.services.AnnouncementService;
 import sit.int221.announcement.services.UserService;
 import sit.int221.announcement.utils.security.JwtTokenUtil;
@@ -46,7 +47,7 @@ public class UserController {
         String token = JwtUtil.getTokenFromHeader(header);
         if (token == null) return;
         String username = jwt.getUsernameFromToken(token);
-        announce.updateAnnouncementOwnerByUserId(id,username);
+        if (announce.updateAnnouncementOwnerByUserId(id,username) == null) throw new ForbiddenException("User","Cannot delete your user");
         service.deleteUser(id);
     }
     @PutMapping("/{id}")

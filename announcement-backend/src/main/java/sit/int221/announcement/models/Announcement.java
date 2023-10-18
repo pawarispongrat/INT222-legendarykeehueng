@@ -41,6 +41,8 @@ public class Announcement {
 
     public Integer getCategoryId() { return category.getCategoryId(); }
 
+    public Integer getOwnerId() { return announcementOwner.getId(); }
+
     public String getAnnouncementCategory() {
         return category.getCategoryName();
     }

@@ -8,18 +8,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import sit.int221.announcement.exceptions.list.FieldException;
-import sit.int221.announcement.exceptions.list.ItemNotFoundException;
-import sit.int221.announcement.exceptions.list.AuthorizedException;
-import sit.int221.announcement.exceptions.list.UserException;
+import sit.int221.announcement.exceptions.list.*;
 import sit.int221.announcement.utils.Utils;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private final HttpStatus BAD_REQUEST = HttpStatus.BAD_REQUEST;
-    private final HttpStatus NOT_FOUND = HttpStatus.NOT_FOUND;
-    private final HttpStatus UNAUTHORIZED = HttpStatus.UNAUTHORIZED;
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e,WebRequest request) {
@@ -28,6 +27,14 @@ public class GlobalExceptionHandler {
             response.addValidationError(field.getField(),field.getDefaultMessage());
         });
         return ResponseEntity.status(BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<ErrorResponse> handleForbiddenException(ForbiddenException e,WebRequest request) {
+        ErrorResponse response = new ErrorResponse(FORBIDDEN.value(),getSimpleName(e), Utils.getUri(request)) ;
+        response.addValidationError(e.getMessage(),e.getCause().getMessage());
+        return ResponseEntity.status(FORBIDDEN).body(response) ;
     }
 
     @ExceptionHandler(ItemNotFoundException.class)

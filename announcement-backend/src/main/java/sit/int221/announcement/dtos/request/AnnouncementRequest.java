@@ -30,10 +30,15 @@ public class AnnouncementRequest {
     @NotNull
     @CategoryNotFound
     private Integer categoryId;
-    @NotNull
+
     private Integer viewCount;
 
     public Display getAnnouncementDisplay() {
         return announcementDisplay == null ? Display.N : Display.valueOf(announcementDisplay);
+    }
+
+
+    public Integer getViewCount() {
+        return viewCount == null ? 0 : viewCount;
     }
 }

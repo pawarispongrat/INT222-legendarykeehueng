@@ -11,7 +11,7 @@ public class AnnouncementAdminResponse extends AnnouncementGuestResponse {
     private User announcementOwner;
     private Integer viewCount;
 
-    public Integer getAnnouncementOwner() {
-        return announcementOwner.getId();
+    public String getAnnouncementOwner() {
+        return announcementOwner.getUsername();
     }
 }

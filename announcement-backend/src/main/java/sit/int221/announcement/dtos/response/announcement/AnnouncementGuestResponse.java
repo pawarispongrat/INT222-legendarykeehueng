@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 public class AnnouncementGuestResponse {
     private Integer id;
     private String announcementTitle;
+    private String announcementDescription;
     private ZonedDateTime publishDate;
     private ZonedDateTime closeDate;
     private Display announcementDisplay;
