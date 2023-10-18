@@ -18,6 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import sit.int221.announcement.utils.components.UserComponent;
 import sit.int221.announcement.utils.enums.Role;
 import sit.int221.announcement.utils.security.Argon;
 import sit.int221.announcement.utils.security.entrypoint.JwtAccessDeniedEntryPoint;

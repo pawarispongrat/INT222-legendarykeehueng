@@ -9,6 +9,7 @@ import sit.int221.announcement.dtos.request.AnnouncementRequest;
 import sit.int221.announcement.models.Announcement;
 import sit.int221.announcement.models.Category;
 import sit.int221.announcement.utils.ListMapper;
+import sit.int221.announcement.utils.components.UserComponent;
 
 @Configuration
 public class ModelMapperConfig {

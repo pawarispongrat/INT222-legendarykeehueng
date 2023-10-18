@@ -25,22 +25,14 @@ public class AnnouncementController {
 
     @Autowired
     private AnnouncementService service;
-    @Autowired
-    private JwtTokenUtil jwt;
-
-
 
     @GetMapping("")
     public List<? extends AnnouncementGuestResponse> getAnnouncement(
-            @RequestHeader(value = "Authorization", required = false) String header,
             @RequestParam(defaultValue = "admin") Modes mode) {
-        String token = JwtUtil.getTokenFromHeader(header);
-        String username = token != null ? jwt.getUsernameFromToken(token) : null;
-        List<String> authorities = token != null ? jwt.getAuthoritiesFromToken(token) : null;
-        return service.getAnnouncement(mode,username,authorities);
+        return service.getAnnouncement(mode);
     }
     @GetMapping("/pages")
-    public PageDTO<AnnouncementGuestResponse> getAnnouncementPage(
+    public PageDTO<? extends AnnouncementGuestResponse> getAnnouncementPage(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "admin") Modes mode,
@@ -50,20 +42,13 @@ public class AnnouncementController {
     }
     //ADMIN & ANNOUNCER
     @PostMapping("")
-    public AnnouncementAdminResponse addAnnouncement(@RequestHeader(value = "Authorization") String header, @Valid @RequestBody AnnouncementRequest announcement) {
-        String token = JwtUtil.getTokenFromHeader(header);
-        if (token == null) return null;
-        String username = jwt.getUsernameFromToken(token);
-        return service.addAnnouncement(announcement,username);
+    public AnnouncementAdminResponse addAnnouncement(@Valid @RequestBody AnnouncementRequest announcement) {
+        return service.addAnnouncement(announcement);
     }
     @GetMapping("/{id}")
     @PreAuthorize("!isAuthenticated() || @security.authorizeAnnouncement(#id)")
-    public <T extends AnnouncementGuestResponse> T getAnnouncementById( @RequestHeader(value = "Authorization", required = false) String header,
-                                                          @PathVariable Integer id,
-                                                          @RequestParam (defaultValue = "false") boolean count) {
-        String token = JwtUtil.getTokenFromHeader(header);
-        List<String> authorities = token != null ? jwt.getAuthoritiesFromToken(token) : null;
-        return service.getAdminAnnouncementById(id,count,authorities);
+    public <T extends AnnouncementGuestResponse> T getAnnouncementById( @PathVariable Integer id, @RequestParam (defaultValue = "false") boolean count) {
+        return service.getAdminAnnouncementById(id,count);
     }
 
     @DeleteMapping("/{id}")

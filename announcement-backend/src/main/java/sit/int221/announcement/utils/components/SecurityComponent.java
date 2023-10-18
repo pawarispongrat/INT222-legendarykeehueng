@@ -1,4 +1,4 @@
-package sit.int221.announcement.utils.security;
+package sit.int221.announcement.utils.components;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -8,7 +8,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import sit.int221.announcement.models.Announcement;
 import sit.int221.announcement.models.User;
-import sit.int221.announcement.services.AnnouncementService;
 import sit.int221.announcement.services.UserService;
 import sit.int221.announcement.utils.enums.Role;
 
@@ -16,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component(value = "security")
-public class SecurityService {
+public class SecurityComponent {
 
     @Autowired
     private UserService user;

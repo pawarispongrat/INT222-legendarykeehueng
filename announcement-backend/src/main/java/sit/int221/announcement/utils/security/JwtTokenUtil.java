@@ -23,10 +23,19 @@ public class JwtTokenUtil {
     private JwtProperties properties;
 
     public String getUsernameFromToken(String token) {
+        if (token == null) return null;
         return getClaimFromToken(token, Claims::getSubject);
     }
 
+    public boolean isEditor(String token,Role... roles) {
+        List<String> authorities = getAuthoritiesFromToken(token);
+        if (authorities == null) return false;
+        List<String> matcher = Arrays.stream(roles).map(Enum::toString).toList();
+        return authorities.stream().anyMatch(matcher::contains);
+    }
+
     public  List<String> getAuthoritiesFromToken(String token) {
+        if (token == null) return null;
         return getClaimFromToken(token, (claims) -> {
             List<String> claim = claims.get("aut", List.class);
             return claim != null ? new ArrayList<>(claim) : new ArrayList<>();

@@ -10,6 +10,7 @@ import sit.int221.announcement.dtos.response.UserResponse;
 import sit.int221.announcement.exceptions.list.ForbiddenException;
 import sit.int221.announcement.services.AnnouncementService;
 import sit.int221.announcement.services.UserService;
+import sit.int221.announcement.utils.components.UserComponent;
 import sit.int221.announcement.utils.security.JwtTokenUtil;
 import sit.int221.announcement.utils.security.JwtUtil;
 
@@ -22,9 +23,9 @@ public class UserController {
     private UserService service;
     @Autowired
     private AnnouncementService announce;
-    @Autowired
-    private JwtTokenUtil jwt;
 
+    @Autowired
+    private UserComponent component;
     @GetMapping("")
     public List<UserResponse> getUser() {
         return service.getUser();
@@ -43,10 +44,9 @@ public class UserController {
         return service.addUser(user);
     }
     @DeleteMapping("/{id}")
-    public void deleteUser(@RequestHeader(value = "Authorization") String header, @PathVariable Integer id){
-        String token = JwtUtil.getTokenFromHeader(header);
-        if (token == null) return;
-        String username = jwt.getUsernameFromToken(token);
+    public void deleteUser(@PathVariable Integer id){
+        String username = component.getSubject();
+        if (username == null) return;
         if (announce.updateAnnouncementOwnerByUserId(id,username) == null) throw new ForbiddenException("User","Cannot delete your user");
         service.deleteUser(id);
     }

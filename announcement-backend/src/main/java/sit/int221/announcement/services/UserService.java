@@ -80,5 +80,8 @@ public class UserService {
     public User getUserByUsername(String username) {
         return repository.findByUsername(username).orElseThrow(() -> new ItemNotFoundException("username","The specified username does not exist"));
     }
+    public User getUserByUsernameOrNull(String username) {
+        return repository.findByUsername(username).orElse(null);
+    }
 
 }

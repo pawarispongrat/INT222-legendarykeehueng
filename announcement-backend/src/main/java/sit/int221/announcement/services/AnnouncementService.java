@@ -15,6 +15,7 @@ import sit.int221.announcement.models.Announcement;
 import sit.int221.announcement.models.Category;
 import sit.int221.announcement.models.User;
 import sit.int221.announcement.repositories.AnnouncementRepository;
+import sit.int221.announcement.utils.components.UserComponent;
 import sit.int221.announcement.utils.enums.Display;
 import sit.int221.announcement.utils.ListMapper;
 import sit.int221.announcement.utils.enums.Modes;
@@ -30,6 +31,9 @@ import java.util.List;
 public class AnnouncementService {
 
     @Autowired
+    private UserComponent component;
+
+    @Autowired
     private AnnouncementRepository repository;
     @Autowired
     private CategoryService categories;
@@ -40,17 +44,10 @@ public class AnnouncementService {
     @Autowired
     private ListMapper listMapper;
 
-    private boolean isEditor(List<String> authorities,Role... roles) {
-        if (authorities == null) return false;
-        List<String> matcher = Arrays.stream(roles).map(Enum::toString).toList();
-        return authorities.stream().anyMatch(matcher::contains);
-    }
-
-    public List<? extends AnnouncementGuestResponse> getAnnouncement(Modes mode,String username, List<String> authorities) {
+    public List<? extends AnnouncementGuestResponse> getAnnouncement(Modes mode) {
         Pageable pageable = Pageable.unpaged();
-        List<Announcement> announcement = getAnnouncementByAuthorities(pageable,mode,0,username,authorities);
-
-        Class<? extends AnnouncementGuestResponse> response = isEditor(authorities,Role.admin,Role.announcer) ? AnnouncementAdminResponse.class : AnnouncementGuestResponse.class;
+        List<Announcement> announcement = getAnnouncementByMode(pageable,mode,0).getContent();
+        Class<? extends AnnouncementGuestResponse> response = component.isEditor(Role.admin,Role.announcer) ? AnnouncementAdminResponse.class : AnnouncementGuestResponse.class;
         List<? extends AnnouncementGuestResponse> responses = listMapper.mapList(announcement, response, mapper);
         Collections.reverse(responses);
         return responses;
@@ -61,12 +58,14 @@ public class AnnouncementService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends AnnouncementGuestResponse> T getAdminAnnouncementById(Integer id, boolean count,List<String> authorities) {
-        Class<? extends AnnouncementGuestResponse> response = isEditor(authorities,Role.admin,Role.announcer) ? AnnouncementAdminResponse.class : AnnouncementGuestResponse.class;
+    public <T extends AnnouncementGuestResponse> T getAdminAnnouncementById(Integer id, boolean count) {
+        Class<? extends AnnouncementGuestResponse> response = component.isEditor(Role.admin,Role.announcer) ? AnnouncementAdminResponse.class : AnnouncementGuestResponse.class;
         if (count) return addView(id,response);
         else return (T) mapper.map(getAnnouncementById(id),response);
     }
-    public AnnouncementAdminResponse addAnnouncement(AnnouncementRequest post, String username){
+    public AnnouncementAdminResponse addAnnouncement(AnnouncementRequest post){
+        String username = component.getSubject();
+        if (username == null) throw new ItemNotFoundException("username","Username not found in token");
         Announcement announcement = mapper.map(post,Announcement.class);
         User owner = users.getUserByUsername(username);
         Category category = categories.getCategoryById(post.getCategoryId());
@@ -108,25 +107,21 @@ public class AnnouncementService {
         return repository.saveAllAndFlush(announcements);
     }
 
-    public PageDTO<AnnouncementGuestResponse> getAnnouncementPage(int page, int size, Modes mode, int category){
+    public PageDTO<? extends AnnouncementGuestResponse> getAnnouncementPage(int page, int size, Modes mode, int category){
         Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.DESC,"id"));
         Page<Announcement> announcement = getAnnouncementByMode(pageable,mode,category);
-        return listMapper.toPageDTO(announcement, AnnouncementGuestResponse.class,mapper);
-    }
-
-    public List<Announcement> getAnnouncementByAuthorities(Pageable pageable, Modes mode, int category,String username, List<String> authorities) {
-        List<Announcement> announcements = getAnnouncementByMode(pageable,mode,category).getContent();
-        if (authorities == null || authorities.contains(Role.admin.toString())) return announcements;
-        return announcements.stream().filter((announcement) -> announcement.getAnnouncementOwner().getUsername().equals(username)).toList();
+        Class<? extends AnnouncementGuestResponse> responses = component.isEditor(Role.announcer,Role.admin) ? AnnouncementAdminResponse.class : AnnouncementGuestResponse.class;
+        return listMapper.toPageDTO(announcement, responses,mapper);
     }
 
     public Page<Announcement> getAnnouncementByMode(Pageable pageable, Modes mode, int category) {
         Page<Announcement> announcement = new PageImpl<>(new ArrayList<>(),pageable,0);
+        User user = !component.isEditor(Role.admin) ? users.getUserByUsernameOrNull(component.getSubject()) : null;
         Display show = Display.Y;
         switch (mode) {
-            case admin -> announcement = repository.findAll(pageable);
-            case active -> announcement = repository.findActive(show,category, ZonedDateTime.now(), pageable);
-            case close -> announcement = repository.findClose(show,category, ZonedDateTime.now(),pageable);
+            case admin -> announcement = repository.findAll(user, pageable);
+            case active -> announcement = repository.findActive(show,category, ZonedDateTime.now(), user, pageable);
+            case close -> announcement = repository.findClose(show,category, ZonedDateTime.now(), user,pageable);
         }
         return announcement;
     }
