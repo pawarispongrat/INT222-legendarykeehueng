@@ -110,7 +110,7 @@ public class AnnouncementService {
     public PageDTO<? extends AnnouncementGuestResponse> getAnnouncementPage(int page, int size, Modes mode, int category){
         Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.DESC,"id"));
         Page<Announcement> announcement = getAnnouncementByMode(pageable,mode,category);
-        Class<? extends AnnouncementGuestResponse> responses = component.isEditor(Role.announcer,Role.admin) ? AnnouncementAdminResponse.class : AnnouncementGuestResponse.class;
+        Class<? extends AnnouncementGuestResponse> responses = component.isEditor(Role.admin) ? AnnouncementAdminResponse.class : AnnouncementGuestResponse.class;
         return listMapper.toPageDTO(announcement, responses,mapper);
     }
 

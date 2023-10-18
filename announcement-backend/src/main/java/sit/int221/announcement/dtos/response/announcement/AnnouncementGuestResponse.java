@@ -16,4 +16,5 @@ public class AnnouncementGuestResponse {
     private Display announcementDisplay;
     private String announcementCategory;
 
+    private Integer viewCount;
 }
