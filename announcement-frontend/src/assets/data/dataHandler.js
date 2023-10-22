@@ -60,6 +60,9 @@ async function createUser(user)  {
 async function getAnnouncementById(id,count=false) {
     return await new FetchHandler(`${API_ANNOUNCEMENTS}/${id}?count=${count}`).authorize().json()
 }
+export async function getUserAnnouncementById(id,count=false) {
+    return await new FetchHandler(`${API_ANNOUNCEMENTS}/${id}?count=${count}`).json()
+}
 async function getUserById(id) {
     return await new FetchHandler(`${API_USERS}/${id}`).authorize().json()
 }

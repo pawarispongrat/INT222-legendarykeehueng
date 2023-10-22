@@ -2,7 +2,7 @@
 import Header from "@/assets/components/text/Header.vue";
 import { onBeforeMount, ref } from "vue";
 import { useRoute } from "vue-router";
-import { getAnnouncementById, isLoaded } from "@/assets/data/dataHandler.js";
+import { getUserAnnouncementById, isLoaded } from "@/assets/data/dataHandler.js";
 import { formatDate } from "@/assets/utils/dateUtils";
 import { displays } from "@/assets/data/announcement";
 import Loading from "vue-loading-overlay";
@@ -10,7 +10,7 @@ const loaded = ref(false);
 const announcement = ref("");
 onBeforeMount(async () => {
     const route = useRoute();
-    announcement.value = await getAnnouncementById(route.params.id,true);
+    announcement.value = await getUserAnnouncementById(route.params.id,true);
     announcement.value = announcement.value?.announcementDisplay === displays.N ? null : announcement.value
     loaded.value = await isLoaded(announcement.value,true)
 })
