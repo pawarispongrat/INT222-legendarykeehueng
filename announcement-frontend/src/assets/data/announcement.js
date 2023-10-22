@@ -15,7 +15,7 @@ class Announcement {
         this.closeDate = closeDate ?? ''
         this.closeTime = closeTime ?? '18:00'
         this.display = display
-        this.categoryId = categoryId
+        this.category = categories?.[categoryId] ?? categories[0]
         this.viewCount = 0
     }
 
@@ -36,7 +36,7 @@ class Announcement {
         this.closeDate = close?.[0] ?? null
         this.closeTime = close?.[1] ?? null
         this.display = announcement.announcementDisplay === displays.Y ? true : false
-        this.categoryId = announcement.categoryId
+        this.category = announcement.announcementCategory
         this.viewCount = announcement.viewCount ? announcement.viewCount : 0
         return this
     }
@@ -49,7 +49,7 @@ class Announcement {
             publishDate: this.getUTCPublish(),
             closeDate: this.getUTCClose(),
             announcementDisplay: this.display ? displays.Y : displays.N,
-            categoryId: this.categoryId,
+            categoryId: categories.findIndex((value) => value === this.category)+1,
             viewCount: this.viewCount ? this.viewCount : 0
         }
     }

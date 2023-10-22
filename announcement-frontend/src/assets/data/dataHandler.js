@@ -1,11 +1,9 @@
-import router from '../../router/index.js';
+import router from '@/router/index.js';
 import {
-    authorizeToken,
-    getAuthorizedToken,
-    getRefreshToken,
     setAccessToken,
     setRefreshToken
 } from "@/assets/data/tokenStorage";
+import FetchHandler from "@/assets/data/fetchHandler";
 
 const API_HOST = import.meta.env.VITE_BASE_URL
 const API_ANNOUNCEMENTS = `${API_HOST}/api/announcements`
@@ -13,168 +11,98 @@ const API_USERS = `${API_HOST}/api/users`
 const API_PAGES = `${API_HOST}/api/announcements/pages`
 const API_TOKEN = `${API_HOST}/api/token`
 
-function sendPage(page) {
-    alert("The request page is not available")
-    router.push(page)
-}
 
-//GET STATUS TO CHECK THAT TOKEN WORKS!
-async function isAuthenticated() {
-    return await validateToken() !== null
-}
-//REVOKE TOKEN
-async function validateToken() {
-    try {
-        const refreshToken = getRefreshToken()
-        const status = await matchPassword(null) //IS EXPIRED
-
-        return (status === 401 && refreshToken !== null) ? revokeToken(refreshToken) : null
-    } catch (error) {
-        return null
-    }
-}
-
-function isLoaded(data,page = "/announcement/",alert = true) {
+async function isLoaded(data,page = "/announcement/",isAlert = true) {
     if (!data) {
-        if (alert) sendPage(page)
+        if (isAlert) {
+            alert("The request page is not available")
+            await router.push(page)
+        }
         return false
     } 
     return true
 }
 
-async function revokeToken(refreshToken) {
-    try {
-        const response = await fetch(`${API_TOKEN}`, { headers: authorizeToken(refreshToken) })
-        const tokenDetail = await response.json()
-        return response.ok ? setAccessToken(tokenDetail.token, response.status) : null
-    } catch (error) { return null }
+export async function revokeToken(refreshToken) {
+    const response = await new FetchHandler(API_TOKEN).bearer(refreshToken).response()
+    const details = await response?.json()
+    if (response?.ok) setAccessToken(details.token)
+    return response?.status
 }
 
-async function getUserAnnouncement(mode,page,category,size) {
-    try {
-        const PAGE = page ? `page=${page}&` : ''
-        const SIZE = size ? `size=${size}&` : ''
-        const MODE = mode ? `mode=${mode}&` : ''
-        const CATEGORY = category ? `category=${category}` : ''
-        const res = await fetch(`${API_PAGES}?${PAGE}${SIZE}${MODE}${CATEGORY}`,{ headers: getAuthorizedToken(), })
-        return res.ok ? res.json() : null
-    } catch (error) { return null }
+function getAnnouncementParams(mode,page,category,size) {
+    return [
+        page ? `page=${page}` : '',
+        size ? `size=${size}` : '',
+        mode ? `mode=${mode}` : '',
+        category ? `category=${category}` : ''
+    ].filter(Boolean).join('&')
+}
+
+export async function getUserAnnouncement(mode,page,category,size) {
+    const query = getAnnouncementParams(mode,page,category,size)
+    return await new FetchHandler(`${API_PAGES}?${query}`).json()
+}
+export async function getAdminAnnouncement(mode,page,category,size) {
+    const query = getAnnouncementParams(mode,page,category,size)
+    return await new FetchHandler(`${API_PAGES}?${query}`).authorize().json()
 }
 
 async function getAnnouncement() {
-    try {
-        const res = await fetch(`${API_ANNOUNCEMENTS}`)
-        return res.ok ? res.json() : null
-    } catch (error) { return null }
+    return await new FetchHandler(API_ANNOUNCEMENTS).json()
 }
 async function getUser() {
-    try {
-        const res = await fetch(`${API_USERS}`,{ headers: getAuthorizedToken(), })
-        return res.ok ? res.json() : null
-    } catch (error) { return null }
+    return await new FetchHandler(API_USERS).authorize().json()
 }
 async function createUser(user)  {
-    try {
-        const res = await fetch(`${API_USERS}`, {
-            method: 'POST',
-            headers: getAuthorizedToken(),
-            body: JSON.stringify(user)
-        })
-        return res.json()
-    } catch (err) { return null }  
-    
+    return await new FetchHandler(API_USERS).authorize().post(user).json()
 }
 async function getAnnouncementById(id,count=false) {
-    try {
-        const res = await fetch(`${API_ANNOUNCEMENTS}/${id}?count=${count}`, { headers: getAuthorizedToken(), })
-        return res.ok ? res.json() : null
-    } catch (error) { return null }
+    return await new FetchHandler(`${API_ANNOUNCEMENTS}/${id}?count=${count}`).authorize().json()
 }
 async function getUserById(id) {
-    try {
-
-        const res = await fetch(`${API_USERS}/${id}`, { headers: getAuthorizedToken(), })
-        return res.ok ? res.json() : null
-    } catch (error) { return null }
+    return await new FetchHandler(`${API_USERS}/${id}`).authorize().json()
 }
 async function createAnnouncement(announcement)  {
-    try {
-
-        const res = await fetch(`${API_ANNOUNCEMENTS}`, {
-            method: 'POST',
-            headers: getAuthorizedToken(),
-            body: JSON.stringify(announcement)
-        })
-        return res.json()
-    } catch (err) { return null }
+    return await new FetchHandler(API_ANNOUNCEMENTS).authorize().post(announcement).json()
     
 }
 async function putAnnouncement(announcement)  {
-    try {
-        const res = await fetch(`${API_ANNOUNCEMENTS}/${announcement.id}`, {
-            method: 'PUT',
-            headers: getAuthorizedToken(),
-            body: JSON.stringify(announcement)
-        })
-        return res.ok ? res.json() : null
-    } catch (err) { return null } 
-    finally { router.push("/admin/announcement/") }
+    const put = await new FetchHandler(`${API_ANNOUNCEMENTS}/${announcement.id}`).authorize().put(announcement).json()
+    await router.push("/admin/announcement/")
+    return put
 }
 
 async function putUser(user)  {
-    try {
-
-        const res = await fetch(`${API_USERS}/${user.id}`, {
-            method: 'PUT',
-            headers: getAuthorizedToken(),
-            body: JSON.stringify(user)
-        })
-        return res.json()
-    } catch (err) { return null }
+    return await new FetchHandler(`${API_USERS}/${user.id}`).authorize().put(user).json()
 }
 
 async function deleteAnnouncement(id) {
-    try {
-        const res = await fetch(`${API_ANNOUNCEMENTS}/${id}`, {method: 'DELETE', headers: getAuthorizedToken(),} )
-        return res.ok ? res.json() : null
-    } catch (err) { return null }
+    return new FetchHandler(`${API_ANNOUNCEMENTS}/${id}`).authorize().delete().json()
 }
 async function deleteUser(id) {
-    try {
-        const res = await fetch(`${API_USERS}/${id}`, {method: 'DELETE', headers: getAuthorizedToken(), } )
-        return res.ok ? res.json() : null
-    } catch (err) { return null }
+    return new FetchHandler(`${API_USERS}/${id}`).authorize().delete().json()
 }
  async function matchPassword(user)  {
-    try {
-        const res = await fetch(`${API_USERS}/match`, {
-            method: 'POST',
-            headers: getAuthorizedToken(),
-            body: JSON.stringify(user)
-        })
-        return res.status
-    } catch (error) { return null }
+    const response  = await new FetchHandler(`${API_USERS}/match`).authorize().post(user).response()
+    return response?.status
 }
 
 const createNewToken = async (data) => {
-    try {
-        const res = await fetch(`${API_TOKEN}`, {
-            method: "POST",
-            headers: { 'Content-type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        const tokenDetail = await res.json()
-        if (res.ok) {
-            setAccessToken(tokenDetail.token)
-            setRefreshToken(tokenDetail.refreshToken)
-            return res.status
-        }
-        else return res?.status ?? null
-    } catch (error) { return null }
-  }
+    const response = await new FetchHandler(API_TOKEN)
+        .header("Content-Type","application/json")
+        .post(data).response()
+    const details = await response.json()
+    if (response.ok) {
+        setAccessToken(details.token)
+        setRefreshToken(details.refreshToken)
+        return response.status
+    }
+    return response?.status
+}
   
 
 
 
-export { createNewToken,getAnnouncement,matchPassword,getAnnouncementById,putAnnouncement,createAnnouncement,deleteAnnouncement,isLoaded, 
-    getUserAnnouncement,getUser,createUser,deleteUser,getUserById,putUser, isAuthenticated }
+export { createNewToken,getAnnouncement,matchPassword,getAnnouncementById,putAnnouncement,createAnnouncement,deleteAnnouncement,isLoaded,
+    getUser,createUser,deleteUser,getUserById,putUser }

@@ -27,10 +27,6 @@ const computedDate = (date) => computed(() => (humanizeDate(date ? date : new Da
                 />
                 <Dropdown label="Category" :options="CATEGORY_ENUM" :isFull="true" field="categoryId"
                         :select="announcement.categoryId" @update="(input) => announcement.categoryId = CATEGORY_ENUM[input]"/>
-                <!-- <label class="label">Description</label>
-                <QuillEditor theme="snow" toolbar="full"
-                    v-model:content="announcement.description" class=" bg-white ann-description" contentType="html"
-                    @text-change="changeText" ref="quilEditor" /> -->
                 <QuilForm label="Description"  field="description"
                         :model-value="announcement.description" 
                 />

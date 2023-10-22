@@ -41,8 +41,8 @@ const onClickDetails = (id) => router.push({ name: 'UserDetails', params: { id: 
     <svg-icon type="mdi" :size="64" :path="mdiBullhornVariant"/>
     <Header>SIT Announcement System (SAS)</Header>
   </div>
-  <div class="flex flex-col w-screen h-screen items-center bg-base-200" v-if="loaded">
-    <div class="w-full p-12 space-y-4">
+  <div class="flex flex-col w-screen h-screen items-center bg-base-100" v-if="loaded">
+    <div class="w-full max-w-[96rem] p-12 space-y-4">
       <div class="flex items-center">
         <p class="text-lg pr-2">Category</p>
         <select v-model="user.category" class="border border-gray-300 h-10 px-2 rounded-md ann-category-filter"

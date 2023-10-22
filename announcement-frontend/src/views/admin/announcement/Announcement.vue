@@ -1,6 +1,6 @@
 <script setup>
 import { onBeforeMount, ref } from 'vue';
-import { getUserAnnouncement,deleteAnnouncement } from '@/assets/data/dataHandler.js';
+import { getAdminAnnouncement,deleteAnnouncement } from '@/assets/data/dataHandler.js';
 import Table from "@/assets/components/table/Table.vue"
 import Button from '@/assets/components/form/Button.vue';
 import Header from "@/assets/components/text/Header.vue"
@@ -20,7 +20,7 @@ const announcement = ref([])
 const sections = ref(["Id", "Title", "Publish Date", "Close Date", "Display", "Category", "Owner", "Action"])
 
 const fetch = async () => {
-  announcement.value = await getUserAnnouncement(modes.ADMIN, announces.getPage() -1, 0)
+  announcement.value = await getAdminAnnouncement(modes.ADMIN, announces.getPage() -1, 0)
   loaded.value = true
   if (!isAdmin()) sections.value = sections.value.filter((section) => section !== "Owner")
 }
@@ -43,7 +43,7 @@ const announcementEditRoute = (id) => `/admin/announcement/${id}/details`
       <Header>Announcement Table</Header>
       <Timezone />
     </div>
-    <Table :createPath="'/admin/announcement/add'"  :head="sections" :body="announcement.content" emptyText="No Announcement">
+    <Table :createPath="'/admin/announcement/add'"  :head="sections" :body="announcement?.content" emptyText="No Announcement">
       <template #column="{ items,index }">
         <td>{{ index+1 }}</td>
         <td>{{ items.announcementTitle }}</td>

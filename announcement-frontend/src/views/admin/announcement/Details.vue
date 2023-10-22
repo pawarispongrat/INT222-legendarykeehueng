@@ -12,7 +12,7 @@ const loaded = ref(false)
 onBeforeMount(async () => {
   const route = useRoute()
   announcement.value = await getAnnouncementById(route.params.id)
-  if (isLoaded(announcement.value)) loaded.value = true
+  if (await isLoaded(announcement.value,'/admin/announcement/')) loaded.value = true
 })
 const computedDisplayColor = computed(() => announcement.value.announcementDisplay === displays.Y ? 'bg-success text-success' : 'bg-error text-error')
 
@@ -20,9 +20,9 @@ const computedDisplayColor = computed(() => announcement.value.announcementDispl
 <template>
   <loading :active="!loaded" :can-cancel="false" :is-full-page="false"/>
   <div v-if="loaded" class="ann-item flex flex-col justify-center items-center">
-    <Header class="py-8">Announcement Detail</Header>
+    <Header class="py-8">Announcement Details</Header>
 
-    <div class="max-w-lg overflow-hidden bg-base-100 shadow-lg">
+    <div class="w-full max-w-2xl overflow-hidden bg-base-100 rounded-md">
       <div class="flex justify-between items-center font-bold text-xl text-gray-100 py-3 px-4 mb-4 bg-[#C1A696] ann-title">
         <p>{{ announcement.announcementTitle }}</p>
         
@@ -47,8 +47,8 @@ const computedDisplayColor = computed(() => announcement.value.announcementDispl
           {{ announcement.announcementCategory }}
         </span>
         <router-link
-          class="inline-block btn-outline btn-error float-right px-3 py-[0.45rem] text-sm border rounded-lg ann-button"
-          to="/admin/announcement">Back</router-link>
+            class="inline-block btn-outline btn-error float-right px-6 py-2 text-sm border rounded-md ann-button"
+            to="/admin/announcement">Back</router-link>
 
       </div>
     </div>

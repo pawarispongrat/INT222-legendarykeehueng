@@ -4,7 +4,7 @@ import PageNotFound from "@/views/PageNotFound.vue"
 import UserAnnouncement from "@/views/user/Announcement.vue"
 
 import User from '@/views/admin/user/User.vue'
-import UserDetails from "@/views/admin/user/Details.vue"
+import UserDetails from "@/views/user/AnnouncementDetails.vue"
 import MatchPassword from "@/views/admin/MatchPassword.vue"
 import AddUser from "@/views/admin/user/Add.vue"
 import EditUser from "@/views/admin/user/Edit.vue"
@@ -15,18 +15,28 @@ import AnnouncementDetails from '@/views/admin/announcement/Details.vue'
 import EditAnnouncement from '@/views/admin/announcement/Edit.vue'
 
 import Login from "@/views/Login.vue"
-import { isAuthenticated } from "@/assets/data/dataHandler";
-import { isEditor,isAdmin } from "@/assets/data/tokenStorage";
+import {isEditor, isAdmin, isTokenExpired, getRefreshToken} from "@/assets/data/tokenStorage";
+import {revokeToken} from "@/assets/data/dataHandler";
 
 const ROLES = ["admin","announcer"]
+
+const isAuthenticated = async () => {
+    if (isTokenExpired()) {
+        const refreshToken = getRefreshToken()
+        const status = await revokeToken(refreshToken)
+        return status && status !== 401 && status !== 403
+    }
+    return true
+}
 const guardRoutes = async (to,from,next) => {
-    await isAuthenticated()
-    
-    if (isEditor()) next()
+    // await isAuthenticated()
+    const authenticated = await isAuthenticated()
+    if (authenticated && isEditor()) next()
     else next("/login")
 }
 const guardAdmin = async (to,from,next) => {
-    if (isAdmin()) next()
+    const authenticated = await isAuthenticated()
+    if (authenticated && isAdmin()) next()
     else next("/admin/announcement")
 }
 const router = createRouter({
@@ -67,6 +77,7 @@ const router = createRouter({
                 { path: '/admin/user/match',name: 'MatchPassword',component: MatchPassword, beforeEnter: guardAdmin }
             ],
             beforeEnter: guardRoutes
+
         },
         {
             path: '/:notfoundpath(.*)',
@@ -78,4 +89,5 @@ const router = createRouter({
         linkActiveClass: "active", // active class for non-exact links.
         linkExactActiveClass: "active" // active class for *exact* links.
 })
+
 export default router

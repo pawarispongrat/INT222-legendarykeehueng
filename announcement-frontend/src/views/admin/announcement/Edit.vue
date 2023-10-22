@@ -10,7 +10,7 @@ const announcement = ref('')
 onBeforeMount(async () => {
     const route = useRoute()
     announcement.value = await getAnnouncementById(route.params.id)
-    if (isLoaded(announcement.value)) {
+    if (await isLoaded(announcement.value)) {
         announcement.value = new Announcement().fromJSON(announcement.value)
     }
 })

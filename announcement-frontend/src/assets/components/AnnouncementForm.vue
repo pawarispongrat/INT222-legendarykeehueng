@@ -76,8 +76,8 @@ const changeText = (e) => validateDesc.value = quilEditor.value.getQuill().getTe
     </div>
     <div class="space-y-2">
       <p>Category</p>
-      <select v-model="announcement.categoryId" class="select select-bordered w-full ann-category">
-        <option v-for="(category, index) of categories" :value="index + 1">
+      <select v-model="announcement.category" class="select select-bordered w-full ann-category">
+        <option v-for="category of categories" :value="category">
           {{ category }}
         </option>
       </select>
