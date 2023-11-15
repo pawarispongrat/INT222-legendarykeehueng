@@ -1,4 +1,4 @@
-package sit.int221.announcement.services;
+package sit.int221.announcement.services.authentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,7 +18,6 @@ import sit.int221.announcement.utils.enums.TokenType;
 import sit.int221.announcement.utils.security.JwtTokenUtil;
 
 import java.util.Collection;
-import java.util.List;
 
 @Service
 public class AuthenticationService {

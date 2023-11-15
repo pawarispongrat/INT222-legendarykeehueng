@@ -35,13 +35,13 @@ public class Announcement {
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "announcementOwner")
+    @JoinColumn(name = "announcementOwner", referencedColumnName = "username")
     @JsonIgnore
     private User announcementOwner;
 
     public Integer getCategoryId() { return category.getCategoryId(); }
 
-    public Integer getOwnerId() { return announcementOwner.getId(); }
+    public String getOwnerUsername() { return announcementOwner.getUsername(); }
 
     public String getAnnouncementCategory() {
         return category.getCategoryName();

@@ -1,4 +1,4 @@
-package sit.int221.announcement.services;
+package sit.int221.announcement.services.authentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;

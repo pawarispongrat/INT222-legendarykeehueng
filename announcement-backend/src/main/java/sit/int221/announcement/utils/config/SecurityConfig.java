@@ -18,13 +18,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import sit.int221.announcement.utils.components.UserComponent;
 import sit.int221.announcement.utils.enums.Role;
 import sit.int221.announcement.utils.security.Argon;
 import sit.int221.announcement.utils.security.entrypoint.JwtAccessDeniedEntryPoint;
 import sit.int221.announcement.utils.security.entrypoint.JwtAuthenticationEntryPoint;
 import sit.int221.announcement.utils.security.JwtRequestFilter;
-import sit.int221.announcement.services.JwtUserDetailsService;
+import sit.int221.announcement.services.authentication.JwtUserDetailsService;
 
 import java.util.Arrays;
 
@@ -57,6 +56,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/api/subscription/**").permitAll()
+                        .requestMatchers("/api/files/**").permitAll()
                         .requestMatchers("/api/token").permitAll()
                         .requestMatchers(GET,"/api/announcements/**").permitAll()
                         .requestMatchers(matchers("/api/announcements/**",POST,PUT,DELETE)).hasAnyAuthority(Role.admin.toString(),Role.announcer.toString())

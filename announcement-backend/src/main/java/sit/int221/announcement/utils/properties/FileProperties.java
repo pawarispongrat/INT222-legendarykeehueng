@@ -1,4 +1,4 @@
-package sit.int221.announcement.utils.security;
+package sit.int221.announcement.utils.properties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,10 +7,9 @@ import sit.int221.announcement.utils.enums.TokenType;
 
 import java.util.Map;
 
-@ConfigurationProperties(prefix = "jwt")
+@ConfigurationProperties(prefix = "file")
 @Getter @Setter
-public class JwtProperties {
+public class FileProperties {
 
-    private String secretKey;
-    private Map<TokenType, Integer> intervalInMinutes;
+    private String uploadDir;
 }

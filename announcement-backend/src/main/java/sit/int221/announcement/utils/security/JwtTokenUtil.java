@@ -2,13 +2,12 @@ package sit.int221.announcement.utils.security;
 
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import sit.int221.announcement.utils.Utils;
 import sit.int221.announcement.utils.enums.Role;
 import sit.int221.announcement.utils.enums.TokenType;
+import sit.int221.announcement.utils.properties.JwtProperties;
 
 
 import java.time.Instant;

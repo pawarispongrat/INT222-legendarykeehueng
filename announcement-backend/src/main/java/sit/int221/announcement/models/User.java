@@ -16,7 +16,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer userId;
     private String username;
     @Getter
     private String name;
@@ -34,7 +34,6 @@ public class User {
 
     @Column(insertable = false,updatable = false)
     private ZonedDateTime updatedOn;
-
 
     public void trim() {
         this.name = name.trim();

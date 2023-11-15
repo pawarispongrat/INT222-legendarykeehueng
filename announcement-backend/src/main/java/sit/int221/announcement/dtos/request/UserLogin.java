@@ -1,11 +1,13 @@
 package sit.int221.announcement.dtos.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
+@JsonIgnoreProperties
 public class UserLogin {
 
     @NotBlank
@@ -16,7 +18,4 @@ public class UserLogin {
     @Size(min = 8,max = 14)
     private String password;
 
-    public void setPassword(String password) { this.password = password != null ? password.trim() : null; }
-
-    public void setUsername(String username) { this.username = username != null ? username.trim() : null; }
 }

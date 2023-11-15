@@ -1,8 +1,6 @@
 package sit.int221.announcement.services;
 
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -23,7 +21,6 @@ import sit.int221.announcement.utils.enums.Role;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,6 +48,10 @@ public class AnnouncementService {
         List<? extends AnnouncementGuestResponse> responses = listMapper.mapList(announcement, response, mapper);
         Collections.reverse(responses);
         return responses;
+    }
+
+    public void hasAnnouncement(Integer id) {
+        repository.findById(id).orElseThrow(() -> new ItemNotFoundException("announcementId"));
     }
 
     private Announcement getAnnouncementById(Integer id) {

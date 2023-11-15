@@ -3,12 +3,13 @@ package sit.int221.announcement;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import sit.int221.announcement.utils.security.JwtProperties;
+import sit.int221.announcement.utils.properties.EmailProperties;
+import sit.int221.announcement.utils.properties.FileProperties;
+import sit.int221.announcement.utils.properties.JwtProperties;
 
 
 @SpringBootApplication
-@EnableConfigurationProperties({ JwtProperties.class })
+@EnableConfigurationProperties({ JwtProperties.class, FileProperties.class, EmailProperties.class })
 public class AnnouncementApplication {
 
     public static void main(String[] args) {

@@ -15,6 +15,7 @@ public class CategoryNotFoundImpl implements ConstraintValidator<CategoryNotFoun
 
     @Override
     public boolean isValid(Integer id, ConstraintValidatorContext context) {
+
         if (id == null) return true;
         return service.hasCategory(id);
     }

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import sit.int221.announcement.exceptions.validator.EnumValidator;
+import sit.int221.announcement.exceptions.validator.IsEmail;
 import sit.int221.announcement.exceptions.validator.UniqueKey;
 import sit.int221.announcement.models.User;
 import sit.int221.announcement.utils.enums.Role;
@@ -24,9 +25,7 @@ public class UserEdit {
     @Size(min = 1,max = 100)
     private String name;
 
-    @NotBlank
-    @Size(min = 1,max = 150)
-    @Email(regexp = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9._-]+",message = "Email should be valid")
+    @IsEmail
     private String email;
 
     @EnumValidator(enumClass = Role.class,message = "must be either Role enum")

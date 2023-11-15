@@ -43,5 +43,4 @@ public interface AnnouncementRepository extends JpaRepository<Announcement,Integ
                                  Pageable pageable);
 
 
-    Optional<List<Announcement>> findByAnnouncementOwner(Integer announcementOwner);
 }
