@@ -1,4 +1,4 @@
-package sit.int221.announcement.utils.enums;
+package sit.int221.announcement.enumeration;
 
 public enum Modes {
     active,close,admin;

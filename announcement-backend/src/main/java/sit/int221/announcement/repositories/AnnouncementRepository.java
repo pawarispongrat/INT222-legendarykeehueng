@@ -7,11 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import sit.int221.announcement.models.Announcement;
 import sit.int221.announcement.models.User;
-import sit.int221.announcement.utils.enums.Display;
+import sit.int221.announcement.enumeration.Display;
 
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Optional;
 
 public interface AnnouncementRepository extends JpaRepository<Announcement,Integer> {
 

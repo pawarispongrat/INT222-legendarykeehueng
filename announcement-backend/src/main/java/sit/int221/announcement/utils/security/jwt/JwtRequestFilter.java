@@ -1,4 +1,4 @@
-package sit.int221.announcement.utils.security;
+package sit.int221.announcement.utils.security.jwt;
 
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -18,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import io.jsonwebtoken.ExpiredJwtException;
 import sit.int221.announcement.exceptions.list.AuthorizedException;
 import sit.int221.announcement.services.authentication.JwtUserDetailsService;
-import sit.int221.announcement.utils.enums.TokenType;
+import sit.int221.announcement.enumeration.TokenType;
 import sit.int221.announcement.utils.security.entrypoint.JwtAuthenticationEntryPoint;
 
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             String username;
             try {
                 type = util.getTokenType(token);
-                username = type == TokenType.ACCESS_TOKEN ? util.getUsernameFromToken(token) : null;
+                username = type == TokenType.ACCESS_TOKEN ? util.getSubjectFromToken(token) : null;
             }
             catch (MalformedJwtException | SignatureException e) { throw new AuthorizedException("Token","Invalid form token"); }
             catch (IllegalArgumentException e) { throw new AuthorizedException(type.toString(),"Unable to get JWT Token"); }

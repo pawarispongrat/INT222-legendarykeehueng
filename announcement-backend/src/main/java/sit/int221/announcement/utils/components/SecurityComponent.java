@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import sit.int221.announcement.models.Announcement;
 import sit.int221.announcement.models.User;
 import sit.int221.announcement.services.UserService;
-import sit.int221.announcement.utils.enums.Role;
+import sit.int221.announcement.enumeration.Role;
 
 import java.util.Collection;
 import java.util.List;

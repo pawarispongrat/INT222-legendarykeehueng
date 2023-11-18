@@ -6,7 +6,9 @@ import lombok.Setter;
 import sit.int221.announcement.exceptions.validator.CategoryNotFound;
 import sit.int221.announcement.exceptions.validator.CloseAfterPublish;
 import sit.int221.announcement.exceptions.validator.EnumValidator;
-import sit.int221.announcement.utils.enums.Display;
+import sit.int221.announcement.enumeration.Display;
+import sit.int221.announcement.exceptions.validator.UniqueKey;
+import sit.int221.announcement.models.User;
 
 import java.time.ZonedDateTime;
 @Getter @Setter

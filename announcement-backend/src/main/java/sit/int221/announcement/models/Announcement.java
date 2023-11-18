@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import sit.int221.announcement.utils.enums.Display;
+import sit.int221.announcement.enumeration.Display;
 
 import java.time.ZonedDateTime;
 
@@ -46,6 +46,7 @@ public class Announcement {
     public String getAnnouncementCategory() {
         return category.getCategoryName();
     }
+
 
     @Override
     public String toString() {

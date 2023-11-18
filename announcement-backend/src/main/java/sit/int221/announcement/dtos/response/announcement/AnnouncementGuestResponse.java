@@ -1,9 +1,8 @@
 package sit.int221.announcement.dtos.response.announcement;
 
-import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
-import sit.int221.announcement.utils.enums.Display;
+import sit.int221.announcement.enumeration.Display;
 
 import java.time.ZonedDateTime;
 @Getter @Setter

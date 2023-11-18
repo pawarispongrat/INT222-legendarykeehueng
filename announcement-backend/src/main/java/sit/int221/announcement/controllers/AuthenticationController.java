@@ -6,7 +6,7 @@ import sit.int221.announcement.dtos.request.UserLogin;
 import sit.int221.announcement.dtos.response.RefreshTokenResponse;
 import sit.int221.announcement.dtos.response.TokenResponse;
 import sit.int221.announcement.services.authentication.AuthenticationService;
-import sit.int221.announcement.utils.security.JwtUtil;
+import sit.int221.announcement.utils.security.jwt.JwtUtil;
 
 @RestController
 @RequestMapping("/api/token")

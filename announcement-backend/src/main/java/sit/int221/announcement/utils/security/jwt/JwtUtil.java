@@ -1,4 +1,4 @@
-package sit.int221.announcement.utils.security;
+package sit.int221.announcement.utils.security.jwt;
 
 import sit.int221.announcement.exceptions.list.AuthorizedException;
 

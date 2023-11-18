@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 
 public class UniqueKeyImpl implements ConstraintValidator<UniqueKey, Object> {
@@ -31,11 +32,14 @@ public class UniqueKeyImpl implements ConstraintValidator<UniqueKey, Object> {
     private String[] fields;
     private String primaryKey;
 
+    private boolean isComposite;
+
     @Override
     public void initialize(UniqueKey annotation) {
         this.entityClass = annotation.model();
         this.fields =  annotation.fields();
-        this.primaryKey = "id";
+        this.isComposite = annotation.composite();
+        this.primaryKey = "id"; //KEY FROM PARAMETERS AND ID KEY
     }
 
     @Override
@@ -49,8 +53,8 @@ public class UniqueKeyImpl implements ConstraintValidator<UniqueKey, Object> {
             booleans[i] = isUnique(builder,target,field,id);
             if (!booleans[i]) new NodeBuilder(context).buildPropertyNode(field);
         }
-
-        return Arrays.stream(booleans).allMatch(Boolean::valueOf);
+        Stream<Boolean> stream = Arrays.stream(booleans);
+        return isComposite ? stream.anyMatch(Boolean::valueOf) : stream.allMatch(Boolean::valueOf);
     }
 
     private boolean isUnique(CriteriaBuilder builder,Object target,String field,Object id) {

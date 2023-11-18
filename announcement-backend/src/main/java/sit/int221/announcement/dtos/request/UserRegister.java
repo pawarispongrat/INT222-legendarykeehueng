@@ -8,7 +8,7 @@ import sit.int221.announcement.exceptions.validator.IsEmail;
 import sit.int221.announcement.exceptions.validator.IsPassword;
 import sit.int221.announcement.exceptions.validator.UniqueKey;
 import sit.int221.announcement.models.User;
-import sit.int221.announcement.utils.enums.Role;
+import sit.int221.announcement.enumeration.Role;
 
 @Getter @Setter
 @UniqueKey(model = User.class, fields = {"username","name","email"})

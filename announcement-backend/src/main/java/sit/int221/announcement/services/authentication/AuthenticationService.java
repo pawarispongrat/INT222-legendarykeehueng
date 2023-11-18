@@ -14,8 +14,8 @@ import sit.int221.announcement.dtos.response.TokenResponse;
 import sit.int221.announcement.exceptions.list.AuthorizedException;
 import sit.int221.announcement.exceptions.list.ItemNotFoundException;
 import sit.int221.announcement.exceptions.list.UserException;
-import sit.int221.announcement.utils.enums.TokenType;
-import sit.int221.announcement.utils.security.JwtTokenUtil;
+import sit.int221.announcement.enumeration.TokenType;
+import sit.int221.announcement.utils.security.jwt.JwtTokenUtil;
 
 import java.util.Collection;
 
@@ -44,7 +44,7 @@ public class AuthenticationService {
         if (jwt.isTokenExpired(refreshToken)) throw new AuthorizedException(TokenType.REFRESH_TOKEN.toString(),"Expired Token");
         TokenType type = jwt.getTokenType(refreshToken);
         if (type == TokenType.ACCESS_TOKEN) throw new AuthorizedException(TokenType.REFRESH_TOKEN.toString(),"Token is invalid");
-        String username = jwt.getUsernameFromToken(refreshToken);
+        String username = jwt.getSubjectFromToken(refreshToken);
         UserDetails details = service.loadUserByUsername(username);
         String token = jwt.generateToken(username, TokenType.ACCESS_TOKEN, getAuthorities(details));
         return new RefreshTokenResponse(token);

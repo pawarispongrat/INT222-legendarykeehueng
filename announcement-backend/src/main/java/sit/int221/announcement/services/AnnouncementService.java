@@ -8,16 +8,17 @@ import sit.int221.announcement.dtos.response.announcement.AnnouncementAdminRespo
 import sit.int221.announcement.dtos.response.announcement.AnnouncementGuestResponse;
 import sit.int221.announcement.dtos.request.AnnouncementRequest;
 import sit.int221.announcement.dtos.PageDTO;
+import sit.int221.announcement.enumeration.SubscribeNotify;
 import sit.int221.announcement.exceptions.list.ItemNotFoundException;
 import sit.int221.announcement.models.Announcement;
 import sit.int221.announcement.models.Category;
 import sit.int221.announcement.models.User;
 import sit.int221.announcement.repositories.AnnouncementRepository;
 import sit.int221.announcement.utils.components.UserComponent;
-import sit.int221.announcement.utils.enums.Display;
+import sit.int221.announcement.enumeration.Display;
 import sit.int221.announcement.utils.ListMapper;
-import sit.int221.announcement.utils.enums.Modes;
-import sit.int221.announcement.utils.enums.Role;
+import sit.int221.announcement.enumeration.Modes;
+import sit.int221.announcement.enumeration.Role;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ public class AnnouncementService {
     private ModelMapper mapper;
     @Autowired
     private ListMapper listMapper;
+    @Autowired
+    private SubscriptionService subscription;
 
     public List<? extends AnnouncementGuestResponse> getAnnouncement(Modes mode) {
         Pageable pageable = Pageable.unpaged();
@@ -73,7 +76,9 @@ public class AnnouncementService {
         announcement.setId(null);
         announcement.setAnnouncementOwner(owner);
         announcement.setCategory(category);
+
         Announcement saved = repository.saveAndFlush(announcement);
+        subscription.sendSubscribeMail(SubscribeNotify.ADD, category);
         return mapper.map(saved,AnnouncementAdminResponse.class);
     }
 
@@ -89,6 +94,7 @@ public class AnnouncementService {
         announcement.setCategory(category);
 
         Announcement saved = repository.saveAndFlush(announcement);
+        subscription.sendSubscribeMail(SubscribeNotify.UPDATE, category);
         return mapper.map(saved,AnnouncementAdminResponse.class);
     }
 

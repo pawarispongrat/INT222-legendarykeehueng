@@ -1,6 +1,5 @@
 package sit.int221.announcement.exceptions;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -8,19 +7,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.multipart.MultipartException;
 import sit.int221.announcement.exceptions.list.*;
 import sit.int221.announcement.exceptions.list.files.FileInvalidException;
 import sit.int221.announcement.exceptions.list.files.FileNotFoundException;
 import sit.int221.announcement.utils.Utils;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -73,6 +67,14 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse(BAD_REQUEST.value(), getSimpleName(e), Utils.getUri(request));
         response.addValidationError(e.getField(), e.getCause().getMessage());
         return ResponseEntity.status(BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(MailSentException.class)
+    @ResponseStatus(BAD_GATEWAY)
+    public ResponseEntity<ErrorResponse> handleEmailSent(MailSentException e, WebRequest request) {
+        ErrorResponse response = new ErrorResponse(BAD_GATEWAY.value(), getSimpleName(e), Utils.getUri(request));
+        response.addValidationError(e.getField(), e.getCause().getMessage());
+        return ResponseEntity.status(BAD_GATEWAY).body(response);
     }
 
     private String getSimpleName(Object object) { return object.getClass().getSimpleName(); }

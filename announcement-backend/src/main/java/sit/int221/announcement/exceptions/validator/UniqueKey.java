@@ -16,6 +16,9 @@ public @interface UniqueKey {
     Class<?> model();
 
     String[] fields();
+
+    boolean composite() default false;
+
     String message() default "does not unique";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

@@ -11,8 +11,6 @@ import sit.int221.announcement.exceptions.list.ForbiddenException;
 import sit.int221.announcement.services.AnnouncementService;
 import sit.int221.announcement.services.UserService;
 import sit.int221.announcement.utils.components.UserComponent;
-import sit.int221.announcement.utils.security.JwtTokenUtil;
-import sit.int221.announcement.utils.security.JwtUtil;
 
 import java.util.List;
 

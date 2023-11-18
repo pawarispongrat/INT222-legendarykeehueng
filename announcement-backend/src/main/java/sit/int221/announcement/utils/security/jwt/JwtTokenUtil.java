@@ -1,13 +1,14 @@
-package sit.int221.announcement.utils.security;
+package sit.int221.announcement.utils.security.jwt;
 
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import sit.int221.announcement.utils.Utils;
-import sit.int221.announcement.utils.enums.Role;
-import sit.int221.announcement.utils.enums.TokenType;
+import sit.int221.announcement.enumeration.Role;
+import sit.int221.announcement.enumeration.TokenType;
 import sit.int221.announcement.utils.properties.JwtProperties;
+import sit.int221.announcement.utils.security.ClaimsMap;
 
 
 import java.time.Instant;
@@ -21,7 +22,7 @@ public class JwtTokenUtil {
     @Autowired
     private JwtProperties properties;
 
-    public String getUsernameFromToken(String token) {
+    public String getSubjectFromToken(String token) {
         if (token == null) return null;
         return getClaimFromToken(token, Claims::getSubject);
     }
@@ -62,7 +63,7 @@ public class JwtTokenUtil {
     }
 
     public Boolean validateToken(String token, UserDetails details) {
-        String usernameFromToken = getUsernameFromToken(token);
+        String usernameFromToken = getSubjectFromToken(token);
         return usernameFromToken.equals(details.getUsername()) && !isTokenExpired(token);
     }
     public String generateToken(String subject, TokenType type, String... authorities) {
@@ -77,7 +78,15 @@ public class JwtTokenUtil {
         return generateToken(claims,subject,interval);
     }
 
+    public String generateTokenWithClaims(String subject, TokenType type, ClaimsMap... maps) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("typ",type);
+        for (ClaimsMap claim : maps) {
+            claims.put(claim.getKey(),claim.getValue());
+        }
 
+        return generateToken(claims,subject, getExpiredFromType(type));
+    }
 
     private String generateToken(Map<String, Object> claims,String subject, int minutes) {
         Instant issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS);
@@ -93,6 +102,18 @@ public class JwtTokenUtil {
     public boolean isTokenExpired(String token) {
         try { return getExpirationFromToken(token).before(new Date()); }
         catch (ExpiredJwtException e) { return true; }
+    }
+
+    public List<ClaimsMap> getListClaimsMap(String token) {
+        List<ClaimsMap> maps = new ArrayList<>();
+        Claims claims = getClaimsFromToken(token);
+        claims.forEach((key, value) -> maps.add(new ClaimsMap(key, value)));
+        return maps;
+    }
+
+    public Integer getExpiredFromType(TokenType type) {
+        Integer interval = properties.getIntervalInMinutes().get(type);
+        return interval != null ? interval : 1;
     }
 
     private Claims getClaimsFromToken(String token) {

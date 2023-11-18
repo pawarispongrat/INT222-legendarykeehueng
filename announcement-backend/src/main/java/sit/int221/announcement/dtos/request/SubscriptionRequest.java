@@ -8,10 +8,13 @@ import lombok.Setter;
 import org.springframework.format.annotation.NumberFormat;
 import sit.int221.announcement.exceptions.validator.CategoryNotFound;
 import sit.int221.announcement.exceptions.validator.IsEmail;
+import sit.int221.announcement.exceptions.validator.UniqueKey;
 import sit.int221.announcement.models.Category;
+import sit.int221.announcement.models.Subscription;
 import sit.int221.announcement.models.User;
 
 @Getter @Setter
+@UniqueKey(model = Subscription.class, fields = {"subscriberEmail","categoryId"}, composite = true)
 public class SubscriptionRequest {
 
     @IsEmail

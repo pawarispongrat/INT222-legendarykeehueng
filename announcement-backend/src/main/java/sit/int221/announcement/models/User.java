@@ -3,8 +3,7 @@ package sit.int221.announcement.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import sit.int221.announcement.utils.enums.Role;
-import sit.int221.announcement.utils.security.Argon;
+import sit.int221.announcement.enumeration.Role;
 
 import java.time.ZonedDateTime;
 import java.util.List;
