@@ -9,6 +9,7 @@ import sit.int221.announcement.enumeration.TokenType;
 import sit.int221.announcement.utils.security.jwt.JwtTokenUtil;
 
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -30,21 +31,26 @@ public class OtpUtil {
     }
 
     private final static String OTP_CLAIM = "otp";
-    public String generateHOTP(String email) {
+    private final static String CATEGORY_IDS_CLAIM = "categoryIds";
+    public String generateHOTP(String email, List<Integer> categoryIds) {
         String otp = generateOtp();
-        ClaimsMap map = new ClaimsMap(OTP_CLAIM,otp);
+        ClaimsMap[] map = new ClaimsMap[] {
+                new ClaimsMap(OTP_CLAIM,otp),
+                new ClaimsMap(CATEGORY_IDS_CLAIM,categoryIds)
+        };
         String hashOtp = util.generateTokenWithClaims(email, TokenType.OTP_TOKEN, map);
         this.cache.put(email,hashOtp);
         return otp;
     }
-    public boolean validateOtp(String validateEmail, String validateOtp) {
+    public List<Integer> getCategoryIdsByOtp(String validateEmail, String validateOtp) {
         String hashOtp = cache.asMap().get(validateEmail);
-        if (hashOtp == null) return false;
+        if (hashOtp == null) return null;
         String storedEmail = util.getSubjectFromToken(hashOtp);
         String storedOtp = util.getClaimFromToken(hashOtp,claims -> claims.get(OTP_CLAIM).toString());
+        List<Integer> storedCategoryIds = util.getClaimFromToken(hashOtp, claims -> (List<Integer>) claims.get(CATEGORY_IDS_CLAIM,List.class));
         boolean isValid = validateEmail.equals(storedEmail) && validateOtp.equals(storedOtp) && !util.isTokenExpired(hashOtp);
         if (isValid) removeOtp(validateEmail);
-        return isValid;
+        return isValid ? storedCategoryIds : null;
     }
 
     private String generateOtp() {

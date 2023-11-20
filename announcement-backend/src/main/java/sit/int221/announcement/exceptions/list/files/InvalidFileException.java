@@ -7,9 +7,9 @@ import sit.int221.announcement.exceptions.list.FieldException;
 
 @Getter
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class FileInvalidException extends FieldException {
+public class InvalidFileException extends FieldException {
 
-    public FileInvalidException(String message) {
+    public InvalidFileException(String message) {
         super("file",message);
     }
 }

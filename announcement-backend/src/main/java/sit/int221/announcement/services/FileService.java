@@ -7,7 +7,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import sit.int221.announcement.exceptions.list.files.FileInvalidException;
+import sit.int221.announcement.exceptions.list.files.InvalidFileException;
 import sit.int221.announcement.exceptions.list.files.FileNotFoundException;
 import sit.int221.announcement.utils.properties.FileProperties;
 
@@ -36,10 +36,10 @@ public class FileService {
 
     public String store(MultipartFile file,Integer folderId) throws IOException {
         String originalName = file.getOriginalFilename();
-        if (originalName == null) throw new FileInvalidException("Original file name cannot be null");
+        if (originalName == null) throw new InvalidFileException("Original file name cannot be null");
         String fileName = StringUtils.cleanPath(originalName);
 
-        if (fileName.contains("..")) throw new FileInvalidException("File name invalid " + fileName);
+        if (fileName.contains("..")) throw new InvalidFileException("File name invalid " + fileName);
         Path target = getTargetPath(fileName,folderId);
         Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
         return fileName;
@@ -59,11 +59,13 @@ public class FileService {
         else throw new FileNotFoundException("File not found.");
     }
 
-    public long getFileCount(Integer folderId) throws IOException {
-        Path location = getUploadPath(folderId);
-        try (Stream<Path> paths = Files.list(location)) {
-            return paths.filter(path -> path.toFile().isFile()).count();
-        }
+    public long getFileCount(Integer folderId) {
+        try {
+            Path location = getUploadPath(folderId);
+            try (Stream<Path> paths = Files.list(location)) {
+                return paths.filter(path -> path.toFile().isFile()).count();
+            }
+        } catch (IOException e) { return 0; }
     }
 
     private Path getTargetPath(String filename, Integer folderId) throws IOException {

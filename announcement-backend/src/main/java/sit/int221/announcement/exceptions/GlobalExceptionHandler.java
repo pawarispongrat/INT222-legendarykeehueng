@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import sit.int221.announcement.exceptions.list.*;
-import sit.int221.announcement.exceptions.list.files.FileInvalidException;
+import sit.int221.announcement.exceptions.list.files.InvalidFileException;
 import sit.int221.announcement.exceptions.list.files.FileNotFoundException;
 import sit.int221.announcement.utils.Utils;
 
@@ -61,9 +61,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(BAD_REQUEST).body(response);
     }
 
-    @ExceptionHandler(FileInvalidException.class)
+    @ExceptionHandler({ InvalidFileException.class, InvalidOtpException.class })
     @ResponseStatus(BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handleFileInvalid(FileInvalidException e, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleFileInvalid(FieldException e, WebRequest request) {
         ErrorResponse response = new ErrorResponse(BAD_REQUEST.value(), getSimpleName(e), Utils.getUri(request));
         response.addValidationError(e.getField(), e.getCause().getMessage());
         return ResponseEntity.status(BAD_REQUEST).body(response);

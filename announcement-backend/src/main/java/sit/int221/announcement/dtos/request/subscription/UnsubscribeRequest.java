@@ -1,4 +1,4 @@
-package sit.int221.announcement.dtos.request;
+package sit.int221.announcement.dtos.request.subscription;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

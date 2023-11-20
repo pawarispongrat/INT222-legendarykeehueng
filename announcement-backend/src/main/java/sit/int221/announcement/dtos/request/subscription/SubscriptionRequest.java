@@ -1,4 +1,4 @@
-package sit.int221.announcement.dtos.request;
+package sit.int221.announcement.dtos.request.subscription;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,8 +13,9 @@ import sit.int221.announcement.models.Category;
 import sit.int221.announcement.models.Subscription;
 import sit.int221.announcement.models.User;
 
+import java.util.List;
+
 @Getter @Setter
-@UniqueKey(model = Subscription.class, fields = {"subscriberEmail","categoryId"}, composite = true)
 public class SubscriptionRequest {
 
     @IsEmail
@@ -22,6 +23,6 @@ public class SubscriptionRequest {
 
     @NotNull
     @CategoryNotFound
-    private Integer categoryId;
+    private List<Integer> categoryId;
 
 }

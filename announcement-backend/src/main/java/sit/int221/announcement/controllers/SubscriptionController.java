@@ -3,8 +3,9 @@ package sit.int221.announcement.controllers;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import sit.int221.announcement.dtos.request.SubscriptionRequest;
-import sit.int221.announcement.dtos.request.UnsubscribeRequest;
+import sit.int221.announcement.dtos.request.subscription.SubscriptionOtpRequest;
+import sit.int221.announcement.dtos.request.subscription.SubscriptionRequest;
+import sit.int221.announcement.dtos.request.subscription.UnsubscribeRequest;
 import sit.int221.announcement.services.SubscriptionService;
 import sit.int221.announcement.utils.ResponseMessage;
 
@@ -20,11 +21,9 @@ public class SubscriptionController {
         return service.sendOtp(request);
     }
 
-    @PostMapping("/subscribe/{otp}")
-    public ResponseMessage subscribeWithOTP(@PathVariable String otp,@Valid @RequestBody SubscriptionRequest request) {
-        return service.subscribe(request,otp) ?
-                new ResponseMessage("Subscribed") :
-                new ResponseMessage("Invalid OTP");
+    @PostMapping("/subscribe-otp")
+    public ResponseMessage subscribeWithOTP(@Valid @RequestBody SubscriptionOtpRequest request) {
+        return service.subscribe(request);
     }
 
     @PostMapping("/unsubscribe")

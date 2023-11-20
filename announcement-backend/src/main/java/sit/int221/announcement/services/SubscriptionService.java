@@ -2,21 +2,23 @@ package sit.int221.announcement.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sit.int221.announcement.dtos.request.SubscriptionRequest;
-import sit.int221.announcement.dtos.request.UnsubscribeRequest;
+import sit.int221.announcement.dtos.request.subscription.SubscriptionOtpRequest;
+import sit.int221.announcement.dtos.request.subscription.SubscriptionRequest;
+import sit.int221.announcement.dtos.request.subscription.UnsubscribeRequest;
 import sit.int221.announcement.enumeration.SubscribeNotify;
+import sit.int221.announcement.exceptions.list.InvalidOtpException;
 import sit.int221.announcement.exceptions.list.ItemNotFoundException;
 import sit.int221.announcement.exceptions.list.MailSentException;
 import sit.int221.announcement.models.Category;
 import sit.int221.announcement.models.Subscription;
 import sit.int221.announcement.models.ids.SubscriptionId;
 import sit.int221.announcement.repositories.SubscriptionRepository;
+import sit.int221.announcement.utils.ResponseMessage;
 import sit.int221.announcement.utils.modules.EmailModule;
 import sit.int221.announcement.utils.properties.EmailProperties;
 import sit.int221.announcement.utils.security.OtpUtil;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class SubscriptionService {
@@ -31,8 +33,9 @@ public class SubscriptionService {
 
     public SubscriptionRequest sendOtp(SubscriptionRequest request) {
         String email = request.getSubscriberEmail();
+        List<Integer> categoryIds = request.getCategoryId();
         EmailModule module = new EmailModule(properties);
-        String otp = util.generateHOTP(email);
+        String otp = util.generateHOTP(email,categoryIds);
         boolean isSent = module.sendEmail(email,"HelloOtp", otp);
         if (!isSent) throw new MailSentException();
         return request;
@@ -46,11 +49,19 @@ public class SubscriptionService {
     }
 
 
-    public boolean subscribe(SubscriptionRequest request,String otp) {
+    public ResponseMessage subscribe(SubscriptionOtpRequest request) {
         String email = request.getSubscriberEmail();
-        boolean isValid = util.validateOtp(email,otp);
-        if (isValid) repository.saveAndFlush(new Subscription(email,request.getCategoryId()));
-        return isValid;
+        String otp = request.getOtp();
+        List<Integer> categoryIds = util.getCategoryIdsByOtp(email,otp);
+        if (categoryIds == null) throw new InvalidOtpException();
+
+        ResponseMessage message = new ResponseMessage("SubscriptionCategory");
+        for (Integer categoryId : categoryIds) {
+            boolean isSubscribe = isSubscribe(email,categoryId);
+            if (!isSubscribe) repository.saveAndFlush(new Subscription(email,categoryId));
+            message.addExist(categoryId.toString(), isSubscribe);
+        }
+        return message;
     }
 
     public boolean unsubscribe(UnsubscribeRequest request) {

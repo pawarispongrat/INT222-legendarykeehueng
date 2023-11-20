@@ -63,7 +63,10 @@ public class UniqueKeyImpl implements ConstraintValidator<UniqueKey, Object> {
         List<Predicate> predicates = new ArrayList<>();
         // SELECT u FROM User u WHERE id <> :id AND username = :username
         if (id != null) predicates.add(builder.notEqual(root.get(this.primaryKey), id));
-        predicates.add(builder.equal(root.get(field), getValue(target,field)));
+        Path<?> path = root.get(field);
+        Object value = getValue(target,field);
+        if (value instanceof ArrayList<?> values) predicates.add(path.in(values));
+        else predicates.add(builder.equal(path, value));
         query.where(predicates.toArray(new Predicate[0]));
         return manager.createQuery(query).getResultList().isEmpty();
     }
