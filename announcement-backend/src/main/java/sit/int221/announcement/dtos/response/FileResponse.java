@@ -12,14 +12,14 @@ public class FileResponse {
     private String fileName;
     private String fileUrl;
 
-    public FileResponse(String fileName) {
+    public FileResponse(String fileName,int id) {
         this.fileName = fileName;
-        this.fileUrl = generateFileUrl();
+        this.fileUrl = generateFileUrl(id);
     }
 
-    private String generateFileUrl() {
+    private String generateFileUrl(int id) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/img/")
+                .path("/img/" + id + "/")
                 .path(this.getFileName())
                 .toUriString();
     }

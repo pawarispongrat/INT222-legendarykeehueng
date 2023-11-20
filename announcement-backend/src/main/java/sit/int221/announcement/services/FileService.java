@@ -7,6 +7,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import sit.int221.announcement.dtos.response.FileResponse;
 import sit.int221.announcement.exceptions.list.files.InvalidFileException;
 import sit.int221.announcement.exceptions.list.files.FileNotFoundException;
 import sit.int221.announcement.utils.properties.FileProperties;
@@ -34,7 +35,7 @@ public class FileService {
         }
     }
 
-    public String store(MultipartFile file,Integer folderId) throws IOException {
+    public FileResponse store(MultipartFile file, Integer folderId) throws IOException {
         String originalName = file.getOriginalFilename();
         if (originalName == null) throw new InvalidFileException("Original file name cannot be null");
         String fileName = StringUtils.cleanPath(originalName);
@@ -42,7 +43,7 @@ public class FileService {
         if (fileName.contains("..")) throw new InvalidFileException("File name invalid " + fileName);
         Path target = getTargetPath(fileName,folderId);
         Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-        return fileName;
+        return new FileResponse(fileName,folderId);
 
     }
 
