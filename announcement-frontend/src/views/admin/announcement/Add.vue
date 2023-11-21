@@ -6,27 +6,28 @@ import { createAnnouncement } from "@/assets/data/dataHandler.js"
 import Announcement from "../../../assets/data/announcement";
 import { useRouter } from "vue-router";
 
-// const announcement = ref(new Announcement())
-// const onCreate = async () => {
-//     const json = await createAnnouncement(announcement.value)
-//     console.log(json);
-//     if (!json?.status) router.push("/admin/announcement/")
-//     else errors.value = json.detail
-// }
-// const errors = ref()
-// provide("errors",errors)
+import Loading from "vue-loading-overlay";
+
+const loaded = ref(true)
+
+
 const router = useRouter()
 const announcement = ref(new Announcement())
 const create = async (announcement,validate) => {
     if (validate) {
-        const json = await createAnnouncement(announcement.toJSON())
-        if (!json?.status) router.push("/admin/announcement/")
+        loaded.value = false
+        await createAnnouncement(announcement.toJSON())
+        loaded.value = true
+        router.push("/admin/announcement/")
     }
 }
 
 </script>
 
 <template>
+      <loading :active="!loaded"
+           :can-cancel="false"
+           :is-full-page="false"/>
     <div class="flex flex-col justify-center items-center">
         <Header class-name="py-8">Add Announcement</Header>
         <!-- <AnnouncementForm :announcement="announcement" @submit="onCreate" /> -->

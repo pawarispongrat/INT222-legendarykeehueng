@@ -10,7 +10,8 @@ const API_ANNOUNCEMENTS = `${API_HOST}/api/announcements`
 const API_USERS = `${API_HOST}/api/users`
 const API_PAGES = `${API_HOST}/api/announcements/pages`
 const API_TOKEN = `${API_HOST}/api/token`
-
+const API_SUBSCRIBE = `${API_HOST}/api/subscription/subscribe`
+const API_OTP = `${API_HOST}/api/subscription/subscribe-otp`
 
 async function isLoaded(data,page = "/announcement/",isAlert = true) {
     if (!data) {
@@ -68,12 +69,10 @@ async function getUserById(id) {
 }
 async function createAnnouncement(announcement)  {
     return await new FetchHandler(API_ANNOUNCEMENTS).authorize().post(announcement).json()
-    
 }
+
 async function putAnnouncement(announcement)  {
-    const put = await new FetchHandler(`${API_ANNOUNCEMENTS}/${announcement.id}`).authorize().put(announcement).json()
-    await router.push("/admin/announcement/")
-    return put
+    return await new FetchHandler(`${API_ANNOUNCEMENTS}/${announcement.id}`).authorize().put(announcement).json()
 }
 
 async function putUser(user)  {
@@ -89,6 +88,14 @@ async function deleteUser(id) {
  async function matchPassword(user)  {
     const response  = await new FetchHandler(`${API_USERS}/match`).authorize().post(user).response()
     return response?.status
+}
+async function subscribe(Email,categoryId){
+    // console.log(await new FetchHandler(API_SUBSCRIBE).post({subscriberEmail:Email,categoryId:categoryId}).json());
+    return await new FetchHandler(API_SUBSCRIBE).post({'subscriberEmail':Email,'categoryId':categoryId}).response()
+
+}
+async function verifyOtp(Email,otp) {
+    return await new FetchHandler(API_OTP).post({'subscriberEmail':Email,'otp':otp}).response()
 }
 
 const createNewToken = async (data) => {
@@ -108,4 +115,4 @@ const createNewToken = async (data) => {
 
 
 export { createNewToken,getAnnouncement,matchPassword,getAnnouncementById,putAnnouncement,createAnnouncement,deleteAnnouncement,isLoaded,
-    getUser,createUser,deleteUser,getUserById,putUser }
+    getUser,createUser,deleteUser,getUserById,putUser,subscribe,verifyOtp }

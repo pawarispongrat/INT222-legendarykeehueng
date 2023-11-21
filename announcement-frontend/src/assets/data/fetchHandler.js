@@ -36,11 +36,13 @@ export default class FetchHandler {
 
     post(body) {
         this.method = HttpMethod.POST
+        this.headers["Content-Type"] = "application/json"
         this.body = body
         return this
     }
     put(body) {
         this.method = HttpMethod.PUT
+        this.headers["Content-Type"] = "application/json"
         this.body = body
         return this
     }
@@ -67,7 +69,6 @@ export default class FetchHandler {
             return undefined
         }
     }
-
     json(status, callback) {
         return this.response().then((res) => {
                 if (res.status === status) {

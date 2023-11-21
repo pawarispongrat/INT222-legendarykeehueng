@@ -14,6 +14,7 @@ import { humanizeDate } from '@/assets/utils/dateUtils';
 import { isAdmin } from '@/assets/data/tokenStorage';
 import Loading from "vue-loading-overlay";
 
+
 const loaded = ref(false)
 const announces = useAnnounces()
 const announcement = ref([])

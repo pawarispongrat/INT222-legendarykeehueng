@@ -6,6 +6,7 @@
   <div class="flex flex-col items-center font bg-base-200 bg-cover h-screen w-screen " >
     <router-view></router-view>
   </div>
+  <div id="modals"></div>
 </template>
 
 <style>
