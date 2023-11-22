@@ -78,7 +78,7 @@ public class AnnouncementService {
         announcement.setCategory(category);
 
         Announcement saved = repository.saveAndFlush(announcement);
-        subscription.sendSubscribeMail(SubscribeNotify.ADD, category);
+        subscription.sendSubscribeMail(saved,SubscribeNotify.ADD, category);
         return mapper.map(saved,AnnouncementAdminResponse.class);
     }
 
@@ -94,7 +94,7 @@ public class AnnouncementService {
         announcement.setCategory(category);
 
         Announcement saved = repository.saveAndFlush(announcement);
-        subscription.sendSubscribeMail(SubscribeNotify.UPDATE, category);
+        subscription.sendSubscribeMail(saved, SubscribeNotify.UPDATE, category);
         return mapper.map(saved,AnnouncementAdminResponse.class);
     }
 

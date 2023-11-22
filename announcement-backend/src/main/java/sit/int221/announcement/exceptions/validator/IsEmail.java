@@ -11,7 +11,7 @@ import org.springframework.core.annotation.AliasFor;
 import java.lang.annotation.*;
 
 @Documented
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {})
 @NotBlank

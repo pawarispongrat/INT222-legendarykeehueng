@@ -5,10 +5,12 @@ import org.springframework.stereotype.Service;
 import sit.int221.announcement.dtos.request.subscription.SubscriptionOtpRequest;
 import sit.int221.announcement.dtos.request.subscription.SubscriptionRequest;
 import sit.int221.announcement.dtos.request.subscription.UnsubscribeRequest;
+import sit.int221.announcement.dtos.response.announcement.AnnouncementAdminResponse;
 import sit.int221.announcement.enumeration.SubscribeNotify;
 import sit.int221.announcement.exceptions.list.InvalidOtpException;
 import sit.int221.announcement.exceptions.list.ItemNotFoundException;
 import sit.int221.announcement.exceptions.list.MailSentException;
+import sit.int221.announcement.models.Announcement;
 import sit.int221.announcement.models.Category;
 import sit.int221.announcement.models.Subscription;
 import sit.int221.announcement.models.ids.SubscriptionId;
@@ -16,6 +18,7 @@ import sit.int221.announcement.repositories.SubscriptionRepository;
 import sit.int221.announcement.utils.ResponseMessage;
 import sit.int221.announcement.utils.modules.EmailModule;
 import sit.int221.announcement.utils.properties.EmailProperties;
+import sit.int221.announcement.utils.security.MD5;
 import sit.int221.announcement.utils.security.OtpUtil;
 
 import java.util.List;
@@ -26,26 +29,50 @@ public class SubscriptionService {
     @Autowired
     private OtpUtil util;
     @Autowired
-    private EmailProperties properties;
-    @Autowired
     private SubscriptionRepository repository;
+    @Autowired
+    private CategoryService categoryService;
+    @Autowired
+    private EmailModule module;
 
 
     public SubscriptionRequest sendOtp(SubscriptionRequest request) {
         String email = request.getSubscriberEmail();
         List<Integer> categoryIds = request.getCategoryId();
-        EmailModule module = new EmailModule(properties);
         String otp = util.generateHOTP(email,categoryIds);
-        boolean isSent = module.sendEmail(email,"HelloOtp", otp);
-        if (!isSent) throw new MailSentException();
+        module.sendEmail(email,"SAS Announcement: Verify email from otp", otp);
         return request;
     }
 
-    public void sendSubscribeMail(SubscribeNotify notify, Category category) {
-        EmailModule module = new EmailModule(properties);
+    public void sendSubscribeMail(Announcement announcement, SubscribeNotify notify, Category category) {
+        String DOMAIN = "https://intproj22.sit.kmutt.ac.th/kp1";
+        StringBuilder sb = new StringBuilder();
+        String[] bodies = new String[]{
+                String.format("Description: %s",announcement.getAnnouncementDescription()), " ",
+                String.format("<a href='%s/announcement/%s'>Click here to view %s announcement</a>", DOMAIN, announcement.getId(),notify.toString()), " ",
+        };
+        for (String body : bodies) appendBody(sb, body);
+
         getEmails(category.getCategoryId()).forEach(email -> {
-            module.sendEmail(email,"Hello Subscribe","Subscribe " + notify.toString() + " :" + category.getCategoryName());
+            String hashEmail = new MD5(email).encode();
+            String unsubscribeLink = String.format("%s/unsubscribe?email=%s&hash=%s",DOMAIN,email,hashEmail);
+            String unsubscribe = String.format("<a href='%s'>Click here to unsubscribe</a>",unsubscribeLink);
+            String subject = String.format("%s, SAS Subscription [%s หมวดหมู่ (%s): %s]",
+                    email,
+                    notify,
+                    category.getCategoryName(),
+                    announcement.getAnnouncementTitle()
+            );
+            appendBody(sb, unsubscribe);
+
+            module.sendEmail(email,subject,sb.toString());
         });
+    }
+
+    private void appendBody(StringBuilder sb, String body) {
+        sb.append("<p>");
+        sb.append(body);
+        sb.append("</p>");
     }
 
 
@@ -56,21 +83,41 @@ public class SubscriptionService {
         if (categoryIds == null) throw new InvalidOtpException();
 
         ResponseMessage message = new ResponseMessage("SubscriptionCategory");
+        StringBuilder sb = new StringBuilder();
         for (Integer categoryId : categoryIds) {
             boolean isSubscribe = isSubscribe(email,categoryId);
             if (!isSubscribe) repository.saveAndFlush(new Subscription(email,categoryId));
             message.addExist(categoryId.toString(), isSubscribe);
+
+            String name = categoryService.getCategoryByIdOrNull(categoryId).getCategoryName();
+            if (name != null)
+                appendBody(sb,isSubscribe ?
+                    "You are already subscribe CATEGORY: " + name :
+                    "You have subscribe new CATEGORY: " + name
+            );
         }
+
+        module.sendEmail(email,"SAS Announcement: Thank you " + email + " for subscribe.", sb.toString());
         return message;
     }
 
     public boolean unsubscribe(UnsubscribeRequest request) {
         String email = request.getSubscriberEmail();
-        Integer categoryId = request.getCategoryId();
-        SubscriptionId id = new SubscriptionId(email,categoryId);
-        boolean exists = repository.existsById(id);
-        if (!exists) throw new ItemNotFoundException("subscriptionId");
-        repository.deleteById(id);
+        String hashEmail = request.getHashEmail();
+        List<Integer> categoryIds = request.getCategoryId();
+        MD5 md5 = new MD5(email);
+        if (!md5.matches(hashEmail)) return false;
+        StringBuilder sb = new StringBuilder();
+        for (Integer categoryId : categoryIds) {
+            SubscriptionId id = new SubscriptionId(email, categoryId);
+            boolean exists = repository.existsById(id);
+            if (!exists) continue;
+            appendBody(sb,"You have unsubscribe CATEGORY: " + categoryId);
+            repository.deleteById(id);
+        }
+
+
+        module.sendEmail(email,"SAS Announcement: You have unsubscribe some category", sb.toString());
         return true;
     }
 

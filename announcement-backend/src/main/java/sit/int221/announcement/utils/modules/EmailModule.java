@@ -4,20 +4,26 @@ import jakarta.mail.*;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import sit.int221.announcement.exceptions.list.MailSentException;
 import sit.int221.announcement.utils.properties.EmailProperties;
 
 import java.util.Properties;
 
+@Service
 public class EmailModule {
 
-    private final EmailProperties properties;
-    public EmailModule(EmailProperties properties) {
-        this.properties = properties;
-    }
+
+    @Autowired
+    private EmailProperties properties;
 
     public Properties getProperties() {
         Properties props = new Properties();
@@ -30,10 +36,11 @@ public class EmailModule {
         return props;
     }
 
-    public boolean sendEmail(String email, String subject, String body) {
+    @Async
+    public void sendEmail(String email, String subject, String body) {
         try {
-            Address source = new InternetAddress(properties.getUsername());
-            Address destination = new InternetAddress(email);
+            InternetAddress source = new InternetAddress(properties.getUsername());
+            InternetAddress destination = new InternetAddress(email);
             Session session = Session.getInstance(getProperties(), new Authenticator() {
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
@@ -41,14 +48,14 @@ public class EmailModule {
                 }
             });
             MimeMessage message = new MimeMessage(session);
-            message.setFrom(source);
-            message.setRecipient(Message.RecipientType.TO, destination);
-            message.setSubject(subject);
-            message.setText(body);
+            MimeMessageHelper helper = new MimeMessageHelper(message,false,"UTF-8");
+            helper.setFrom(source);
+            helper.setTo(destination);
+            helper.setSubject(subject);
+            helper.setText(body,true);
             Transport.send(message);
-            return true;
         } catch (MailException | MessagingException e) {
-            return false;
+            throw new MailSentException();
         }
     }
 

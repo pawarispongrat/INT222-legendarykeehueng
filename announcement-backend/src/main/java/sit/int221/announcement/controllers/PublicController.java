@@ -8,23 +8,24 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import sit.int221.announcement.exceptions.validator.IsEmail;
 import sit.int221.announcement.services.AnnouncementService;
 import sit.int221.announcement.services.FileService;
+import sit.int221.announcement.utils.ResponseMessage;
 
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/img/")
-public class FileUrlController {
+public class PublicController {
 
     @Autowired
     private FileService service;
     @Autowired
     private AnnouncementService announcement;
 
-    @GetMapping("/{announcementId}/{filename:.+}")
+    @GetMapping("/img/{announcementId}/{filename:.+}")
     public ResponseEntity<Resource> serveFile(
             @PathVariable Integer announcementId,
             @PathVariable String filename,
@@ -35,7 +36,7 @@ public class FileUrlController {
         String mime = service.getFileMime(request,resource);
         if (mime == null) mime = "application/octet-stream";
         //inline = view in browser, attachment = download
-        String headers = String.format("inline; filename %s",filename);
+        String headers = String.format("attachment; filename %s",filename);
 
         return  ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, headers)
                 .contentType(MediaType.parseMediaType(mime))
