@@ -5,7 +5,6 @@ import { provide, ref } from "vue";
 import { createAnnouncement } from "@/assets/data/dataHandler.js"
 import Announcement from "../../../assets/data/announcement";
 import { useRouter } from "vue-router";
-
 import Loading from "vue-loading-overlay";
 
 const loaded = ref(true)

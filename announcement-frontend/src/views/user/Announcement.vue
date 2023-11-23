@@ -19,10 +19,11 @@ import ModalForm from '@/assets/components/modal/ModalForm.vue';
 const user = useAnnounces()
 const announcements = ref([])
 const loaded = ref(false)
-const { setOpen  } = useModal()
+const { setOpen,setModal  } = useModal()
 
 const verifyEmail = ref("")
-
+const respondOtp = ref()
+const statusRespond = ref()
 onMounted(async () => {
   await fetch()
   loaded.value = true
@@ -31,12 +32,19 @@ const fetch = async () => {
   announcements.value = await getUserAnnouncement(user.getMode(), user.getPage() - 1, user.category)
 }
 const sendSubscribe = async (email,categories) =>{
-  setOpen('annSubscribe1')
-  await subscribe(email,categories)
+  const statusValue = await subscribe(email,categories)
+ 
   verifyEmail.value = email
+  if(statusValue === 200){
+    setModal('annSubscribe')
+    setOpen('annSubscribe1')
+    statusRespond.value = false
+  }statusRespond.value = true
 }
 const sendOtp = async (otp) => {
-  await verifyOtp(verifyEmail.value,otp)
+ const respond = await verifyOtp(verifyEmail.value,otp)
+ respondOtp.value = respond 
+ setOpen('annSubscribe2')
 }
 
 const changeMode = async () => {
@@ -49,6 +57,8 @@ const changeCategory = async () => {
 }
 const getButton = computed(() => user.getMode() === modes.CLOSE ? 'Active Announcements' : 'Closed Announcements')
 const onClickDetails = (id) => router.push({ name: 'UserDetails', params: { id: id } })
+
+
 </script>
  
 <template>
@@ -67,15 +77,23 @@ const onClickDetails = (id) => router.push({ name: 'UserDetails', params: { id: 
     <ModalButton :modal-id="`annSubscribe`" class="absolute bottom-10 left-10 h-16 w-16 rounded-full shadow-2xl justify-center transition-transform transform-gpu hover:scale-125"/>
         <ModalForm :modal-id="`annSubscribe`"
                    name="Please fill email"
+                   :isError=statusRespond
                    :categories="categories" @confirm="sendSubscribe"
+                   :statusRespond="statusRespond"
                    option="Subscribe"
+                   :isOption=true
                    placeholder="abc123@email.com"
         />
         <ModalForm :modal-id="`annSubscribe1`"
            name="Verify OTP" @confirm="sendOtp"
            :option="`The OTP has been sented`"
         />
-   
+        <ModalForm :modal-id="`annSubscribe2`"
+           option="Subscribe status" 
+           :categories="categories"
+           :isOption=false
+           :status=respondOtp
+        />
 
     <div class="w-full max-w-[96rem] p-12 space-y-4">
       <div class="flex items-center">
