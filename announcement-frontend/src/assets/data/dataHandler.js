@@ -68,7 +68,10 @@ async function getUserById(id) {
     return await new FetchHandler(`${API_USERS}/${id}`).authorize().json()
 }
 async function createAnnouncement(announcement)  {
-    return await new FetchHandler(API_ANNOUNCEMENTS).authorize().post(announcement).json()
+
+    const test = await new FetchHandler(API_ANNOUNCEMENTS).authorize().post(announcement).json()
+    console.log(test);
+    return test
 }
 
 async function putAnnouncement(announcement)  {
@@ -83,6 +86,7 @@ async function deleteAnnouncement(id) {
     return new FetchHandler(`${API_ANNOUNCEMENTS}/${id}`).authorize().delete().json()
 }
 async function deleteUser(id) {
+
     return new FetchHandler(`${API_USERS}/${id}`).authorize().delete().json()
 }
  async function matchPassword(user)  {
@@ -91,11 +95,15 @@ async function deleteUser(id) {
 }
 async function subscribe(Email,categoryId){
     // console.log(await new FetchHandler(API_SUBSCRIBE).post({subscriberEmail:Email,categoryId:categoryId}).json());
-    return await new FetchHandler(API_SUBSCRIBE).post({'subscriberEmail':Email,'categoryId':categoryId}).response()
+    const response = await new FetchHandler(API_SUBSCRIBE).post({'subscriberEmail':Email,'categoryId':categoryId}).response()
+    console.log(response.status);
+    return response.status
+
 
 }
 async function verifyOtp(Email,otp) {
-    return await new FetchHandler(API_OTP).post({'subscriberEmail':Email,'otp':otp}).response()
+    const response = await new FetchHandler(API_OTP).post({'subscriberEmail':Email,'otp':otp}).response()
+    return response.json()
 }
 
 const createNewToken = async (data) => {
