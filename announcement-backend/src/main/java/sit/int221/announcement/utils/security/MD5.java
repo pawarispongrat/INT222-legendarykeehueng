@@ -33,6 +33,6 @@ public class MD5 {
     }
 
     public boolean matches(String hash) {
-        return Objects.equals(encode(this.plainText), hash);
+        return Objects.equals(encode(), hash);
     }
 }
