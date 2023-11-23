@@ -16,8 +16,8 @@ const props = defineProps({
     isError: { type: Boolean, default: false },
     isSlot: { type: Boolean, default: false },
     isOption: { type: Boolean, default: false },
-    categories: { type: Array }
-
+    categories: { type: Array },
+    open: { type: Boolean, default: false }
 })
 const input = ref("")
 
@@ -38,7 +38,7 @@ const getCategoryById = (id) => {
     const index = id - 1;
     return props.categories[index];
 }
-const test = () =>{
+const test = () => {
     console.log(props.statusRespond);
 }
 // onBeforeMount(() => setModal(props.modalId))
@@ -54,12 +54,14 @@ const emit = defineEmits(["confirm"])
                         class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-lg">
                         <div class="bg-white p-12 space-y-4">
                             <p v-if="isError" class="text-error">!! Wrong Email format !!</p>
-                            <Input v-if="name"  :label="name" :placeholder="placeholder" :class-name="`${isError ? 'font border-error border-2' : ''}`" :required="true"
+                            <Input v-if="name" :label="name" :placeholder="placeholder"
+                                :class-name="`${isError ? 'font border-error border-2' : ''}`" :required="true"
                                 v-model.trim="input" :max="45" />
                             <div class="form-control">
                                 <p class="font-bold">{{ option }}</p>
                                 <p v-if="status && status.exists" v-for="item in status.exists" :key="item.id">
-                                 {{ item.exist ? `You are already Subscribe ${getCategoryById(item.id)}` : `You are Subscribe now ${getCategoryById(item.id)}` }} 
+                                    {{ item.exist ? `You are already Subscribe ${getCategoryById(item.id)}` : `You are
+                                    Subscribe now ${getCategoryById(item.id)}` }}
                                 </p>
                                 <label v-if="isOption" class="cursor-pointer label" v-for="(category, index) in categories"
                                     :key="index">
@@ -72,7 +74,8 @@ const emit = defineEmits(["confirm"])
                             </div>
                         </div>
                         <div class="bg-slate-100 p-3 flex justify-end max-lg:flex-col gap-x-4 gap-y-4" @click="test">
-                            <button v-if="!isSlot"  type="button" @click=" $emit('confirm', input, selectedOptions)"
+                            <button v-if="(open || (!isSlot && selectedOptions.length > 0 && input.length > 0))"
+                                type="button" @click="$emit('confirm', input, selectedOptions),setOpen(modalId)"
                                 class="btn btn-error text-white hover:bg-red-500">Confirm</button>
                             <button v-if="!isSlot" type="button" @click="setOpen(modalId)"
                                 class="btn btn-outline">Cancel</button>

@@ -24,6 +24,7 @@ const { setOpen,setModal  } = useModal()
 const verifyEmail = ref("")
 const respondOtp = ref()
 const statusRespond = ref()
+
 onMounted(async () => {
   await fetch()
   loaded.value = true
@@ -33,7 +34,6 @@ const fetch = async () => {
 }
 const sendSubscribe = async (email,categories) =>{
   const statusValue = await subscribe(email,categories)
- 
   verifyEmail.value = email
   if(statusValue === 200){
     setModal('annSubscribe')
@@ -45,6 +45,7 @@ const sendOtp = async (otp) => {
  const respond = await verifyOtp(verifyEmail.value,otp)
  respondOtp.value = respond 
  setOpen('annSubscribe2')
+ setModal('annSubscribe1')
 }
 
 const changeMode = async () => {
@@ -80,19 +81,21 @@ const onClickDetails = (id) => router.push({ name: 'UserDetails', params: { id: 
                    :isError=statusRespond
                    :categories="categories" @confirm="sendSubscribe"
                    :statusRespond="statusRespond"
+                   :isOption="true"
                    option="Subscribe"
-                   :isOption=true
                    placeholder="abc123@email.com"
         />
         <ModalForm :modal-id="`annSubscribe1`"
            name="Verify OTP" @confirm="sendOtp"
            :option="`The OTP has been sented`"
+           :open="true"
         />
         <ModalForm :modal-id="`annSubscribe2`"
            option="Subscribe status" 
            :categories="categories"
-           :isOption=false
+           :open="true"
            :status=respondOtp
+           
         />
 
     <div class="w-full max-w-[96rem] p-12 space-y-4">
