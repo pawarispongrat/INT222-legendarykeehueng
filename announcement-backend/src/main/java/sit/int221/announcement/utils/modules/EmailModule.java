@@ -60,4 +60,10 @@ public class EmailModule {
     }
 
 
+    public void appendBody(StringBuilder sb, String body) {
+        sb.append("<p>");
+        sb.append(body);
+        sb.append("</p>");
+    }
+
 }

@@ -1,6 +1,7 @@
 package sit.int221.announcement.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sit.int221.announcement.dtos.request.subscription.SubscriptionOtpRequest;
 import sit.int221.announcement.dtos.request.subscription.SubscriptionRequest;
@@ -35,6 +36,9 @@ public class SubscriptionService {
     @Autowired
     private EmailModule module;
 
+    @Value("${host.domain}")
+    private String DOMAIN;
+
 
     public SubscriptionRequest sendOtp(SubscriptionRequest request) {
         String email = request.getSubscriberEmail();
@@ -45,13 +49,12 @@ public class SubscriptionService {
     }
 
     public void sendSubscribeMail(Announcement announcement, SubscribeNotify notify, Category category) {
-        String DOMAIN = "https://intproj22.sit.kmutt.ac.th/kp1";
         StringBuilder sb = new StringBuilder();
         String[] bodies = new String[]{
                 String.format("Description: %s",announcement.getAnnouncementDescription()), " ",
                 String.format("<a href='%s/announcement/%s'>Click here to view %s announcement</a>", DOMAIN, announcement.getId(),notify.toString()), " ",
         };
-        for (String body : bodies) appendBody(sb, body);
+        for (String body : bodies) module.appendBody(sb, body);
 
         getEmails(category.getCategoryId()).forEach(email -> {
             String hashEmail = new MD5(email).encode();
@@ -63,16 +66,9 @@ public class SubscriptionService {
                     category.getCategoryName(),
                     announcement.getAnnouncementTitle()
             );
-            appendBody(sb, unsubscribe);
-
+            module.appendBody(sb, unsubscribe);
             module.sendEmail(email,subject,sb.toString());
         });
-    }
-
-    private void appendBody(StringBuilder sb, String body) {
-        sb.append("<p>");
-        sb.append(body);
-        sb.append("</p>");
     }
 
 
@@ -91,7 +87,7 @@ public class SubscriptionService {
 
             String name = categoryService.getCategoryByIdOrNull(categoryId).getCategoryName();
             if (name != null)
-                appendBody(sb,isSubscribe ?
+                module.appendBody(sb,isSubscribe ?
                     "You are already subscribe CATEGORY: " + name :
                     "You have subscribe new CATEGORY: " + name
             );
@@ -108,14 +104,14 @@ public class SubscriptionService {
         MD5 md5 = new MD5(email);
         if (!md5.matches(hashEmail)) return false;
         StringBuilder sb = new StringBuilder();
+
         for (Integer categoryId : categoryIds) {
             SubscriptionId id = new SubscriptionId(email, categoryId);
             boolean exists = repository.existsById(id);
             if (!exists) continue;
-            appendBody(sb,"You have unsubscribe CATEGORY: " + categoryId);
+            module.appendBody(sb,"You have unsubscribe CATEGORY: " + categoryId);
             repository.deleteById(id);
         }
-
 
         module.sendEmail(email,"SAS Announcement: You have unsubscribe some category", sb.toString());
         return true;
