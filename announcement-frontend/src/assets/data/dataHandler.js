@@ -11,6 +11,8 @@ const API_USERS = `${API_HOST}/api/users`
 const API_PAGES = `${API_HOST}/api/announcements/pages`
 const API_TOKEN = `${API_HOST}/api/token`
 const API_SUBSCRIBE = `${API_HOST}/api/subscription/subscribe`
+const API_UNSUBSCRIBE = `${API_HOST}/api/subscription/unsubscribe`
+
 const API_OTP = `${API_HOST}/api/subscription/subscribe-otp`
 
 async function isLoaded(data,page = "/announcement/",isAlert = true) {
@@ -98,8 +100,12 @@ async function subscribe(Email,categoryId){
     const response = await new FetchHandler(API_SUBSCRIBE).post({'subscriberEmail':Email,'categoryId':categoryId}).response()
     console.log(response.status);
     return response.status
-
-
+}
+async function unsubscribe(Email,hashEmail,categoryId){
+    // console.log(await new FetchHandler(API_SUBSCRIBE).post({subscriberEmail:Email,categoryId:categoryId}).json());
+    const response = await new FetchHandler(API_UNSUBSCRIBE).post({'subscriberEmail':Email,'hashEmail':hashEmail,'categoryId':categoryId}).json()
+    console.log(response);
+    return response
 }
 async function verifyOtp(Email,otp) {
     const response = await new FetchHandler(API_OTP).post({'subscriberEmail':Email,'otp':otp}).response()
@@ -123,4 +129,4 @@ const createNewToken = async (data) => {
 
 
 export { createNewToken,getAnnouncement,matchPassword,getAnnouncementById,putAnnouncement,createAnnouncement,deleteAnnouncement,isLoaded,
-    getUser,createUser,deleteUser,getUserById,putUser,subscribe,verifyOtp }
+    getUser,createUser,deleteUser,getUserById,putUser,subscribe,verifyOtp,unsubscribe }

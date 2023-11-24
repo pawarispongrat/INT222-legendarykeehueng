@@ -8,7 +8,7 @@ import UserDetails from "@/views/user/AnnouncementDetails.vue"
 import MatchPassword from "@/views/admin/MatchPassword.vue"
 import AddUser from "@/views/admin/user/Add.vue"
 import EditUser from "@/views/admin/user/Edit.vue"
-
+import UserUnSubscribe from "@/views/user/Unsubscribe.vue"
 import Announcement from '@/views/admin/announcement/Announcement.vue'
 import AddAnnouncement from '@/views/admin/announcement/Add.vue'
 import AnnouncementDetails from '@/views/admin/announcement/Details.vue'
@@ -56,6 +56,11 @@ const router = createRouter({
             name: 'UserAnnouncement',
             component: UserAnnouncement
         },
+        {
+            path: '/unsubscribe/',
+            name: 'UserUnSubscribe',
+            component: UserUnSubscribe
+          },
         {
             path: '/announcement/:id',
             name: 'UserDetails',
