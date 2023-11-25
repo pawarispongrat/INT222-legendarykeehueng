@@ -65,17 +65,17 @@ const onClickDetails = (id) => router.push({ name: 'UserDetails', params: { id: 
 <template>
   
   <loading :active="!loaded" :can-cancel="false" :is-full-page="false"/>
-  <div class="flex h-64 items-center space-x-4 px-12">
+  <div class="flex h-64 items-center space-x-4 px-12 ">
     <svg-icon type="mdi" :size="64" :path="mdiBullhornVariant"/>
     <Header>SIT Announcement System (SAS)</Header>
   </div>
-  <div class="flex flex-col w-screen h-screen items-center bg-base-100" v-if="loaded">
+  <div class="flex flex-col w-screen h-screen items-center bg-[#EFE2D7] " v-if="loaded">
 
-    <div class="absolute bottom-10 left-10 h-16 w-16 bg-white rounded-2xl shadow-2xl flex items-center justify-center ">
+    <div class="absolute bottom-10 left-10 h-16 w-16 bg-whirte rounded-2xl shadow-2xl flex items-center justify-center ">
     <svg-icon type="mdi" class=" text-red-600" :size="52" :path="mdiEmailCheck" />
     </div>
   
-    <ModalButton :modal-id="`annSubscribe`" class="absolute bottom-10 left-10 h-16 w-16 rounded-full shadow-2xl justify-center transition-transform transform-gpu hover:scale-125"/>
+    <ModalButton :modal-id="`annSubscribe`" class="absolute bottom-10 left-10 h-16 w-16 rounded-full shadow-2xl justify-center transition-transform transform-gpu hover:scale-125 "/>
         <ModalForm :modal-id="`annSubscribe`"
                    name="Please fill email"
                    :isError=statusRespond
@@ -98,7 +98,7 @@ const onClickDetails = (id) => router.push({ name: 'UserDetails', params: { id: 
            
         />
 
-    <div class="w-full max-w-[96rem] p-12 space-y-4">
+    <div class="w -full max-w-[96rem] p-12 space-y-4">
       <div class="flex items-center">
         <p class="text-lg pr-2">Category</p>
         <select v-model="user.category" class="border border-gray-300 h-10 px-2 rounded-md ann-category-filter"
