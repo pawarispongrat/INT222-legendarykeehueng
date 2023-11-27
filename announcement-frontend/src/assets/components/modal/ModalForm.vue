@@ -52,13 +52,13 @@ const emit = defineEmits(["confirm"])
                 <div class="flex min-h-full justify-center p-4 text-center items-center">
                     <div
                         class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-lg">
-                        <div class="bg-white p-12 space-y-4">
+                        <div class="bg-[#EFE2D7] p-12 space-y-4">
                             <p v-if="isError" class="text-error">!! Wrong Email format !!</p>
                             <Input v-if="name" :label="name" :placeholder="placeholder"
                                 :class-name="`${isError ? 'font border-error border-2' : ''}`" :required="true"
                                 v-model.trim="input" :max="45" />
-                            <div class="form-control">
-                                <p class="font-bold">{{ option }}</p>
+                            <div class="form-control ">
+                                <p class="font-bold">[ {{ option }} ]</p>
                                 <p v-if="status && status.exists" v-for="item in status.exists" :key="item.id">
                                     {{ item.exist ? `You are already Subscribe ${getCategoryById(item.id)}` : `You are
                                     Subscribe now ${getCategoryById(item.id)}` }}
