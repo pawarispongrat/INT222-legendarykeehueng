@@ -6,10 +6,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import sit.int221.announcement.dtos.response.FileResponse;
 import sit.int221.announcement.exceptions.validator.IsEmail;
 import sit.int221.announcement.services.AnnouncementService;
 import sit.int221.announcement.services.FileService;
@@ -25,16 +27,14 @@ public class PublicController {
     @Autowired
     private AnnouncementService announcement;
 
-    @GetMapping("/img/{announcementId}/{filename:.+}")
+    @GetMapping("/attachments/{announcementId}/{filename:.+}")
     public ResponseEntity<Resource> serveFile(
             @PathVariable Integer announcementId,
-            @PathVariable String filename,
-            HttpServletRequest request) throws IOException {
-        announcement.hasAnnouncement(announcementId);
+            @PathVariable String filename) throws IOException {
+        announcement.isDisplay(announcementId);
 
         Resource resource = service.loadFileAsResource(filename, announcementId);
-        String mime = service.getFileMime(request,resource);
-        if (mime == null) mime = "application/octet-stream";
+        String mime = service.getFileMime(filename,announcementId);
         //inline = view in browser, attachment = download
         String headers = String.format("attachment; filename %s",filename);
 

@@ -12,11 +12,14 @@ import sit.int221.announcement.exceptions.list.files.InvalidFileException;
 import sit.int221.announcement.exceptions.list.files.FileNotFoundException;
 import sit.int221.announcement.utils.properties.FileProperties;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -34,6 +37,31 @@ public class FileService {
             return null;
         }
     }
+    public String getFileMime(String fileName, Integer folderId) {
+        return getFileMime( getUploadFile(fileName,folderId) );
+    }
+
+    public String getFileMime(Path path) {
+        try {
+            return Files.probeContentType(path);
+        } catch (IOException e) {
+            return "application/octet-stream";
+        }
+    }
+
+    public List<FileResponse> getFilesByAnnouncementId(Integer folderId) throws IOException {
+        Path folderPath = getUploadPath(folderId);
+        try (Stream<Path> path = Files.walk(folderPath).filter((filePath) ->
+                !filePath.toFile().getName().startsWith(".")
+                && Files.isRegularFile(filePath))) {
+            return path.map((filePath) -> {
+                File file = filePath.toFile();
+                String name = file.getName();
+                Path upload = getUploadFile(name,folderId);
+                return new FileResponse(name, getFileMime(upload), folderId, file.length());
+            }).collect(Collectors.toList());
+        }
+    }
 
     public FileResponse store(MultipartFile file, Integer folderId) throws IOException {
         String originalName = file.getOriginalFilename();
@@ -43,17 +71,24 @@ public class FileService {
         if (fileName.contains("..")) throw new InvalidFileException("File name invalid " + fileName);
         Path target = getTargetPath(fileName,folderId);
         Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-        return new FileResponse(fileName,folderId);
+        return new FileResponse(fileName,file.getContentType(),folderId, file.getSize());
 
     }
+
 
     public void delete(String fileName,Integer folderId) throws IOException {
         Path target = getTargetPath(fileName,folderId);
         boolean exists = Files.deleteIfExists(target);
         if (!exists) throw new FileNotFoundException("File not exists!");
     }
+    public void deleteFolder(Integer folderId) {
+        Path target = getUploadPath(folderId);
+        try { Files.deleteIfExists(target); }
+        catch (IOException ignored) {}
+    }
 
     public Resource loadFileAsResource(String fileName,Integer folderId) throws IOException {
+        if (fileName.startsWith(".")) throw new java.io.FileNotFoundException("File not found.");
         Path target = getTargetPath(fileName,folderId);
         Resource resource = new UrlResource(target.toUri());
         if (resource.exists()) return resource;
@@ -64,7 +99,7 @@ public class FileService {
         try {
             Path location = getUploadPath(folderId);
             try (Stream<Path> paths = Files.list(location)) {
-                return paths.filter(path -> path.toFile().isFile()).count();
+                return paths.filter(path -> !path.toFile().getName().startsWith(".") && path.toFile().isFile()).count();
             }
         } catch (IOException e) { return 0; }
     }
@@ -73,6 +108,9 @@ public class FileService {
         Path location = getUploadPath(folderId);
         if (Files.notExists(location)) Files.createDirectories(location);
         return location.resolve(filename).normalize();
+    }
+    private Path getUploadFile(String filename, Integer folderId) {
+        return getUploadPath(folderId).resolve(filename).normalize();
     }
 
     private Path getUploadPath(Integer folderId) {

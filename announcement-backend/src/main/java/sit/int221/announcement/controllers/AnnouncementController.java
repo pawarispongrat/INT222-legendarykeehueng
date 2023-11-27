@@ -10,7 +10,9 @@ import sit.int221.announcement.dtos.request.AnnouncementRequest;
 import sit.int221.announcement.dtos.PageDTO;
 import sit.int221.announcement.services.AnnouncementService;
 import sit.int221.announcement.enumeration.Modes;
+import sit.int221.announcement.services.FileService;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -20,6 +22,8 @@ public class AnnouncementController {
 
     @Autowired
     private AnnouncementService service;
+    @Autowired
+    private FileService fileService;
 
     @GetMapping("")
     public List<? extends AnnouncementGuestResponse> getAnnouncement(
@@ -48,8 +52,10 @@ public class AnnouncementController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("@security.authorizeAnnouncement(#id)")
-    public AnnouncementAdminResponse deleteAnnouncement(@PathVariable Integer id){
-        return service.deleteAnnouncement(id);
+    public AnnouncementAdminResponse deleteAnnouncement(@PathVariable Integer id) {
+        AnnouncementAdminResponse response = service.deleteAnnouncement(id);
+        fileService.deleteFolder(id);
+        return response;
     }
     @PutMapping("/{id}")
     @PreAuthorize("@security.authorizeAnnouncement(#id)")

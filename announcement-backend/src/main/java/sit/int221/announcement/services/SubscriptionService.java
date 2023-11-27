@@ -6,11 +6,9 @@ import org.springframework.stereotype.Service;
 import sit.int221.announcement.dtos.request.subscription.SubscriptionOtpRequest;
 import sit.int221.announcement.dtos.request.subscription.SubscriptionRequest;
 import sit.int221.announcement.dtos.request.subscription.UnsubscribeRequest;
-import sit.int221.announcement.dtos.response.announcement.AnnouncementAdminResponse;
 import sit.int221.announcement.enumeration.SubscribeNotify;
 import sit.int221.announcement.exceptions.list.InvalidOtpException;
 import sit.int221.announcement.exceptions.list.ItemNotFoundException;
-import sit.int221.announcement.exceptions.list.MailSentException;
 import sit.int221.announcement.models.Announcement;
 import sit.int221.announcement.models.Category;
 import sit.int221.announcement.models.Subscription;
@@ -18,8 +16,7 @@ import sit.int221.announcement.models.ids.SubscriptionId;
 import sit.int221.announcement.repositories.SubscriptionRepository;
 import sit.int221.announcement.utils.ResponseMessage;
 import sit.int221.announcement.utils.modules.EmailModule;
-import sit.int221.announcement.utils.properties.EmailProperties;
-import sit.int221.announcement.utils.security.MD5;
+import sit.int221.announcement.utils.security.HMAC;
 import sit.int221.announcement.utils.security.OtpUtil;
 
 import java.util.List;
@@ -57,7 +54,7 @@ public class SubscriptionService {
         for (String body : bodies) module.appendBody(sb, body);
 
         getEmails(category.getCategoryId()).forEach(email -> {
-            String hashEmail = new MD5(email).encode();
+            String hashEmail = new HMAC(email, HMAC.Algorithm.SHA1).encode();
             String unsubscribeLink = String.format("%s/unsubscribe?email=%s&hash=%s",DOMAIN,email,hashEmail);
             String unsubscribe = String.format("<a href='%s'>Click here to unsubscribe</a>",unsubscribeLink);
             String subject = String.format("%s, SAS Subscription [%s หมวดหมู่ (%s): %s]",
@@ -84,10 +81,9 @@ public class SubscriptionService {
             boolean isSubscribe = isSubscribe(email,categoryId);
             if (!isSubscribe) repository.saveAndFlush(new Subscription(email,categoryId));
             message.addExist(categoryId.toString(), isSubscribe);
-
             String name = categoryService.getCategoryByIdOrNull(categoryId).getCategoryName();
-            if (name != null)
-                module.appendBody(sb,isSubscribe ?
+            if (name == null) continue;
+            module.appendBody(sb,isSubscribe ?
                     "You are already subscribe CATEGORY: " + name :
                     "You have subscribe new CATEGORY: " + name
             );
@@ -101,15 +97,17 @@ public class SubscriptionService {
         String email = request.getSubscriberEmail();
         String hashEmail = request.getHashEmail();
         List<Integer> categoryIds = request.getCategoryId();
-        MD5 md5 = new MD5(email);
-        if (!md5.matches(hashEmail)) return false;
+        HMAC hmac = new HMAC(email, HMAC.Algorithm.SHA1);
+        if (!hmac.matches(hashEmail)) return false;
         StringBuilder sb = new StringBuilder();
 
         for (Integer categoryId : categoryIds) {
             SubscriptionId id = new SubscriptionId(email, categoryId);
             boolean exists = repository.existsById(id);
             if (!exists) continue;
-            module.appendBody(sb,"You have unsubscribe CATEGORY: " + categoryId);
+            String name = categoryService.getCategoryByIdOrNull(categoryId).getCategoryName();
+            if (name == null) continue;
+            module.appendBody(sb,"You have unsubscribe CATEGORY: " + name);
             repository.deleteById(id);
         }
 

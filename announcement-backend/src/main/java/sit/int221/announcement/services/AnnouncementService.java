@@ -61,6 +61,11 @@ public class AnnouncementService {
         return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("announcementId"));
     }
 
+    public void isDisplay(Integer id) {
+        Announcement announcement = getAnnouncementById(id);
+        if (announcement.getAnnouncementDisplay() == Display.N) throw new ItemNotFoundException("announcementId");
+    }
+
     @SuppressWarnings("unchecked")
     public <T extends AnnouncementGuestResponse> T getAdminAnnouncementById(Integer id, boolean count) {
         Class<? extends AnnouncementGuestResponse> response = component.isEditor(Role.admin,Role.announcer) ? AnnouncementAdminResponse.class : AnnouncementGuestResponse.class;

@@ -1,5 +1,6 @@
 package sit.int221.announcement.exceptions;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -7,11 +8,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import sit.int221.announcement.exceptions.list.*;
 import sit.int221.announcement.exceptions.list.files.InvalidFileException;
 import sit.int221.announcement.exceptions.list.files.FileNotFoundException;
 import sit.int221.announcement.utils.Utils;
 
+import javax.naming.SizeLimitExceededException;
 import java.io.IOException;
 
 import static org.springframework.http.HttpStatus.*;
@@ -57,7 +60,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleIOException(IOException e, WebRequest request) {
         ErrorResponse response = new ErrorResponse(BAD_REQUEST.value(), getSimpleName(e), Utils.getUri(request));
-        response.addValidationError("operationError", "See more in console for extend error.");
+        String message = getSimpleName(e);
+        response.addValidationError("operationError","See more in console for extend error [" + message + "]");
         return ResponseEntity.status(BAD_REQUEST).body(response);
     }
 

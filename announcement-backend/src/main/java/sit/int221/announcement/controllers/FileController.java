@@ -1,11 +1,8 @@
 package sit.int221.announcement.controllers;
 
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sit.int221.announcement.dtos.response.FileResponse;
@@ -26,23 +23,34 @@ public class FileController {
     private FileService service;
     @Autowired
     private AnnouncementService announcement;
-    private final int FILE_LIMIT = 5;
+
+    @GetMapping("/{announcementId}")
+    public List<FileResponse> getFilesFromAnnouncementId(@PathVariable Integer announcementId) throws IOException {
+        announcement.isDisplay(announcementId);
+
+        return service.getFilesByAnnouncementId(announcementId) ;
+    }
 
     @PostMapping("/{announcementId}")
+    @PreAuthorize("@security.authorizeAnnouncement(#announcementId)")
     public List<FileResponse> upload(
             @PathVariable Integer announcementId,
-            @RequestParam("files") MultipartFile[] files) throws IOException {
+            @RequestParam("files") MultipartFile[] files
+    ) throws IOException {
         announcement.hasAnnouncement(announcementId);
-        long fileCount = files.length + service.getFileCount(announcementId);
-        if (fileCount > FILE_LIMIT) throw new InvalidFileException("File limit exceeded. [Max: 5]");
-        List<FileResponse> responses = new ArrayList<>();
-        for (MultipartFile file : files)
-            responses.add(service.store(file,announcementId));
 
-        return responses ;
+        int MAX_FILE = 5;
+        long fileCount = files.length + service.getFileCount(announcementId);
+        if (fileCount > MAX_FILE) throw new InvalidFileException(String.format("Exceeding file count: %s", MAX_FILE));
+
+        List<FileResponse> responses = new ArrayList<>();
+        for (MultipartFile file : files) responses.add(service.store(file,announcementId));
+
+        return responses;
     }
 
     @DeleteMapping("/{announcementId}/{filename:.+}")
+    @PreAuthorize("@security.authorizeAnnouncement(#announcementId)")
     public ResponseMessage delete(
             @PathVariable Integer announcementId,
             @PathVariable String filename) throws IOException {

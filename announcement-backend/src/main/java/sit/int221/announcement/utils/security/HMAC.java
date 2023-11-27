@@ -1,19 +1,23 @@
 package sit.int221.announcement.utils.security;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.security.MessageDigest;
 import java.util.Objects;
 
-public class MD5 {
+public class HMAC {
     @Value("${spring.mail.secret}")
     private String secretKey;
     private final String plainText;
     private final String algorithm;
 
-    public MD5(String plainText) {
+    public HMAC(String plainText,Algorithm algorithm) {
         this.plainText = plainText;
-        this.algorithm = "MD5";
+        this.algorithm = algorithm.getAlgorithm();
     }
 
     public String encode() {
@@ -34,5 +38,12 @@ public class MD5 {
 
     public boolean matches(String hash) {
         return Objects.equals(encode(), hash);
+    }
+
+    @Getter @AllArgsConstructor
+    public enum Algorithm {
+        MD5("MD5"), SHA1("SHA-1");
+
+        final String algorithm;
     }
 }
