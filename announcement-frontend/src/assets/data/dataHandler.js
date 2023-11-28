@@ -12,7 +12,8 @@ const API_PAGES = `${API_HOST}/api/announcements/pages`
 const API_TOKEN = `${API_HOST}/api/token`
 const API_SUBSCRIBE = `${API_HOST}/api/subscription/subscribe`
 const API_UNSUBSCRIBE = `${API_HOST}/api/subscription/unsubscribe`
-
+const API_UPLOAD = `${API_HOST}/api/files`
+const API_FILE = `${API_HOST}/api/files`
 const API_OTP = `${API_HOST}/api/subscription/subscribe-otp`
 
 async function isLoaded(data,page = "/announcement/",isAlert = true) {
@@ -72,8 +73,8 @@ async function getUserById(id) {
 async function createAnnouncement(announcement)  {
 
     const test = await new FetchHandler(API_ANNOUNCEMENTS).authorize().post(announcement).json()
-    console.log(test);
-    return test
+    console.log(test.id);
+    return test.id
 }
 
 async function putAnnouncement(announcement)  {
@@ -112,6 +113,24 @@ async function verifyOtp(Email,otp) {
     return response.json()
 }
 
+
+async function uploadFile(id,files){
+        const formData = new FormData();
+        files.forEach((file) => {
+          console.log(file);
+          formData.append(`files`, file);
+        })
+        console.log(formData);
+        const response = await new FetchHandler(`${API_UPLOAD}/${id}`).authorize().post(formData).content(undefined).response(false)
+        return response.json()
+    }
+
+
+async function getFileById(id){
+    return await new FetchHandler(`${API_FILE}/${id}`).json()
+}    
+
+
 const createNewToken = async (data) => {
     const response = await new FetchHandler(API_TOKEN)
         .header("Content-Type","application/json")
@@ -129,4 +148,4 @@ const createNewToken = async (data) => {
 
 
 export { createNewToken,getAnnouncement,matchPassword,getAnnouncementById,putAnnouncement,createAnnouncement,deleteAnnouncement,isLoaded,
-    getUser,createUser,deleteUser,getUserById,putUser,subscribe,verifyOtp,unsubscribe }
+    getUser,createUser,deleteUser,getUserById,putUser,subscribe,verifyOtp,unsubscribe,uploadFile,getFileById }

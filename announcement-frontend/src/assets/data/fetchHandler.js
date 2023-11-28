@@ -33,11 +33,17 @@ export default class FetchHandler {
         this.revoke = true
         return this
     }
-
     post(body) {
         this.method = HttpMethod.POST
         this.headers["Content-Type"] = "application/json"
         this.body = body
+        return this
+    }
+    content(type){
+        if (type === undefined) {
+            delete this.headers["Content-Type"]
+        } else
+        this.headers["Content-Type"] = type
         return this
     }
     put(body) {
@@ -52,12 +58,14 @@ export default class FetchHandler {
     }
 
 
-    async response() {
+    async response(isJson = true) {
         try {
             const options = { method: this.method }
-            if (this.body) options["body"] = JSON.stringify(this.body)
+            if (this.body) options["body"] = isJson === true ? JSON.stringify(this.body): this.body
             if (Object.keys(this.headers).length !== 0) options["headers"] = this.headers
+            console.log(options);
             const response =  await fetch(this.url, options)
+          
             if (this.revoke && response.status === 401) {
                 const refreshToken = getRefreshToken()
                 const status = await revokeToken(refreshToken)

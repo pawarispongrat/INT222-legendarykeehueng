@@ -4,10 +4,12 @@ import { categories } from "../data/announcement.js";
 import { ref, onMounted } from "vue";
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import {getAccessToken, getRefreshToken, isTokenExpired} from "@/assets/data/tokenStorage";
 import inputFile from "@/assets/components/form/inputFile.vue"
 
 const quilEditor = ref('')
 const validateDesc = ref(null)
+const file = ref([])
 
 const props = defineProps({
   announcement: { required: true },
@@ -35,7 +37,7 @@ const submit = () => {
   validateText()
   validateDate()
   validate.value = Object.values(validates.value).every((item) => item);
-  emits("submit", props.announcement, validate.value)
+  emits("submit", props.announcement, validate.value,file.value)
 };
 const sendErrorText = (type, text, byValidate) => {
   validates.value[type] = byValidate
@@ -61,11 +63,12 @@ const validateDate = () => {
 }
 
 const changeText = (e) => validateDesc.value = quilEditor.value.getQuill().getText();
+const test = ()=>{console.log(file)}
 
 </script>
 <template>
   <div class="space-y-1 w-1/4">
-    <div class="-mt-6">
+    <div class="-mt-6" @click="test()">
       <p>
         Title
         <span class="text-sm text-gray-500">({{ announcement.title?.length }}/{{ MAX_TITLE }})</span>
@@ -105,7 +108,7 @@ const changeText = (e) => validateDesc.value = quilEditor.value.getQuill().getTe
       </textarea> -->
     </div>
 
-      <DateTimeForm   date-text="Publish Date" @date="(e) => (announcement.publishDate = e.target.value)"
+    <DateTimeForm date-text="Publish Date" @date="(e) => (announcement.publishDate = e.target.value)"
       @time="(e) => (announcement.publishTime = e.target.value)" :date="announcement.publishDate"
       :time="announcement.publishTime" :max-date="announcement.closeDate" :time-publish="announcement.publishTime"
       :validate="validates.publish" :error-text="errorText.publish" />
@@ -115,7 +118,7 @@ const changeText = (e) => validateDesc.value = quilEditor.value.getQuill().getTe
       @time="(e) => (announcement.closeTime = e.target.value)" :date="announcement.closeDate"
       :time="announcement.closeTime" :min-date="announcement.publishDate" :time-close="announcement.closeTime"
       :validate="validates.close" :error-text="errorText.close" />
-  
+
 
     <div class="space-y-s w-full ">
       <p c>Display</p>
@@ -125,9 +128,9 @@ const changeText = (e) => validateDesc.value = quilEditor.value.getQuill().getTe
       </div>
     </div>
 
-    <inputFile/>
-
-    <div class="flex  w-full">
+    <inputFile :filesAnnouncement="file" />
+    
+    <div class="flex  w-full" >
       <button class="btn border-0 bg-[#C1A696] ann-button text-gray-100 w-44 hover:bg-[#E4B79D] disabled:bg-base-100"
         @click="submit()" :disabled="disabledSubmit">
         {{ submitText }}
@@ -135,7 +138,6 @@ const changeText = (e) => validateDesc.value = quilEditor.value.getQuill().getTe
       <router-link class="btn btn-error ann-button w-44 ml-10 hover:bg-red-500 border-0 text-gray-100"
         :to="{ name: 'Announcement' }">Back</router-link>
     </div>
-  </div>  
-  
+  </div>
 </template>
 <style scoped></style>
