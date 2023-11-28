@@ -116,19 +116,21 @@ async function verifyOtp(Email,otp) {
 
 async function uploadFile(id,files){
         const formData = new FormData();
-        files.forEach((file) => {
-          console.log(file);
-          formData.append(`files`, file);
-        })
-        console.log(formData);
+        files.forEach((file) => { formData.append(`files`, file); })
         const response = await new FetchHandler(`${API_UPLOAD}/${id}`).authorize().post(formData).content(undefined).response(false)
         return response.json()
     }
 
 
 async function getFileById(id){
-    return await new FetchHandler(`${API_FILE}/${id}`).json()
+    return await new FetchHandler(`${API_FILE}/${id}`).authorize().authorize().json()
 }    
+async function updateFile(id,files){
+    const formData = new FormData();
+    files.forEach((file) => { formData.append(`files`, file); })
+    const response = await new FetchHandler(`${API_UPLOAD}/${id}`).authorize().put(formData).content(undefined).response(false)
+    return response.json()
+}
 
 
 const createNewToken = async (data) => {
@@ -148,4 +150,4 @@ const createNewToken = async (data) => {
 
 
 export { createNewToken,getAnnouncement,matchPassword,getAnnouncementById,putAnnouncement,createAnnouncement,deleteAnnouncement,isLoaded,
-    getUser,createUser,deleteUser,getUserById,putUser,subscribe,verifyOtp,unsubscribe,uploadFile,getFileById }
+    getUser,createUser,deleteUser,getUserById,putUser,subscribe,verifyOtp,unsubscribe,uploadFile,getFileById,updateFile }

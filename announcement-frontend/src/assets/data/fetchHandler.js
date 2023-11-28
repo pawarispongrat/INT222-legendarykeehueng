@@ -63,7 +63,6 @@ export default class FetchHandler {
             const options = { method: this.method }
             if (this.body) options["body"] = isJson === true ? JSON.stringify(this.body): this.body
             if (Object.keys(this.headers).length !== 0) options["headers"] = this.headers
-            console.log(options);
             const response =  await fetch(this.url, options)
           
             if (this.revoke && response.status === 401) {

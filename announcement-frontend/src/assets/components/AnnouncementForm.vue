@@ -4,18 +4,18 @@ import { categories } from "../data/announcement.js";
 import { ref, onMounted } from "vue";
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import {getAccessToken, getRefreshToken, isTokenExpired} from "@/assets/data/tokenStorage";
 import inputFile from "@/assets/components/form/inputFile.vue"
 
 const quilEditor = ref('')
 const validateDesc = ref(null)
-const file = ref([])
 
 const props = defineProps({
   announcement: { required: true },
+  files:{ required: true},
   submitText: String,
   disabledSubmit: { type: Boolean, default: false },
 });
+
 const emits = defineEmits(["submit"])
 const MAX_TITLE = 200;
 const MAX_DESCRIPTION = 10000;
@@ -37,7 +37,7 @@ const submit = () => {
   validateText()
   validateDate()
   validate.value = Object.values(validates.value).every((item) => item);
-  emits("submit", props.announcement, validate.value,file.value)
+  emits("submit", props.announcement, validate.value, props.files)
 };
 const sendErrorText = (type, text, byValidate) => {
   validates.value[type] = byValidate
@@ -63,12 +63,11 @@ const validateDate = () => {
 }
 
 const changeText = (e) => validateDesc.value = quilEditor.value.getQuill().getText();
-const test = ()=>{console.log(file)}
 
 </script>
 <template>
   <div class="space-y-1 w-1/4">
-    <div class="-mt-6" @click="test()">
+    <div class="-mt-6">
       <p>
         Title
         <span class="text-sm text-gray-500">({{ announcement.title?.length }}/{{ MAX_TITLE }})</span>
@@ -128,7 +127,7 @@ const test = ()=>{console.log(file)}
       </div>
     </div>
 
-    <inputFile :filesAnnouncement="file" />
+    <inputFile :files="files"/>
     
     <div class="flex  w-full" >
       <button class="btn border-0 bg-[#C1A696] ann-button text-gray-100 w-44 hover:bg-[#E4B79D] disabled:bg-base-100"

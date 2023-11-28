@@ -8,7 +8,7 @@ import { useRouter } from "vue-router";
 import Loading from "vue-loading-overlay";
 
 const loaded = ref(true)
-
+const files = ref([])
 
 const router = useRouter()
 const announcement = ref(new Announcement())
@@ -16,9 +16,9 @@ const create = async (announcement,validate,file) => {
     if (validate) {
         loaded.value = false
         const id = await createAnnouncement(announcement.toJSON())
+        await uploadFile(id, file)
         loaded.value = true
         router.push("/admin/announcement/")
-        uploadFile(id, file)
     }
 }
 
@@ -31,7 +31,7 @@ const create = async (announcement,validate,file) => {
     <div class="flex flex-col justify-center items-center">
         <Header class-name="py-8">Add Announcement</Header>
         <!-- <AnnouncementForm :announcement="announcement" @submit="onCreate" /> -->
-        <AnnouncementForm :announcement="announcement"  @submit="create" submit-text="Submit"/>
+        <AnnouncementForm :announcement="announcement" :files="files" @submit="create" submit-text="Submit"/>
     </div>
 </template>
  

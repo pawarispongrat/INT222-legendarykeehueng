@@ -17,13 +17,14 @@ const isImage = computed(() => {
 </script>
 
 <template>
-    <div>
+    <div class="flex justify-center">
       <div v-if="isImage" class="image-container w-4/6 h-4/6 mt-10">
           <img :src="file?.fileUrl" alt="Image Preview" class="w-full h-300">
       </div>
       <div v-else class="w-4/6">
       <a :href="file?.fileUrl">
       <icon :file="file"/>
+   
     </a>
     </div>
     </div>

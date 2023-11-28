@@ -38,6 +38,7 @@ onBeforeMount(async () => {
                 <span class="inline-block px-3 py-2 text-sm mr-2 text-[#FAA497] bg-[#FAA497] bg-opacity-20 rounded-md ann-category">
                     {{ announcement.announcementCategory }}
                 </span>
+       
                 <FileViewer v-for="(file, index) in files" :key="index"  :file="file" />
 
                 <router-link

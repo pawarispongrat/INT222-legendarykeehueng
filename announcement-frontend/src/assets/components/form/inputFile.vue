@@ -1,66 +1,51 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { ref,watch } from 'vue';
+import {toast} from "vue3-toastify";
 
 const props = defineProps({
-  filesAnnouncement: Array
+  files: Array
 })
+const previewImageFiles = ref(new Map());
+watch([props.files], (old,files) => {
+  files[0].forEach(file => previewImage(file))
+}, { deep: true })
 
-
-const files = ref([]);
-const previewImageFiles = ref([]);
 
 const chooseBinaryFile = (event) => {
   const file = event.target.files[0];
-  previewImage(file);
-  files.value.push(file);
-  files.value = props.filesAnnouncement
+  if(props.files.some(f=>f.name === file.name)) toast.error("File already exist",{ hideProgressBar: true })
+  else props.files.push(file);
 };
-
-const previewImage = async () => {
-  const reader = new FileReader();
+const previewImage = (file) => {
+  if (!isImage(file.name)) return
+  const reader = new FileReader()
   reader.onload = () => {
-    previewImageFiles.value.push(reader.result);
-  };
-  // const response = await fetchl("http://ocalhost:8080/attachments/85/Screenshot%202023-11-27%20002546%20%284%29.png",{
-  //   method: "GET",
-  //   mode: "no-cors"
-  // } ) 
-  const blob = await getFileFromUrl(url)
-  reader.readAsDataURL(blob);
-  files.value = props.filesAnnouncement
-};
-const url = "http://localhost:8080/attachments/85/Screenshot%202023-11-27%20002546%20%284%29.png"
-async function getFileFromUrl(url){
-  const response = await fetch(url,{mode:"no-cors"});
-  const data = await response.blob();
-  return new File([data], 'Screenshot%202023-11-27%20002546%20%284%29.png', {
-    type: data.type 
-  });
-}
-onMounted(async () => {
-  console.log(await getFileFromUrl("http://localhost:8080/attachments/85/Screenshot%202023-11-27%20002546%20%284%29.png"));
-  })
-//  console.log(URL.createObjectURL(await fetch(url,{mode:"no-cors"}).then(res => res.blob())));
-const deleteFile = (index) => {
-  files.value.splice(index, 1);
-  files.value = props.filesAnnouncement
+    previewImageFiles.value.set(file.name, reader.result);
+  }
+  reader.readAsDataURL(file)
+}  
+
+
+const deleteFile = (fileName, index) => {
+  props.files.splice(index, 1);
+  previewImageFiles.value.delete(fileName);
 };
 const isImage = (fileName) => {
   const lowerCaseFileName = fileName.toLowerCase();
   const allowedExtensions = ['.png', '.jpeg', '.gif', '.jpg'];
   return allowedExtensions.some((extension) => lowerCaseFileName.endsWith(extension));
-};
-const test = () => { console.log(files.value); console.log(previewImageFiles.value);console.log(props.filesAnnouncement); }
+}
+const getImage = (fileName) => previewImageFiles.value.get(fileName)
 </script>
 
 <template>
-  <form id="formEle"  @click="test()">
-    File upload: <input type="file" accept=".jpg, .jpeg,.png,.pdf" @change="chooseBinaryFile" multiple />
+  <form id="formEle">
+    File upload: <input :disabled="files.length === 5" type="file" accept=".jpg, .jpeg,.png,.pdf" @change="chooseBinaryFile" multiple />
     <div v-for="(file, index) in files" :key="index">
       <p>{{ file.name }}</p>
-      <img v-if="isImage(file.name)" v-show="previewImageFiles[index]" :src="previewImageFiles[index]"
+      <img v-if="isImage(file.name)" v-show="getImage(file.name)" :src="getImage(file.name)"
         class="w-24 h-24" />
-      <button class="btn bg-error mt-2 outline-none" @click="deleteFile(index)">Delete</button>
+      <button class="btn bg-error mt-2 outline-none" @click="deleteFile(file.name,index)">Delete</button>
     </div>
   </form>
 </template>
