@@ -1,6 +1,7 @@
 package sit.int221.announcement.services;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,7 +51,7 @@ public class FileService {
         }
     }
 
-    public List<FileResponse> getFilesByAnnouncementId(Integer folderId) throws IOException {
+    public List<FileResponse> getFilesByAnnouncementId(Integer folderId) {
         Path folderPath = getUploadPath(folderId);
         try (Stream<Path> path = Files.walk(folderPath).filter((filePath) ->
                 !filePath.toFile().getName().startsWith(".")
@@ -60,7 +62,7 @@ public class FileService {
                 Path upload = getUploadFile(name,folderId);
                 return new FileResponse(name, getFileMime(upload), folderId, file.length());
             }).collect(Collectors.toList());
-        }
+        } catch (IOException ignored) { return new ArrayList<>(); }
     }
 
     public FileResponse store(MultipartFile file, Integer folderId) throws IOException {
@@ -81,11 +83,28 @@ public class FileService {
         boolean exists = Files.deleteIfExists(target);
         if (!exists) throw new FileNotFoundException("File not exists!");
     }
+    public boolean deleteFile(String fileName,Integer folderId) {
+        try {
+            Path target = getTargetPath(fileName,folderId);
+            return Files.deleteIfExists(target);
+        } catch (IOException e) {
+            return false;
+        }
+    }
     public void deleteFolder(Integer folderId) {
         Path target = getUploadPath(folderId);
         try { Files.deleteIfExists(target); }
         catch (IOException ignored) {}
     }
+    public void deleteFilesInFolder(Integer folderId) {
+        try {
+            Path target = getUploadPath(folderId);
+            FileUtils.cleanDirectory(target.toFile());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public Resource loadFileAsResource(String fileName,Integer folderId) throws IOException {
         if (fileName.startsWith(".")) throw new java.io.FileNotFoundException("File not found.");
@@ -99,7 +118,7 @@ public class FileService {
         try {
             Path location = getUploadPath(folderId);
             try (Stream<Path> paths = Files.list(location)) {
-                return paths.filter(path -> !path.toFile().getName().startsWith(".") && path.toFile().isFile()).count();
+                return paths.filter(this::isFile).count();
             }
         } catch (IOException e) { return 0; }
     }
@@ -108,6 +127,10 @@ public class FileService {
         Path location = getUploadPath(folderId);
         if (Files.notExists(location)) Files.createDirectories(location);
         return location.resolve(filename).normalize();
+    }
+
+    private boolean isFile(Path filePath) {
+        return !filePath.toFile().getName().startsWith(".") && Files.isRegularFile(filePath);
     }
     private Path getUploadFile(String filename, Integer folderId) {
         return getUploadPath(folderId).resolve(filename).normalize();

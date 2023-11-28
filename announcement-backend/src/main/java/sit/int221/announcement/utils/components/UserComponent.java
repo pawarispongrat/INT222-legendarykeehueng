@@ -31,6 +31,9 @@ public class UserComponent {
         List<String> matcher = Arrays.stream(roles).map(Enum::toString).toList();
         return authorities.stream().anyMatch(matcher::contains);
     }
+    public boolean isEditor() {
+        return isEditor(Role.values());
+    }
     public boolean isAuthenticated() {
         return getAuthentication() != null &&  getAuthentication().isAuthenticated();
     }

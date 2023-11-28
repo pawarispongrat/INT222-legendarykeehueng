@@ -6,10 +6,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sit.int221.announcement.dtos.response.FileResponse;
+import sit.int221.announcement.enumeration.Role;
 import sit.int221.announcement.exceptions.list.files.InvalidFileException;
 import sit.int221.announcement.services.AnnouncementService;
 import sit.int221.announcement.services.FileService;
 import sit.int221.announcement.utils.ResponseMessage;
+import sit.int221.announcement.utils.components.UserComponent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,10 +25,14 @@ public class FileController {
     private FileService service;
     @Autowired
     private AnnouncementService announcement;
+    @Autowired
+    private UserComponent authenticate;
 
     @GetMapping("/{announcementId}")
-    public List<FileResponse> getFilesFromAnnouncementId(@PathVariable Integer announcementId) throws IOException {
-        announcement.isDisplay(announcementId);
+    @PreAuthorize("!isAuthenticated() || @security.authorizeAnnouncement(#announcementId)")
+    public List<FileResponse> getFilesFromAnnouncementId(@PathVariable Integer announcementId) {
+        if (authenticate.isEditor()) announcement.hasAnnouncement(announcementId);
+        else announcement.isDisplay(announcementId);
 
         return service.getFilesByAnnouncementId(announcementId) ;
     }
@@ -47,6 +53,17 @@ public class FileController {
         for (MultipartFile file : files) responses.add(service.store(file,announcementId));
 
         return responses;
+    }
+
+    @PutMapping("/{announcementId}")
+    @PreAuthorize("@security.authorizeAnnouncement(#announcementId)")
+    public List<FileResponse> update(
+            @PathVariable Integer announcementId,
+            @RequestParam("files") MultipartFile[] files
+    ) throws IOException {
+        service.deleteFilesInFolder(announcementId);
+
+        return upload(announcementId,files);
     }
 
     @DeleteMapping("/{announcementId}/{filename:.+}")
