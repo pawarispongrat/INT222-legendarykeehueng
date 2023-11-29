@@ -4,6 +4,7 @@ import AnnouncementForm from "@/assets/components/AnnouncementForm.vue";
 import Announcement from "@/assets/data/announcement.js"
 import { ref, onBeforeMount, watch } from "vue";
 import { getAnnouncementById, isLoaded, putAnnouncement,getFileById, updateFile } from "@/assets/data/dataHandler.js"
+import FetchHandler from "@/assets/data/fetchHandler.js"
 import { useRoute,useRouter } from 'vue-router';
 import Loading from "vue-loading-overlay";
 
@@ -13,7 +14,7 @@ const announcement = ref('')
 const files = ref([])
 
 async function getFileFromUrl(url,name){
-  const response = await fetch(url)
+  const response = await new FetchHandler(url).authorize().response()
   const data = await response.blob()
   return new File([data], name, { type: data.type })
 }
@@ -38,7 +39,6 @@ onBeforeMount(async () => {
 // EDITED
 let edited = ref(-1)
 watch([announcement], async () => { edited.value++; }, { deep: true })
-watch([fil]
 const edit = async (announcement,validate,file) => {
     if (validate) {
         loaded.value = false
