@@ -1,7 +1,7 @@
 <script setup>
 import Header from '@/assets/components/text/Header.vue';
 import { onBeforeMount, ref, computed } from 'vue';
-import { getAnnouncementById, isLoaded } from '@/assets/data/dataHandler.js';
+import { getAnnouncementById, isLoaded,getFileById} from '@/assets/data/dataHandler.js';
 import { formatDate } from '@/assets/utils/dateUtils';
 import { useRoute } from 'vue-router';
 import { displays } from '@/assets/data/announcement';
