@@ -29,8 +29,13 @@ public class FileResponse {
         this.fileSize = fileSize;
     }
 
+    @JsonIgnore
+    @Value("${host.domain}")
+    private String domain;
+
     private String generateFileUrl(int folderId) {
-        return MvcUriComponentsBuilder.fromMethodName(PublicController.class,"serveFile", folderId, this.fileName).toUriString();
+        return domain + "/attachments/" + folderId + "/" + this.fileName;
+//        return MvcUriComponentsBuilder.fromMethodName(PublicController.class,"serveFile", folderId, this.fileName).toUriString();
     }
 
 
