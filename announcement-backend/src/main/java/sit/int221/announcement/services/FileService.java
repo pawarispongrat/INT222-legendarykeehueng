@@ -3,6 +3,7 @@ package sit.int221.announcement.services;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,8 @@ public class FileService {
 
     @Autowired
     private FileProperties properties;
+    @Value("${host.domain}")
+    private String domain;
 
     public String getFileMime(HttpServletRequest request,Resource resource) {
         try {
@@ -60,7 +63,7 @@ public class FileService {
                 File file = filePath.toFile();
                 String name = file.getName();
                 Path upload = getUploadFile(name,folderId);
-                return new FileResponse(name, getFileMime(upload), folderId, file.length());
+                return new FileResponse(domain, name, getFileMime(upload), folderId, file.length());
             }).collect(Collectors.toList());
         } catch (IOException ignored) { return new ArrayList<>(); }
     }
@@ -74,7 +77,7 @@ public class FileService {
         Path target = getTargetPath(fileName,folderId);
         System.out.println(target.toAbsolutePath());
         Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-        FileResponse response = new FileResponse(fileName,file.getContentType(),folderId, file.getSize());
+        FileResponse response = new FileResponse(domain, fileName,file.getContentType(),folderId, file.getSize());
         System.out.println(response.getFileUrl());
         return response;
 

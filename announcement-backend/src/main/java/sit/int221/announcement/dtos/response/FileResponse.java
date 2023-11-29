@@ -22,18 +22,14 @@ public class FileResponse {
     private long fileSize;
 
 
-    public FileResponse(String fileName,String fileType,int id,long fileSize) {
+    public FileResponse(String domain, String fileName,String fileType,int id,long fileSize) {
         this.fileName = fileName;
         this.fileType = fileType;
-        this.fileUrl = generateFileUrl(id);
+        this.fileUrl = generateFileUrl(domain,id);
         this.fileSize = fileSize;
     }
 
-    @JsonIgnore
-    @Value("${host.domain}")
-    private String domain;
-
-    private String generateFileUrl(int folderId) {
+    private String generateFileUrl(String domain,int folderId) {
         return domain + "/attachments/" + folderId + "/" + this.fileName;
 //        return MvcUriComponentsBuilder.fromMethodName(PublicController.class,"serveFile", folderId, this.fileName).toUriString();
     }
