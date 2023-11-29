@@ -30,8 +30,7 @@ public class FileResponse {
     }
 
     private String generateFileUrl(int folderId) {
-        return MvcUriComponentsBuilder.fromMethodName(PublicController.class,"serveFile", folderId, this.fileName)
-                .scheme("https").port(443).toUriString();
+        return MvcUriComponentsBuilder.fromMethodName(PublicController.class,"serveFile", folderId, this.fileName).toUriString();
     }
 
 

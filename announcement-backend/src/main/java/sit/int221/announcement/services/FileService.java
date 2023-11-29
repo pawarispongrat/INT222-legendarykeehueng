@@ -128,7 +128,7 @@ public class FileService {
 
     private Path getTargetPath(String filename, Integer folderId) throws IOException {
         Path location = getUploadPath(folderId);
-        Files.createDirectories(location);
+        if (Files.notExists(location)) Files.createDirectories(location);
         return location.resolve(filename).normalize();
     }
 
