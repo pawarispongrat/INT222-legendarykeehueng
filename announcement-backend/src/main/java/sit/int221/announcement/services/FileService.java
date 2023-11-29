@@ -72,8 +72,11 @@ public class FileService {
 
         if (fileName.contains("..")) throw new InvalidFileException("File name invalid " + fileName);
         Path target = getTargetPath(fileName,folderId);
+        System.out.println(target.toAbsolutePath());
         Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-        return new FileResponse(fileName,file.getContentType(),folderId, file.getSize());
+        FileResponse response = new FileResponse(fileName,file.getContentType(),folderId, file.getSize());
+        System.out.println(response.getFileUrl());
+        return response;
 
     }
 
