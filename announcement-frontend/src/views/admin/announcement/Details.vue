@@ -11,9 +11,11 @@ import Fileviewer from '../../user/Fileviewer.vue';
 
 const announcement = ref('')
 const loaded = ref(false)
+const files = ref([])
 onBeforeMount(async () => {
   const route = useRoute()
   announcement.value = await getAnnouncementById(route.params.id)
+  files.value = await getFileById(route.params.id)
   if (await isLoaded(announcement.value,'/admin/announcement/')) loaded.value = true
 })
 const computedDisplayColor = computed(() => announcement.value.announcementDisplay === displays.Y ? 'bg-success text-success' : 'bg-error text-error')

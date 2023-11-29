@@ -16,7 +16,6 @@ onBeforeMount(async () => {
     files.value = await getFileById(route.params.id)
     announcement.value = announcement.value?.announcementDisplay === displays.N ? null : announcement.value
     loaded.value = await isLoaded(announcement.value,true)
-    console.log(files.value);
 })
 
 </script>
