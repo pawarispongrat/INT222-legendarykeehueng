@@ -22,6 +22,7 @@ async function getFileFromUrl(url,name){
 
 onBeforeMount(async () => {
     const route = useRoute()
+    loaded.value = false
     const fetchAnnouncement = await getAnnouncementById(route.params.id)
     const filePayload = await getFileById(route.params.id) ?? []
     for (const fileData of filePayload) {
@@ -31,6 +32,7 @@ onBeforeMount(async () => {
     }
     if (await isLoaded(fetchAnnouncement)) {
         announcement.value = new Announcement().fromJSON(fetchAnnouncement)
+        loaded.value = true
     }
 
     
