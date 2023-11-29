@@ -16,7 +16,7 @@ onBeforeMount(async () => {
   const route = useRoute()
   announcement.value = await getAnnouncementById(route.params.id)
   files.value = await getFileById(route.params.id)
-  if (await isLoaded(announcement.value,'/admin/announcement/')) loaded.value = true
+  loaded.value = await isLoaded(announcement.value,'/admin/announcement/')
 })
 const computedDisplayColor = computed(() => announcement.value.announcementDisplay === displays.Y ? 'bg-success text-success' : 'bg-error text-error')
 
