@@ -5,6 +5,8 @@ import { getAnnouncementById, isLoaded } from '@/assets/data/dataHandler.js';
 import { formatDate } from '@/assets/utils/dateUtils';
 import { useRoute } from 'vue-router';
 import { displays } from '@/assets/data/announcement';
+import FileViewer from "./Fileviewer.vue";
+
 import Loading from "vue-loading-overlay";
 
 const announcement = ref('')
@@ -46,6 +48,9 @@ const computedDisplayColor = computed(() => announcement.value.announcementDispl
         <span class="inline-block px-3 py-2 text-sm mr-2 text-[#FAA497] bg-[#FAA497] bg-opacity-20 rounded-lg ann-category">
           {{ announcement.announcementCategory }}
         </span>
+
+        <FileViewer v-for="(file, index) in files" :key="index"  :file="file" />
+
         <router-link
             class="inline-block btn-outline btn-error float-right px-6 py-2 text-sm border rounded-md ann-button"
             to="/admin/announcement">Back</router-link>
