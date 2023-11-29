@@ -2,6 +2,10 @@ package sit.int221.announcement.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +31,22 @@ public class FileController {
     private AnnouncementService announcement;
     @Autowired
     private UserComponent authenticate;
+
+    @GetMapping("/{announcementId}/{filename:.+}")
+    public ResponseEntity<Resource> serveFile(
+            @PathVariable Integer announcementId,
+            @PathVariable String filename) throws IOException {
+        announcement.isDisplay(announcementId);
+
+        Resource resource = service.loadFileAsResource(filename, announcementId);
+        String mime = service.getFileMime(filename,announcementId);
+        //inline = view in browser, attachment = download
+        String headers = String.format("attachment; filename %s",filename);
+
+        return  ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, headers)
+                .contentType(MediaType.parseMediaType(mime))
+                .body(resource);
+    }
 
     @GetMapping("/{announcementId}")
     @PreAuthorize("!isAuthenticated() || @security.authorizeAnnouncement(#announcementId)")
