@@ -33,10 +33,12 @@ public class FileController {
     private UserComponent authenticate;
 
     @GetMapping("/{announcementId}/{filename:.+}")
+    @PreAuthorize("!isAuthenticated() || @security.authorizeAnnouncement(#announcementId)")
     public ResponseEntity<Resource> serveFile(
             @PathVariable Integer announcementId,
             @PathVariable String filename) throws IOException {
-        announcement.isDisplay(announcementId);
+        if (authenticate.isEditor()) announcement.hasAnnouncement(announcementId);
+        else announcement.isDisplay(announcementId);
 
         Resource resource = service.loadFileAsResource(filename, announcementId);
         String mime = service.getFileMime(filename,announcementId);
