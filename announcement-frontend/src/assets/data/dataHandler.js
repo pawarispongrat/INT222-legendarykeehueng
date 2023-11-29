@@ -123,7 +123,7 @@ async function uploadFile(id,files){
 
 
 async function getFileById(id){
-    return await new FetchHandler(`${API_FILE}/${id}`).authorize().authorize().json()
+    return await new FetchHandler(`${API_FILE}/${id}`).authorize().json()
 }    
 async function updateFile(id,files){
     const formData = new FormData();

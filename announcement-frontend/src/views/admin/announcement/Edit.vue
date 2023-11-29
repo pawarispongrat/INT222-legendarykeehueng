@@ -38,6 +38,7 @@ onBeforeMount(async () => {
 // EDITED
 let edited = ref(-1)
 watch([announcement], async () => { edited.value++; }, { deep: true })
+watch([fil]
 const edit = async (announcement,validate,file) => {
     if (validate) {
         loaded.value = false
@@ -54,7 +55,7 @@ const edit = async (announcement,validate,file) => {
            :is-full-page="false"/>
     <div class="flex flex-col justify-center items-center">
         <Header class-name="py-8">Edit Announcement Detail</Header>
-        <AnnouncementForm :announcement="announcement" :files="files" @submit="edit" submit-text="Edit" :disabled-submit="edited <= 1"/>
+        <AnnouncementForm :announcement="announcement" :files="files" @submit="edit" submit-text="Edit" :disabled-submit="edited <= 0"/>
     </div>
 </template>
  
