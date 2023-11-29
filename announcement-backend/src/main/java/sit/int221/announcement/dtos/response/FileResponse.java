@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import sit.int221.announcement.controllers.PublicController;
 
 import java.net.MalformedURLException;
@@ -33,11 +34,8 @@ public class FileResponse {
     private String domain;
 
     private String generateFileUrl(int folderId) {
-        URI uri = null;
-        try { uri = new URL(domain).toURI(); }
-        catch (MalformedURLException | URISyntaxException ignored) {}
-        assert uri != null;
-        return MvcUriComponentsBuilder.fromMethodName(PublicController.class,"serveFile", folderId, this.fileName).uri(uri).toUriString();
+        return MvcUriComponentsBuilder.fromMethodName(PublicController.class,"serveFile", folderId, this.fileName)
+                .scheme("https").port(443).toUriString();
     }
 
 
