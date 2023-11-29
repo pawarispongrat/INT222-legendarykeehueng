@@ -5,9 +5,9 @@ import { getAnnouncementById, isLoaded } from '@/assets/data/dataHandler.js';
 import { formatDate } from '@/assets/utils/dateUtils';
 import { useRoute } from 'vue-router';
 import { displays } from '@/assets/data/announcement';
-import FileViewer from "./Fileviewer.vue";
 
 import Loading from "vue-loading-overlay";
+import Fileviewer from '../../user/Fileviewer.vue';
 
 const announcement = ref('')
 const loaded = ref(false)
@@ -49,7 +49,7 @@ const computedDisplayColor = computed(() => announcement.value.announcementDispl
           {{ announcement.announcementCategory }}
         </span>
 
-        <FileViewer v-for="(file, index) in files" :key="index"  :file="file" />
+        <Fileviewer v-for="(file, index) in files" :key="index"  :file="file" />
 
         <router-link
             class="inline-block btn-outline btn-error float-right px-6 py-2 text-sm border rounded-md ann-button"
