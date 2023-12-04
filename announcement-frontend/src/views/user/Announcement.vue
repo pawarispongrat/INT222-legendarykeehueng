@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiBullhornVariant,mdiEmailCheck } from '@mdi/js';
+import {mdiAccount, mdiBullhornVariant, mdiEmailCheck} from '@mdi/js';
 
 import Header from '@/assets/components/text/Header.vue';
 import { getUserAnnouncement,subscribe,verifyOtp } from '@/assets/data/dataHandler';
@@ -15,15 +15,24 @@ import Table from "@/assets/components/table/Table.vue";
 import Loading from "vue-loading-overlay";
 import ModalButton from '@/assets/components/modal/ModalButton.vue';
 import ModalForm from '@/assets/components/modal/ModalForm.vue';
+import Timezone from "@/assets/components/text/Timezone.vue";
+import AbsoluteIcon from "@/assets/icons/AbsoluteIcon.vue";
+import {useMsal} from "@/assets/stores/useMsal";
+import Modal from "@/assets/components/modal/Modal.vue";
+import {Auth} from "@/assets/data/msalAuthenticate";
 
+const msal = useMsal()
 const user = useAnnounces()
 const announcements = ref([])
 const loaded = ref(false)
-const { setOpen,setModal  } = useModal()
+const { setOpen,setModal,clearModal  } = useModal()
 
 const verifyEmail = ref("")
-const respondOtp = ref()
-const statusRespond = ref()
+const otpResponse = ref()
+const errors = ref({
+    email: null,
+    otp: null
+})
 
 onMounted(async () => {
   await fetch()
@@ -38,14 +47,19 @@ const sendSubscribe = async (email,categories) =>{
   if(statusValue === 200){
     setModal('annSubscribe')
     setOpen('annSubscribe1')
-    statusRespond.value = false
-  }statusRespond.value = true
+    errors.value.email = null
+  }
+  else { errors.value.email = "Wrong format email!" }
 }
 const sendOtp = async (otp) => {
- const respond = await verifyOtp(verifyEmail.value,otp)
- respondOtp.value = respond 
- setOpen('annSubscribe2')
- setModal('annSubscribe1')
+  const response = await verifyOtp(verifyEmail.value,otp)
+  if (response.status === 200) {
+      otpResponse.value = response.json()
+      setOpen('annSubscribe2')
+      setModal('annSubscribe1')
+      errors.value.otp = null
+  }
+  else { errors.value.otp = "Otp is invalid or expired" }
 }
 
 const changeMode = async () => {
@@ -58,47 +72,55 @@ const changeCategory = async () => {
 }
 const getButton = computed(() => user.getMode() === modes.CLOSE ? 'Active Announcements' : 'Closed Announcements')
 const onClickDetails = (id) => router.push({ name: 'UserDetails', params: { id: id } })
+const onOpenMail = () => {
+  setOpen('annSubscribe')
+}
+const onLogin = async () => {
+  if (!msal.account) msal.login()
+  else setOpen("accountDetail")
 
-
+  console.log(await Auth.getToken())
+}
+const onLogout = () => {
+  msal.logout()
+}
+const getBody = () => {
+}
 </script>
  
 <template>
-  
   <loading :active="!loaded" :can-cancel="false" :is-full-page="false"/>
   <div class="flex h-64 items-center space-x-4 px-12 ">
     <svg-icon type="mdi" :size="64" :path="mdiBullhornVariant"/>
     <Header>SIT Announcement System (SAS)</Header>
   </div>
   <div class="flex flex-col w-screen h-screen items-center bg-[#EFE2D7] " v-if="loaded">
+    <AbsoluteIcon tip="Subscribe" @open="onOpenMail" :icon="mdiEmailCheck" icon-class="text-red-400" div-class="bottom-12 left-12 z-10"/>
+    <AbsoluteIcon :tip="msal.account ? 'Welcome' : 'Login'" @open="onLogin" :icon="mdiAccount" icon-class="text-red-400" div-class="bottom-32 left-12"/>
+    <Modal @confirm="onLogout" confirm-text="Logout" v-if="msal.account" modal-id="accountDetail" :title="`Welcome, ${msal.account.name}`" :body="getBody" />
+    <ModalForm modal-id="annSubscribe"
+               name="Enter the email for subscribe categories"
+               :error="errors.email"
+               :categories="categories" @confirm="sendSubscribe"
+               :isOption="true"
+               option="Categories"
+               placeholder="abc123@email.com"
+    />
+    <ModalForm :modal-id="`annSubscribe1`"
+               name="Verify OTP" @confirm="sendOtp"
+               :error="errors.otp"
+               option="The OTP has been sent"
+               :open="true"
+    />
+    <ModalForm :modal-id="`annSubscribe2`"
+               option="Thank you for subscribe SAS Announcement"
+               :categories="categories"
+               :open="true"
+               :status=otpResponse
+               @confirm="() => clearModal('annSubscribe2')"
 
-    <div class="absolute bottom-10 left-10 h-16 w-16 bg-whirte rounded-2xl shadow-2xl flex items-center justify-center ">
-    <svg-icon type="mdi" class=" text-red-600" :size="52" :path="mdiEmailCheck" />
-    </div>
-  
-    <ModalButton :modal-id="`annSubscribe`" class="absolute bottom-10 left-10 h-16 w-16 rounded-full shadow-2xl justify-center transition-transform transform-gpu hover:scale-125 "/>
-        <ModalForm :modal-id="`annSubscribe`"
-                   name="Please fill email"
-                   :isError=statusRespond
-                   :categories="categories" @confirm="sendSubscribe"
-                   :statusRespond="statusRespond"
-                   :isOption="true"
-                   option="Subscribe"
-                   placeholder="abc123@email.com"
-        />
-        <ModalForm :modal-id="`annSubscribe1`"
-           name="Verify OTP" @confirm="sendOtp"
-           :option="`The OTP has been sented`"
-           :open="true"
-        />
-        <ModalForm :modal-id="`annSubscribe2`"
-           option="Subscribe status" 
-           :categories="categories"
-           :open="true"
-           :status=respondOtp
-           
-        />
-
-    <div class="w -full max-w-[96rem] p-12 space-y-4">
+    />
+    <div class="w-full max-w-[96rem] p-12 space-y-4">
       <div class="flex items-center">
         <p class="text-lg pr-2">Category</p>
         <select v-model="user.category" class="border border-gray-300 h-10 px-2 rounded-md ann-category-filter"
@@ -106,21 +128,18 @@ const onClickDetails = (id) => router.push({ name: 'UserDetails', params: { id: 
           <option :value="0">ทั้งหมด</option>
           <option v-for="(category, index) of categories" :value="index + 1">{{ category }}</option>
         </select>
-        
+
       </div>
-     
+
       <div class="w-full flex flex-wrap items-center justify-between max-lg:justify-center max-lg:gap-y-2">
-        <p class="text-xl font-bold text-[#C1A696]">
-          Date/Time shown in Timezone: <span class="kanit-light text-base-content">{{ TIMEZONE }}</span>
-        </p>
-       
+        <Timezone header-class="text-xl text-[#C1A696]"/>
         <button @click="changeMode"
                 class="text-md h-[3.4rem] w-64 max-lg:w-full border-0 btn-success text-white ann-button text-center uppercase rounded-md"
                 :class="user.getMode() === modes.CLOSE ?
             'bg-success hover:bg-emerald-500' : 'bg-error hover:bg-red-500'">
           {{ getButton }}
         </button>
-        
+
       </div>
       <div v-if="announcements?.content?.length > 0">
         <Table :head="['No','Title','Close Date','Category']"

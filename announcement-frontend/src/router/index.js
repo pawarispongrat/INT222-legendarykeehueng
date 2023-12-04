@@ -18,8 +18,6 @@ import Login from "@/views/Login.vue"
 import {isEditor, isAdmin, isTokenExpired, getRefreshToken} from "@/assets/data/tokenStorage";
 import {revokeToken} from "@/assets/data/dataHandler";
 
-const ROLES = ["admin","announcer"]
-
 const isAuthenticated = async () => {
     if (isTokenExpired()) {
         const refreshToken = getRefreshToken()
@@ -54,7 +52,7 @@ const router = createRouter({
         {
             path: '/announcement/',
             name: 'UserAnnouncement',
-            component: UserAnnouncement
+            component: async () => UserAnnouncement
         },
         {
             path: '/unsubscribe/',

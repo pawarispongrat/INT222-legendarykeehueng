@@ -7,7 +7,7 @@ import { useRoute } from 'vue-router';
 import { displays } from '@/assets/data/announcement';
 
 import Loading from "vue-loading-overlay";
-import Fileviewer from '../../user/Fileviewer.vue';
+import Fileviewer from '../../user/FileViewer.vue';
 
 const announcement = ref('')
 const loaded = ref(false)

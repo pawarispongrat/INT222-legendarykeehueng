@@ -6,7 +6,7 @@ import { getUserAnnouncementById, isLoaded,getFileById } from "@/assets/data/dat
 import { formatDate } from "@/assets/utils/dateUtils";
 import { displays } from "@/assets/data/announcement";
 import Loading from "vue-loading-overlay";
-import FileViewer from "./Fileviewer.vue";
+import FileViewer from "./FileViewer.vue";
 const loaded = ref(false);
 const announcement = ref("");
 const files = ref([])

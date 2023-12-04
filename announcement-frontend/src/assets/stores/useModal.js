@@ -4,11 +4,12 @@ import { ref } from 'vue';
 export const useModal = defineStore("modal",() => {
     const modals = ref(new Map())
     const setModal = (id) => modals.value.set(id,false)
+    const clearModal = (id) => modals.value.delete(id)
     const getModals = () => modals.value.entries()
     const setOpen = (id) => modals.value.set(id,!isOpen(id))
     const getModalById = (id) => modals?.value.get(id)
     const isOpen = (id) => getModalById(id)
-    return { setModal,setOpen,isOpen,getModals }
+    return { setModal,setOpen,isOpen,getModals,clearModal }
 })
 
 if (import.meta.hot) {

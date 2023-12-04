@@ -73,7 +73,6 @@ async function getUserById(id) {
 async function createAnnouncement(announcement)  {
 
     const test = await new FetchHandler(API_ANNOUNCEMENTS).authorize().post(announcement).json()
-    console.log(test.id);
     return test.id
 }
 
@@ -99,18 +98,16 @@ async function deleteUser(id) {
 async function subscribe(Email,categoryId){
     // console.log(await new FetchHandler(API_SUBSCRIBE).post({subscriberEmail:Email,categoryId:categoryId}).json());
     const response = await new FetchHandler(API_SUBSCRIBE).post({'subscriberEmail':Email,'categoryId':categoryId}).response()
-    console.log(response.status);
     return response.status
 }
 async function unsubscribe(Email,hashEmail,categoryId){
     // console.log(await new FetchHandler(API_SUBSCRIBE).post({subscriberEmail:Email,categoryId:categoryId}).json());
     const response = await new FetchHandler(API_UNSUBSCRIBE).post({'subscriberEmail':Email,'hashEmail':hashEmail,'categoryId':categoryId}).json()
-    console.log(response);
     return response
 }
 async function verifyOtp(Email,otp) {
     const response = await new FetchHandler(API_OTP).post({'subscriberEmail':Email,'otp':otp}).response()
-    return response.json()
+    return response
 }
 
 

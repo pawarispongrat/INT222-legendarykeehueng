@@ -40,11 +40,9 @@ const check = ref({ username: "", password: "" })
       <h1 class="text-2xl font-semibold mb-3">SIT Announcement</h1>
       <h1 class="text-3xl font-semibold mb-3">Welcome back</h1>
       <form @submit.prevent="submitForm">
-             <!-- Username Input -->
-            <Input label="Username" class-name="ann-username" placeholder="RewLegendary" error-class-name="ann-error-username" 
+            <Input label="Username" class-name="ann-username" placeholder="RewLegendary" error-class-name="ann-error-username"
                 v-model.trim="check.username" :required="true"/>
-            <!-- Password Input -->
-            <Input label="Password" type="password"  class-name="ann-password" placeholder="•••••••••••••" error-class-name="ann-error-password" 
+            <Input label="Password" type="password"  class-name="ann-password" placeholder="•••••••••••••" error-class-name="ann-error-password"
                 v-model.trim="check.password" :required="true"/>
             <Button type="submit" name="Sign in to your account" class="ann-button w-full max-w-xl my-6 py-2  bg-orange-400 hover:bg-orange-500" />
       </form>
