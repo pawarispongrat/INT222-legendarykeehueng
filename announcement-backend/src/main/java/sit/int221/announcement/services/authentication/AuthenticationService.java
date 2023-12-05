@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import sit.int221.announcement.dtos.JwtUser;
 import sit.int221.announcement.dtos.request.UserLogin;
 import sit.int221.announcement.dtos.response.RefreshTokenResponse;
 import sit.int221.announcement.dtos.response.TokenResponse;
@@ -15,9 +16,12 @@ import sit.int221.announcement.exceptions.list.AuthorizedException;
 import sit.int221.announcement.exceptions.list.ItemNotFoundException;
 import sit.int221.announcement.exceptions.list.UserException;
 import sit.int221.announcement.enumeration.TokenType;
+import sit.int221.announcement.utils.security.ClaimsMap;
 import sit.int221.announcement.utils.security.jwt.JwtTokenUtil;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class AuthenticationService {
@@ -35,7 +39,8 @@ public class AuthenticationService {
         if (details == null) throw new ItemNotFoundException("INVALID_CREDENTIALS");
         authenticate(request.getUsername(),request.getPassword(),details.getAuthorities());
         String username = details.getUsername();
-        String token = jwt.generateToken(username, TokenType.ACCESS_TOKEN, getAuthorities(details));
+
+        String token = jwt.generateTokenWithClaims(username, TokenType.ACCESS_TOKEN, getAccessTokenClaims(details));
         String refreshToken = jwt.generateToken(username, TokenType.REFRESH_TOKEN);
         return new TokenResponse(token,refreshToken);
     }
@@ -46,8 +51,17 @@ public class AuthenticationService {
         if (type == TokenType.ACCESS_TOKEN) throw new AuthorizedException(TokenType.REFRESH_TOKEN.toString(),"Token is invalid");
         String username = jwt.getSubjectFromToken(refreshToken);
         UserDetails details = service.loadUserByUsername(username);
-        String token = jwt.generateToken(username, TokenType.ACCESS_TOKEN, getAuthorities(details));
+        String token = jwt.generateTokenWithClaims(username, TokenType.ACCESS_TOKEN, getAccessTokenClaims(details));
         return new RefreshTokenResponse(token);
+    }
+    private ClaimsMap[] getAccessTokenClaims(UserDetails details) {
+        List<ClaimsMap> maps = new ArrayList<>();
+        JwtUser jwtUser = (JwtUser) details;
+        String[] authorities = getAuthorities(details);
+        if (authorities.length > 0) maps.add(new ClaimsMap("aut", getAuthorities(details)));
+        maps.add(new ClaimsMap("name", jwtUser.getName()));
+        maps.add(new ClaimsMap("email", jwtUser.getEmail()));
+        return maps.toArray(maps.toArray(new ClaimsMap[0]));
     }
 
     private String[] getAuthorities(UserDetails details) {

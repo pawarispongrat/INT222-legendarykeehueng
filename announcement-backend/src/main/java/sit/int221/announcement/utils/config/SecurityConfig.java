@@ -60,7 +60,8 @@ public class SecurityConfig {
     }
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeHttpRequests((requests) -> requests
+        http.cors().and().csrf().disable()
+                        .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/attachments/**").permitAll()
                         .requestMatchers("/api/subscription/**").permitAll()
                         .requestMatchers(GET,"/api/files/**").permitAll()
@@ -73,7 +74,9 @@ public class SecurityConfig {
                         .authenticationProvider(authenticationProvider())
                         .exceptionHandling().authenticationEntryPoint(entryPoint).accessDeniedHandler(accessDenied).and()
                         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                        .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+//                .addFilterBefore(aadFilter, UsernamePasswordAuthenticationFilter.class)
+                        .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+                        ;
         return http.build();
     }
     private RequestMatcher[] matchers(String path,HttpMethod... methods) {

@@ -28,6 +28,7 @@ async function isLoaded(data,page = "/announcement/",isAlert = true) {
 }
 
 export async function revokeToken(refreshToken) {
+    if (!refreshToken) return 404
     const response = await new FetchHandler(API_TOKEN).bearer(refreshToken).response()
     const details = await response?.json()
     if (response?.ok) setAccessToken(details.token)

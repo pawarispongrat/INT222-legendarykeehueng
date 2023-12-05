@@ -1,12 +1,11 @@
 <script setup>
-import { onMounted, ref } from 'vue';
-import { getUser } from '@/assets/data/dataHandler.js';
+import { ref } from 'vue';
 import router from '@/router';
 import SvgIcon from '@jamescoyle/vue-icon'
 import { mdiFolderAccount ,mdiListBox,mdiAlertCircleOutline,mdiLogout,mdiAccountCircle,mdiBullhorn,mdiTextBoxCheck  } from '@mdi/js'
 import ModalButton from '@/assets/components/modal/ModalButton.vue';
 import Modal from '@/assets/components/modal/Modal.vue';
-import { getAccessToken, getJwtSubject, isAdmin } from '@/assets/data/tokenStorage.js'
+import { getJwtName, isAdmin } from '@/assets/data/tokenStorage.js'
 
 const users = ref([])
 const logOut = () =>{
@@ -25,7 +24,7 @@ const items = ref([
         <div class="ann-app-title text-4xl font-bold p-6 px-9 inline-flex gap-x-4">SAS APP</div>
         <div class="ann-app-title flex items-center pb-8 px-8 gap-x-3">
           <svg-icon class="flex" type="mdi" :size="32" :path="mdiAccountCircle"/>
-          <span class="text-lg">{{ getJwtSubject() }}</span>
+          <span class="text-lg">{{ getJwtName() }}</span>
         </div>
         <li v-for="(item,index) in items" :key="index" class="px-5">
             <router-link :to="item.path" v-if="item?.condition !== undefined ? item.condition : true"

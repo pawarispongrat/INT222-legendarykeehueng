@@ -1,5 +1,4 @@
 <script setup>
-import SvgIcon from '@jamescoyle/vue-icon';
 import { useModal } from '@/assets/stores/useModal.js';
 import { Teleport, ref } from 'vue';
 import Input from '../form/Input.vue';

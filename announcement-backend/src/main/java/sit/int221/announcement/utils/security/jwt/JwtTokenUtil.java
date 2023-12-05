@@ -61,7 +61,6 @@ public class JwtTokenUtil {
         Claims claims = getClaimsFromToken(token);
         return resolver.apply(claims);
     }
-
     public Boolean validateToken(String token, UserDetails details) {
         String usernameFromToken = getSubjectFromToken(token);
         return usernameFromToken.equals(details.getUsername()) && !isTokenExpired(token);
@@ -72,10 +71,8 @@ public class JwtTokenUtil {
         if (authorities != null && authorities.length > 0) {
             claims.put("aut", authorities);
         }
-        Integer interval = properties.getIntervalInMinutes().get(type);
-        if (interval == null) interval = 1;
 
-        return generateToken(claims,subject,interval);
+        return generateToken(claims,subject, getExpiredFromType(type));
     }
 
     public String generateTokenWithClaims(String subject, TokenType type, ClaimsMap... maps) {
@@ -101,6 +98,10 @@ public class JwtTokenUtil {
 
     public boolean isTokenExpired(String token) {
         try { return getExpirationFromToken(token).before(new Date()); }
+        catch (ExpiredJwtException e) { return true; }
+    }
+    public boolean isTokenExpiredFromClaims(Claims claims) {
+        try { return claims.getExpiration().before(new Date()); }
         catch (ExpiredJwtException e) { return true; }
     }
 

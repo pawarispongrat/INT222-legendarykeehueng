@@ -2,7 +2,6 @@
 import SvgIcon from '@jamescoyle/vue-icon';
 import { useModal } from '@/assets/stores/useModal.js';
 import { Teleport } from 'vue';
-import { onBeforeMount } from 'vue';
 
 const { isOpen, setOpen } = useModal()
 const props = defineProps({

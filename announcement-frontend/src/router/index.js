@@ -15,16 +15,21 @@ import AnnouncementDetails from '@/views/admin/announcement/Details.vue'
 import EditAnnouncement from '@/views/admin/announcement/Edit.vue'
 
 import Login from "@/views/Login.vue"
-import {isEditor, isAdmin, isTokenExpired, getRefreshToken} from "@/assets/data/tokenStorage";
+import {isEditor, isAdmin, isTokenExpired, getRefreshToken, getAccessToken} from "@/assets/data/tokenStorage";
 import {revokeToken} from "@/assets/data/dataHandler";
+import {Auth} from "@/assets/data/msalAuthenticate";
 
 const isAuthenticated = async () => {
     if (isTokenExpired()) {
         const refreshToken = getRefreshToken()
         const status = await revokeToken(refreshToken)
-        return status && status !== 401 && status !== 403
+        return status && status !== 401 && status !== 403 && status !== 404
     }
     return true
+}
+const isLogin = (to,from,next) => {
+    if (Auth.isLoggedIn() || getAccessToken()) next("/announcement")
+    else next()
 }
 const guardRoutes = async (to,from,next) => {
     // await isAuthenticated()
@@ -43,7 +48,8 @@ const router = createRouter({
         {
             path: '/login',
             name: 'Login',
-            component: Login
+            component: async () => Login,
+            beforeEnter: isLogin
         },
         {
             path: '/',
@@ -85,7 +91,7 @@ const router = createRouter({
         {
             path: '/:notfoundpath(.*)',
             name: 'PageNotFound',
-            component: PageNotFound        
+            component: PageNotFound
         },
         
         ],

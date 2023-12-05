@@ -1,20 +1,26 @@
 import {revokeToken} from "@/assets/data/dataHandler";
 import router from "@/router";
+import {Auth} from "@/assets/data/msalAuthenticate";
 
 const ACCESS_TOKEN = "accessToken"
 const REFRESH_TOKEN = "refreshToken"
 
-const ROLES = ["admin","announcer"]
+const ROLES = ["admin","announcer","visitor"]
 
 export function getJwt() {
     const token = getAccessToken()
-    return token && JSON.parse(atob(token.split('.')[1]))
+    // console.log(decoded)
+    return token && JSON.parse(atob(token?.split('.')[1]))
 }
-export function getJwtSubject() {
-    return getJwt()?.sub
+export function getJwtName() {
+    return getJwt()?.name
 }
-function getJwtRoles() {
-    return getJwt()?.aut
+
+export function getJwtEmail() {
+    return getJwt()?.email
+}
+export function getJwtRoles() {
+    return getJwt()?.aut ?? "visitor"
 }
 export function isEditor() {
     return getJwtRoles() && getJwtRoles().some((element) => ROLES.includes(element))
@@ -36,6 +42,10 @@ export function getAccessToken() {
 }
 export function getRefreshToken() { return localStorage.getItem(REFRESH_TOKEN) }
 
+export function clearToken() {
+    localStorage.removeItem(ACCESS_TOKEN)
+    localStorage.removeItem(REFRESH_TOKEN)
+}
 export function setAccessToken(token, status) {
     localStorage.setItem(ACCESS_TOKEN, token)
     return status

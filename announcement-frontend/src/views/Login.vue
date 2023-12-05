@@ -5,6 +5,7 @@ import Button from '@/assets/components/form/Button.vue';
 import {createNewToken} from '@/assets/data/dataHandler';
 import router from '@/router';
 import {toast} from "vue3-toastify";
+import {useMsal} from "@/assets/stores/useMsal";
 
 const submitForm = async () => {
     const status = await createNewToken(check.value); // Assign the HTTP status code
@@ -27,6 +28,11 @@ const submitForm = async () => {
     }
 }
 const check = ref({ username: "", password: "" })
+const msal = useMsal()
+const loginAzure = async () => {
+  await msal.login()
+  await router.push("/announcement")
+}
 </script>
  
 <template>
@@ -44,7 +50,8 @@ const check = ref({ username: "", password: "" })
                 v-model.trim="check.username" :required="true"/>
             <Input label="Password" type="password"  class-name="ann-password" placeholder="•••••••••••••" error-class-name="ann-error-password"
                 v-model.trim="check.password" :required="true"/>
-            <Button type="submit" name="Sign in to your account" class="ann-button w-full max-w-xl my-6 py-2  bg-orange-400 hover:bg-orange-500" />
+            <Button type="submit" name="Sign in to your account" class="ann-button w-full max-w-xl mt-6 pt-2  bg-orange-400 hover:bg-orange-500" />
+            <Button @click="loginAzure" name="Sign in with microsoft" class="ann-button w-full max-w-xl mt-4 bg-blue-400 hover:bg-blue-500" />
       </form>
   </div>
   </div>

@@ -1,6 +1,7 @@
 import {acceptHMRUpdate, defineStore} from "pinia";
 import {ref} from "vue";
-import {Auth} from "@/assets/data/msalAuthenticate";
+import {Auth, msal} from "@/assets/data/msalAuthenticate";
+import {clearToken, setAccessToken, setRefreshToken} from "@/assets/data/tokenStorage";
 
 export const useMsal = defineStore("msal",() => {
     const initialized = ref(false)
@@ -17,9 +18,11 @@ export const useMsal = defineStore("msal",() => {
     async function login () {
         error.value = ''
         return Auth.login()
-            .then(data => {
+            .then(async (data) => {
                 account.value = data
                 error.value = ''
+                const token = await Auth.getToken()
+                setAccessToken(token)
             })
             .catch(err => {
                 error.value = err.message
@@ -30,10 +33,11 @@ export const useMsal = defineStore("msal",() => {
     async function logout () {
         return Auth.logout().then(() => {
             account.value = null
+
         })
     }
 
-    return { error, account, initialized, initialize, login, logout, }
+    return { error, account, initialized, initialize, login, logout,  }
 })
 
 if (import.meta.hot) {

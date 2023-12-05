@@ -2,7 +2,6 @@
 import Button from "../form/Button.vue"
 import { mdiFileDocumentPlusOutline, mdiMagnify, mdiIsland } from "@mdi/js"
 import SvgIcon from '@jamescoyle/vue-icon';
-import { isIsoDate, humanizeDate } from "../../utils/dateUtils";
 
 const props = defineProps({
     head: Array,

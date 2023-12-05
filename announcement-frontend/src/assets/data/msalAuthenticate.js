@@ -4,9 +4,10 @@ import {
     PublicClientApplication
 } from '@azure/msal-browser'
 
-const scopes = []
+const scopes = ["05274b39-da42-4da3-b122-41d5825c0480/Roles"]
 const config = {
     auth: {
+
         clientId: '05274b39-da42-4da3-b122-41d5825c0480', // This is the ONLY mandatory field that you need to supply.
         authority: 'https://login.microsoftonline.com/6f4432dc-20d2-441d-b1db-ac3380ba633d', // Defaults to "https://login.microsoftonline.com/common"
         redirectUri: '/announcement', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
@@ -45,6 +46,7 @@ export const Auth = {
     return msal.getActiveAccount()
 },
 
+
 /**
  * Login
  */
@@ -52,7 +54,7 @@ async login() {
     const request = { redirectUri: config.auth.redirectUri, scopes, }
     return msal.loginPopup(request).then(result => {
             // could do something with the AuthResult here if you need to
-            console.log('Logged in with', result)
+            // console.log('Logged in with', result)
             // set active account
             return this.setAccount(result.account)
         })
@@ -81,6 +83,7 @@ async logout () {
  */
 async getToken() {
     const request = { scopes }
+
     return msal
         // try getting the token silently
         .acquireTokenSilent(request)
@@ -89,7 +92,9 @@ async getToken() {
             if (error instanceof InteractionRequiredAuthError) return msal.acquireTokenPopup(request)
             throw error
         })
-        .then((result) => result.accessToken)
+        .then((result) => {
+            return result.accessToken
+        })
 },
 
 /**
@@ -97,9 +102,14 @@ async getToken() {
  * @private
  */
 setAccount(account) {
+
     msal.setActiveAccount(account)
     return account
 },
+
+    isLoggedIn() {
+        return msal.getAllAccounts().length > 0;
+    } ,
 
 /**
  * Escape hatch when msal gets stuck

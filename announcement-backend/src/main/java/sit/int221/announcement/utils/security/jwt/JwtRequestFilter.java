@@ -19,9 +19,11 @@ import io.jsonwebtoken.ExpiredJwtException;
 import sit.int221.announcement.exceptions.list.AuthorizedException;
 import sit.int221.announcement.services.authentication.JwtUserDetailsService;
 import sit.int221.announcement.enumeration.TokenType;
+import sit.int221.announcement.utils.security.entra.EntraTokenUtil;
 import sit.int221.announcement.utils.security.entrypoint.JwtAuthenticationEntryPoint;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -34,16 +36,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenUtil util;
+    @Autowired
+    private EntraTokenUtil entra;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException {
         try {
+            if (alreadyAuthenticated() && filter(request,response, chain)) return;
+
             String header = request.getHeader("Authorization");
             if (JwtUtil.isNotBearer(header) && filter(request, response, chain)) return;
             String token = JwtUtil.getTokenFromHeader(header);
             TokenType type = TokenType.NULL;
             String username;
             try {
+                if (entra.isAadToken(token) != null && filter(request,response,chain)) return;
                 type = util.getTokenType(token);
                 username = type == TokenType.ACCESS_TOKEN ? util.getSubjectFromToken(token) : null;
             }
@@ -52,6 +59,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             catch (ExpiredJwtException e) {
                 Object expiredType = e.getClaims().get("type");
                 throw new AuthorizedException(expiredType != null ? expiredType.toString() : TokenType.NULL.toString(),"Expired Token");
+            }
+            catch (RuntimeException e) {
+                throw new AuthorizedException(TokenType.NULL.toString(),"Expired Token");
             }
 
             SecurityContext context = SecurityContextHolder.getContext();
@@ -76,5 +86,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throw new AuthorizedException(e.getCause().getClass().getSimpleName(), e.getMessage());
         }
 
+    }
+
+    private boolean alreadyAuthenticated() {
+        return Optional.of(SecurityContextHolder.getContext())
+                .map(SecurityContext::getAuthentication)
+                .map(Authentication::isAuthenticated)
+                .orElse(false);
     }
 }

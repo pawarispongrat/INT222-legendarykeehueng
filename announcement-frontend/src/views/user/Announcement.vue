@@ -6,20 +6,21 @@ import {mdiAccount, mdiBullhornVariant, mdiEmailCheck} from '@mdi/js';
 import Header from '@/assets/components/text/Header.vue';
 import { getUserAnnouncement,subscribe,verifyOtp } from '@/assets/data/dataHandler';
 import { categories } from '@/assets/data/announcement';
-import { TIMEZONE, formatDate } from '@/assets/utils/dateUtils';
+import { formatDate } from '@/assets/utils/dateUtils';
 import { useAnnounces, modes } from '@/assets/stores/useAnnounces';
 import { useModal} from '@/assets/stores/useModal';
 import Pagination from '@/assets/components/Pagination.vue';
 import router from '@/router';
 import Table from "@/assets/components/table/Table.vue";
 import Loading from "vue-loading-overlay";
-import ModalButton from '@/assets/components/modal/ModalButton.vue';
 import ModalForm from '@/assets/components/modal/ModalForm.vue';
 import Timezone from "@/assets/components/text/Timezone.vue";
-import AbsoluteIcon from "@/assets/icons/AbsoluteIcon.vue";
+import AbsoluteIcon from "@/assets/components/icon/AbsoluteIcon.vue";
 import {useMsal} from "@/assets/stores/useMsal";
 import Modal from "@/assets/components/modal/Modal.vue";
 import {Auth} from "@/assets/data/msalAuthenticate";
+import {clearToken, getAccessToken, getJwtEmail, getJwtName, getJwtRoles} from "@/assets/data/tokenStorage";
+import {useRouter} from "vue-router";
 
 const msal = useMsal()
 const user = useAnnounces()
@@ -76,15 +77,25 @@ const onOpenMail = () => {
   setOpen('annSubscribe')
 }
 const onLogin = async () => {
-  if (!msal.account) msal.login()
-  else setOpen("accountDetail")
-
-  console.log(await Auth.getToken())
+  // if (!getAccessToken()) await msal.login()
+  // else setOpen("accountDetail")
+  if (getAccessToken()) {
+    setOpen("accountDetail")
+  } else {
+    await router.push("/login")
+  }
 }
 const onLogout = () => {
-  msal.logout()
-}
-const getBody = () => {
+  if (Auth.isLoggedIn()) {
+    msal.logout()
+    clearToken()
+    window.location.reload()
+  }
+  else if (getAccessToken()) {
+    clearToken()
+    window.location.reload()
+  }
+
 }
 </script>
  
@@ -96,8 +107,8 @@ const getBody = () => {
   </div>
   <div class="flex flex-col w-screen h-screen items-center bg-[#EFE2D7] " v-if="loaded">
     <AbsoluteIcon tip="Subscribe" @open="onOpenMail" :icon="mdiEmailCheck" icon-class="text-red-400" div-class="bottom-12 left-12 z-10"/>
-    <AbsoluteIcon :tip="msal.account ? 'Welcome' : 'Login'" @open="onLogin" :icon="mdiAccount" icon-class="text-red-400" div-class="bottom-32 left-12"/>
-    <Modal @confirm="onLogout" confirm-text="Logout" v-if="msal.account" modal-id="accountDetail" :title="`Welcome, ${msal.account.name}`" :body="getBody" />
+    <AbsoluteIcon :tip="getAccessToken() ? 'Welcome' : 'Login'" @open="onLogin" :icon="mdiAccount" icon-class="text-red-400" div-class="bottom-32 left-12"/>
+    <Modal @confirm="onLogout" confirm-text="Logout" modal-id="accountDetail" :title="`Welcome, ${getJwtName()}`" :body="`EMAIL: ${getJwtEmail()}\nROLE: ${getJwtRoles()}`" />
     <ModalForm modal-id="annSubscribe"
                name="Enter the email for subscribe categories"
                :error="errors.email"

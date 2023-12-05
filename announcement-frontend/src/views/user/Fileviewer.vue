@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-import icon from '@/assets/components/icon/icon.vue'
+import FileIcon from "@/assets/components/icon/FileIcon.vue";
 
 const props = defineProps({
   file: { type: Object, default: false },
@@ -23,7 +23,7 @@ const isImage = computed(() => {
       </div>
       <div v-else class="w-4/6">
       <a :href="file?.fileUrl">
-      <icon :file="file"/>
+      <FileIcon :file="file"/>
    
     </a>
     </div>

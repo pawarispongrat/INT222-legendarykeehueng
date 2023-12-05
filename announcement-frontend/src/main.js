@@ -6,14 +6,14 @@ import {createPinia} from 'pinia'
 import {LoadingPlugin} from "vue-loading-overlay";
 import 'vue3-toastify/dist/index.css';
 import 'vue-loading-overlay/dist/css/index.css';
+import {msal} from "@/assets/data/msalAuthenticate";
 
 const app = createApp(App)
 const pinia = createPinia()
+msal.initialize()
 
 import "@/assets/data/msalAuthenticate.js"
-import {msal} from "@/assets/data/msalAuthenticate";
 
-msal.initialize()
 app.use(router)
 app.use(LoadingPlugin, {
     isFullPage: false
