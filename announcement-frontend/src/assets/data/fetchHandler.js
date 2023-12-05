@@ -68,6 +68,7 @@ export default class FetchHandler {
             if (this.revoke && response.status === 401) {
                 const refreshToken = getRefreshToken()
                 const status = await revokeToken(refreshToken)
+                if (status === 404) await router.push("/announcement")
                 if (!status || status === 401 || status === 403) await router.push("/login")
                 else return this.authorize().response()
             }
