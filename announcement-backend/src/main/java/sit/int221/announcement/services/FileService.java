@@ -30,7 +30,7 @@ public class FileService {
 
     @Autowired
     private FileProperties properties;
-    @Value("${backend.domain}")
+    @Value("${host.domain}")
     private String domain;
 
     public String getFileMime(HttpServletRequest request,Resource resource) {
