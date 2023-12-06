@@ -30,7 +30,7 @@ public class FileService {
 
     @Autowired
     private FileProperties properties;
-    @Value("${host.domain}")
+    @Value("${backend.domain}")
     private String domain;
 
     public String getFileMime(HttpServletRequest request,Resource resource) {
@@ -76,8 +76,7 @@ public class FileService {
         if (fileName.contains("..")) throw new InvalidFileException("File name invalid " + fileName);
         Path target = getTargetPath(fileName,folderId);
         Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-        FileResponse response = new FileResponse(domain, fileName,file.getContentType(),folderId, file.getSize());
-        return response;
+        return new FileResponse(domain, fileName,file.getContentType(),folderId, file.getSize());
 
     }
 

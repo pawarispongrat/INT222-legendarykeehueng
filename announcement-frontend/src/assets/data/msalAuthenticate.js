@@ -5,13 +5,15 @@ import {
 } from '@azure/msal-browser'
 
 const scopes = ["05274b39-da42-4da3-b122-41d5825c0480/Roles"]
+const REDIRECT_URI = import.meta.env.VITE_AZURE_REDIRECT
+
 const config = {
     auth: {
 
         clientId: '05274b39-da42-4da3-b122-41d5825c0480', // This is the ONLY mandatory field that you need to supply.
         authority: 'https://login.microsoftonline.com/6f4432dc-20d2-441d-b1db-ac3380ba633d', // Defaults to "https://login.microsoftonline.com/common"
-        redirectUri: '/announcement', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
-        postLogoutRedirectUri: '/announcement', // Indicates the page to navigate after logout.
+        redirectUri: REDIRECT_URI, // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
+        postLogoutRedirectUri: REDIRECT_URI, // Indicates the page to navigate after logout.
         clientCapabilities: ['CP1'], // this lets the resource owner know that this client is capable of handling claims challenge.
     },
 }
