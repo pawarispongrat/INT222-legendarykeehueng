@@ -8,8 +8,11 @@ const props = defineProps({
 });
 
 const fileType = computed(() => {
-  const segments = props.file?.fileType.split('/');
-  const extension = segments[segments.length - 1];
+  // console.log(props.file)
+  // const segments = props.file?.fileType.split('/');
+  // const extension = segments[segments.length - 1];
+  const filename = props.file?.fileName
+  const extension = ( filename.indexOf('.') > 0 ) ? filename.split('.').pop().toLowerCase() : ''
   return extension.toUpperCase();
 });
 

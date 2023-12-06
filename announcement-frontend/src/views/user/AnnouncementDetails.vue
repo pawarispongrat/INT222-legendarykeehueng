@@ -23,10 +23,14 @@ onBeforeMount(async () => {
     <loading :active="!loaded" :can-cancel="false" :is-full-page="false"/>
     <div v-if="loaded" class=" h-screen w-screen flex flex-col items-center ann-item p-8">
         <Header class="p-8"> Announcement Details</Header>
-        <div class="overflow-auto bg-base-100 w-full max-w-2xl rounded-md">
-            <p class="font-bold text-xl text-gray-100 py-5 w-full px-4 bg-[#C1A696] ann-title">
+        <div class="overflow-auto bg-base-100 w-full max-w-[80rem] rounded-md">
+            <div class="flex items-center justify-between font-bold text-xl text-gray-100 py-5 w-full px-4 bg-[#C1A696] ann-title">
                 {{ announcement.announcementTitle }}
-            </p>
+              <router-link
+                  class="btn btn-error text-sm border rounded-md  px-6 text-white hover:bg-red-500 hover:border-red-500"
+                  to="/announcement">Back</router-link>
+            </div>
+
             <p class="px-6 py-5 text-error">
                 Closed on: <span class="ann-close-date">{{ formatDate(announcement.closeDate) }}</span>
             </p>
@@ -39,10 +43,6 @@ onBeforeMount(async () => {
                 </span>
        
                 <FileViewer v-for="(file, index) in files" :key="index"  :file="file" />
-
-                <router-link
-                    class="inline-block mt-4 btn-outline btn-error float-right px-6 py-2 text-sm border rounded-md ann-button"
-                    to="/announcement">Back</router-link>
             </div>
         </div>
     </div>

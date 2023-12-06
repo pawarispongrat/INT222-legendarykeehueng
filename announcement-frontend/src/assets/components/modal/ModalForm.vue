@@ -1,6 +1,6 @@
 <script setup>
 import { useModal } from '@/assets/stores/useModal.js';
-import { Teleport, ref } from 'vue';
+import {Teleport, ref, onBeforeMount} from 'vue';
 import Input from '../form/Input.vue';
 
 
@@ -12,6 +12,8 @@ const props = defineProps({
     option: String,
     status: Object,
     placeholder: String,
+  inputLabel: { type: String, default: null},
+  inputValue: { type: String, default: null},
     error: { type: String, default: null },
     isSlot: { type: Boolean, default: false },
     isOption: { type: Boolean, default: false },
@@ -37,6 +39,7 @@ const getCategoryById = (id) => {
     const index = id - 1;
     return props.categories[index];
 }
+onBeforeMount(() => input.value = props.inputValue)
 // onBeforeMount(() => setModal(props.modalId))
 const emit = defineEmits(["confirm"])
 
@@ -49,8 +52,9 @@ const emit = defineEmits(["confirm"])
                     <div
                         class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-lg">
                         <div class="bg-[#EFE2D7] p-12 space-y-4">
-                            <Input v-if="name" :label="name" :placeholder="placeholder" :errors="error ? [error] : null" :required="true"
+                            <Input v-if="name && !inputValue" :label="name" :placeholder="placeholder" :errors="error ? [error] : null" :required="true"
                                 v-model.trim="input" :max="45" />
+                            <div v-else>{{inputLabel}}{{ inputValue }}</div>
                             <div class="form-control ">
                                 <p class="font-bold">[ {{ option }} ]</p>
                                 <p v-if="status && status.exists" v-for="item in status.exists" :key="item.id">
@@ -69,7 +73,7 @@ const emit = defineEmits(["confirm"])
                         </div>
                         <div class="bg-slate-100 p-3 flex justify-end max-lg:flex-col gap-x-4 gap-y-4">
                             <button v-if="(open || (!isSlot && selectedOptions.length > 0 && input.length > 0))"
-                                type="button" @click="$emit('confirm', input, selectedOptions)"
+                                type="button" @click="$emit('confirm',input, selectedOptions)"
                                 class="btn btn-error text-white hover:bg-red-500">Confirm</button>
                             <button v-if="!isSlot" type="button" @click="setOpen(modalId)"
                                 class="btn btn-outline">Cancel</button>

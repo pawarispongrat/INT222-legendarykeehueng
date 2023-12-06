@@ -32,7 +32,7 @@ public class UserComponent {
         return authorities.stream().anyMatch(matcher::contains);
     }
     public boolean isEditor() {
-        return isEditor(Role.values());
+        return isEditor(Role.admin, Role.announcer);
     }
     public boolean isAuthenticated() {
         return getAuthentication() != null &&  getAuthentication().isAuthenticated();

@@ -66,7 +66,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/subscription/**").permitAll()
                         .requestMatchers(GET,"/api/files/**").permitAll()
                         .requestMatchers(matchers("/api/files/**",POST,DELETE)).hasAnyAuthority(getAuthorize())
-                        .requestMatchers("/api/token").permitAll()
+                        .requestMatchers("/api/token/**").permitAll()
                         .requestMatchers(GET,"/api/announcements/**").permitAll()
                         .requestMatchers(matchers("/api/announcements/**",POST,PUT,DELETE)).hasAnyAuthority(getAuthorize())
                         .requestMatchers("/api/users/**").hasAuthority(Role.admin.toString())

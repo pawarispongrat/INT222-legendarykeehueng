@@ -58,7 +58,7 @@ const router = createRouter({
         {
             path: '/announcement/',
             name: 'UserAnnouncement',
-            component: async () => UserAnnouncement
+            component:  UserAnnouncement
         },
         {
             path: '/unsubscribe/',
@@ -68,7 +68,7 @@ const router = createRouter({
         {
             path: '/announcement/:id',
             name: 'UserDetails',
-            component: UserDetails
+            component: async () => UserDetails
         },
         {
             path: '/admin/',

@@ -50,7 +50,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             TokenType type = TokenType.NULL;
             String username;
             try {
-                if (entra.isAadToken(token) != null && filter(request,response,chain)) return;
+                if (entra.isValidAadToken(token) != null && filter(request,response,chain)) return;
                 type = util.getTokenType(token);
                 username = type == TokenType.ACCESS_TOKEN ? util.getSubjectFromToken(token) : null;
             }

@@ -25,8 +25,8 @@ export default class FetchHandler {
         this.headers["Authorization"] = `Bearer ${token}`
         return this
     }
-    authorize() {
-        const token = getAccessToken()
+    authorize(token) {
+        if (!token) token = getAccessToken()
         if (!token) return this
         this.headers["Content-Type"] = "application/json"
         this.headers["Authorization"] = `Bearer ${token}`
@@ -40,10 +40,9 @@ export default class FetchHandler {
         return this
     }
     content(type){
-        if (type === undefined) {
+        if (type === undefined)
             delete this.headers["Content-Type"]
-        } else
-        this.headers["Content-Type"] = type
+        else this.headers["Content-Type"] = type
         return this
     }
     put(body) {
@@ -64,7 +63,7 @@ export default class FetchHandler {
             if (this.body) options["body"] = isJson === true ? JSON.stringify(this.body): this.body
             if (Object.keys(this.headers).length !== 0) options["headers"] = this.headers
             const response =  await fetch(this.url, options)
-          
+            if (!response) return undefined
             if (this.revoke && response.status === 401) {
                 const refreshToken = getRefreshToken()
                 const status = await revokeToken(refreshToken)

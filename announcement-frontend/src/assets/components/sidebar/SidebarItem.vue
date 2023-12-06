@@ -5,12 +5,16 @@ import SvgIcon from '@jamescoyle/vue-icon'
 import { mdiFolderAccount ,mdiListBox,mdiAlertCircleOutline,mdiLogout,mdiAccountCircle,mdiBullhorn,mdiTextBoxCheck  } from '@mdi/js'
 import ModalButton from '@/assets/components/modal/ModalButton.vue';
 import Modal from '@/assets/components/modal/Modal.vue';
-import { getJwtName, isAdmin } from '@/assets/data/tokenStorage.js'
+import {clearToken, getJwtName, isAdmin} from '@/assets/data/tokenStorage.js'
+import {Auth} from "@/assets/data/msalAuthenticate";
+import {useMsal} from "@/assets/stores/useMsal";
 
 const users = ref([])
-const logOut = () =>{
-    localStorage.clear();
-    router.push({ name: 'Login' })
+const { logout } = useMsal()
+const logOut = async () =>{
+    clearToken()
+    if (Auth.isLoggedIn()) await logout()
+    await router.push({ name: 'Login' })
 }
 const items = ref([
     { path: "/announcement", name: "Announcement Viewer",icon: mdiBullhorn},

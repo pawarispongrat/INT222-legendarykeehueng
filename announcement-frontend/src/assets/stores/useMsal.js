@@ -2,6 +2,7 @@ import {acceptHMRUpdate, defineStore} from "pinia";
 import {ref} from "vue";
 import {Auth, msal} from "@/assets/data/msalAuthenticate";
 import {clearToken, setAccessToken, setRefreshToken} from "@/assets/data/tokenStorage";
+import {createEntraToken} from "@/assets/data/dataHandler";
 
 export const useMsal = defineStore("msal",() => {
     const initialized = ref(false)
@@ -21,8 +22,8 @@ export const useMsal = defineStore("msal",() => {
             .then(async (data) => {
                 account.value = data
                 error.value = ''
-                const token = await Auth.getToken()
-                setAccessToken(token)
+                const entraToken = await Auth.getToken()
+                if (entraToken) await createEntraToken(entraToken)
             })
             .catch(err => {
                 error.value = err.message

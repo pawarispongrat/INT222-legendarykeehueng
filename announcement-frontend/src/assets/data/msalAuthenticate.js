@@ -53,11 +53,11 @@ export const Auth = {
 async login() {
     const request = { redirectUri: config.auth.redirectUri, scopes, }
     return msal.loginPopup(request).then(result => {
-            // could do something with the AuthResult here if you need to
-            // console.log('Logged in with', result)
-            // set active account
-            return this.setAccount(result.account)
-        })
+        // could do something with the AuthResult here if you need to
+        // console.log('Logged in with', result)
+        // set active account
+        return this.setAccount(result.account)
+    })
         .catch((error) => {
             // if we get stuck, clear session and attempt to log in again
             if (error.errorCode === 'interaction_in_progress') {

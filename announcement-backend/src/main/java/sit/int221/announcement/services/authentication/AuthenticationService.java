@@ -17,6 +17,7 @@ import sit.int221.announcement.exceptions.list.ItemNotFoundException;
 import sit.int221.announcement.exceptions.list.UserException;
 import sit.int221.announcement.enumeration.TokenType;
 import sit.int221.announcement.utils.security.ClaimsMap;
+import sit.int221.announcement.utils.security.entra.EntraTokenUtil;
 import sit.int221.announcement.utils.security.jwt.JwtTokenUtil;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class AuthenticationService {
         authenticate(request.getUsername(),request.getPassword(),details.getAuthorities());
         String username = details.getUsername();
 
-        String token = jwt.generateTokenWithClaims(username, TokenType.ACCESS_TOKEN, getAccessTokenClaims(details));
+        String token = jwt.generateTokenWithClaims(username, TokenType.ACCESS_TOKEN, jwt.getAccessTokenClaims(details));
         String refreshToken = jwt.generateToken(username, TokenType.REFRESH_TOKEN);
         return new TokenResponse(token,refreshToken);
     }
@@ -51,21 +52,8 @@ public class AuthenticationService {
         if (type == TokenType.ACCESS_TOKEN) throw new AuthorizedException(TokenType.REFRESH_TOKEN.toString(),"Token is invalid");
         String username = jwt.getSubjectFromToken(refreshToken);
         UserDetails details = service.loadUserByUsername(username);
-        String token = jwt.generateTokenWithClaims(username, TokenType.ACCESS_TOKEN, getAccessTokenClaims(details));
+        String token = jwt.generateTokenWithClaims(username, TokenType.ACCESS_TOKEN, jwt.getAccessTokenClaims(details));
         return new RefreshTokenResponse(token);
-    }
-    private ClaimsMap[] getAccessTokenClaims(UserDetails details) {
-        List<ClaimsMap> maps = new ArrayList<>();
-        JwtUser jwtUser = (JwtUser) details;
-        String[] authorities = getAuthorities(details);
-        if (authorities.length > 0) maps.add(new ClaimsMap("aut", getAuthorities(details)));
-        maps.add(new ClaimsMap("name", jwtUser.getName()));
-        maps.add(new ClaimsMap("email", jwtUser.getEmail()));
-        return maps.toArray(maps.toArray(new ClaimsMap[0]));
-    }
-
-    private String[] getAuthorities(UserDetails details) {
-        return details.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new);
     }
 
     private void authenticate(String username, String password, Collection<? extends GrantedAuthority> authority) {

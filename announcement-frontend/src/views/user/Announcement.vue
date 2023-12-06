@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import {ref, onMounted, computed, onBeforeMount} from 'vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import {mdiAccount, mdiBullhornVariant, mdiEmailCheck} from '@mdi/js';
 
@@ -20,7 +20,6 @@ import {useMsal} from "@/assets/stores/useMsal";
 import Modal from "@/assets/components/modal/Modal.vue";
 import {Auth} from "@/assets/data/msalAuthenticate";
 import {clearToken, getAccessToken, getJwtEmail, getJwtName, getJwtRoles} from "@/assets/data/tokenStorage";
-import {useRouter} from "vue-router";
 
 const msal = useMsal()
 const user = useAnnounces()
@@ -35,11 +34,11 @@ const errors = ref({
     otp: null
 })
 
-onMounted(async () => {
-  await fetch()
+onBeforeMount(async () => {
+  await fetchAnnouncement()
   loaded.value = true
 })
-const fetch = async () => {
+const fetchAnnouncement = async () => {
   announcements.value = await getUserAnnouncement(user.getMode(), user.getPage() - 1, user.category)
 }
 const sendSubscribe = async (email,categories) =>{
@@ -89,7 +88,6 @@ const onLogout = () => {
   if (Auth.isLoggedIn()) {
     msal.logout()
     clearToken()
-    window.location.reload()
   }
   else if (getAccessToken()) {
     clearToken()
@@ -106,12 +104,21 @@ const onLogout = () => {
     <Header>SIT Announcement System (SAS)</Header>
   </div>
   <div class="flex flex-col w-screen h-screen items-center bg-[#EFE2D7] " v-if="loaded">
-    <AbsoluteIcon tip="Subscribe" @open="onOpenMail" :icon="mdiEmailCheck" icon-class="text-red-400" div-class="bottom-12 left-12 z-10"/>
-    <AbsoluteIcon :tip="getAccessToken() ? 'Welcome' : 'Login'" @open="onLogin" :icon="mdiAccount" icon-class="text-red-400" div-class="bottom-32 left-12"/>
-    <Modal @confirm="onLogout" confirm-text="Logout" modal-id="accountDetail" :title="`Welcome, ${getJwtName()}`" :body="`EMAIL: ${getJwtEmail()}\nROLE: ${getJwtRoles()}`" />
+    <AbsoluteIcon tip="Subscribe" @open="onOpenMail" :icon="mdiEmailCheck" icon-class="text-red-400" div-class="bottom-12 left-12 z-20"/>
+    <AbsoluteIcon :tip="getAccessToken() ? 'Welcome' : 'Login'" @open="onLogin" :icon="mdiAccount" icon-class="text-red-400" div-class="bottom-32 left-12 z-10"/>
+    <Modal @confirm="onLogout" confirm-text="Logout" modal-id="accountDetail" :title="`Welcome, ${getJwtName()}`">
+      <template #body>
+        <div class="text-slate-500">
+          <p>EMAIL => {{ getJwtEmail() }}</p>
+          <p>ROLE => {{ getJwtRoles() }}</p>
+        </div>
+      </template>
+    </Modal>
     <ModalForm modal-id="annSubscribe"
                name="Enter the email for subscribe categories"
-               :error="errors.email"
+               input-label="Subscribe email for: "
+               :input-value="getJwtEmail()"
+               :error="errors?.email"
                :categories="categories" @confirm="sendSubscribe"
                :isOption="true"
                option="Categories"
@@ -119,7 +126,7 @@ const onLogout = () => {
     />
     <ModalForm :modal-id="`annSubscribe1`"
                name="Verify OTP" @confirm="sendOtp"
-               :error="errors.otp"
+               :error="errors?.otp"
                option="The OTP has been sent"
                :open="true"
     />
@@ -154,12 +161,12 @@ const onLogout = () => {
       </div>
       <div v-if="announcements?.content?.length > 0">
         <Table :head="['No','Title','Close Date','Category']"
-               :body="announcements.content"
+               :body="announcements?.content"
                body-class="cursor-pointer hover hover:bg-base-300"
                :use-header="false" :use-action="false"
                @section-click="onClickDetails">>
           <template #column="{ items, index }">
-            <td class="py-6">{{ index + 1 + (announcements.page * announcements.size) }}</td>
+            <td class="py-6">{{ index + 1 + (announcements?.page * announcements?.size) }}</td>
             <td class="ann-title text-left"> {{ items.announcementTitle }}</td>
             <td class="ann-close-date px-3 text-center ">{{ formatDate(items.closeDate) }}</td>
             <td class="ann-category text-center ">

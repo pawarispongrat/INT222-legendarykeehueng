@@ -10,13 +10,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
 import sit.int221.announcement.enumeration.Role;
+import sit.int221.announcement.models.User;
 import sit.int221.announcement.utils.security.PublicKeyExtract;
 import sit.int221.announcement.utils.security.jwt.JwtTokenUtil;
 
 import java.io.*;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
-import java.text.ParseException;
 import java.util.*;
 
 
@@ -34,19 +34,35 @@ public class EntraTokenUtil {
     private static final String STS_WINDOWS_ISSUER = "https://sts.windows.net/";
     private static final String STS_CHINA_CLOUD_API_ISSUER = "https://sts.chinacloudapi.cn/";
 
-    public Claims isAadToken(String token) throws RuntimeException {
+    public Claims authenticateAad(String token) throws RuntimeException {
+        Claims verifyClaims = isValidAadToken(token);
+        if (verifyClaims == null) return null;
+//      Ref:  AadAuthenticationFilter from azure active directory
+        this.authenticateByUser(verifyClaims);
+
+        return verifyClaims;
+
+    }
+    public Claims isValidAadToken(String token) throws RuntimeException {
         Claims verifyClaims = verifyToken(token);
         if (verifyClaims == null) return null;
         if (!isAadIssuer(verifyClaims)) return null;
         if (!isValidToken(verifyClaims)) return null;
 //      Ref:  AadAuthenticationFilter from azure active directory
-        this.authenticate(verifyClaims);
 
         return verifyClaims;
 
     }
 
-    private void authenticate(Claims verifyClaims) {
+
+    public void authenticateByUser(User user) {
+        Collection<SimpleGrantedAuthority> roles = new HashSet<>();
+        roles.add(new SimpleGrantedAuthority(user.getRole().toString()));
+        Authentication authentication = new PreAuthenticatedAuthenticationToken(user,null, roles);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private void authenticateByUser(Claims verifyClaims) {
         String email = verifyClaims.get("upn", String.class); //AZURE EMAIL
         String name = verifyClaims.get("name",String.class); //AZURE NAME
         EntraUser user = new EntraUser(email, name);
@@ -55,6 +71,10 @@ public class EntraTokenUtil {
         roles.add(new SimpleGrantedAuthority(Role.visitor.toString()));
         Authentication authentication = new PreAuthenticatedAuthenticationToken(user,null, roles);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    public String getEmail(Claims claims) {
+        return claims.get("email",String.class);
     }
 
 
@@ -75,7 +95,7 @@ public class EntraTokenUtil {
                 .replace("%tenantId%", properties.getTenantId())
                 .replace("%clientId%", properties.getClientId());
         try {
-            
+
             PublicKey publicKey = new PublicKeyExtract(jwkProviderUrl,token).getX509PublicKey();
             return Jwts.parser()
                     .setSigningKey(publicKey)

@@ -40,7 +40,7 @@ const getImage = (fileName) => previewImageFiles.value.get(fileName)
 
 <template>
   <form id="formEle">
-    File upload: <input :disabled="files.length === 5" type="file" accept=".jpg, .jpeg,.png,.pdf" @change="chooseBinaryFile" multiple />
+    File upload: <input :disabled="files.length === 5" type="file" accept=".jpg, .jpeg,.png,.pdf,.docx,.doc,.xlsx,.csv" @change="chooseBinaryFile" multiple />
     <div v-for="(file, index) in files" :key="index">
       <p>{{ file.name }}</p>
       <img v-if="isImage(file.name)" v-show="getImage(file.name)" :src="getImage(file.name)"

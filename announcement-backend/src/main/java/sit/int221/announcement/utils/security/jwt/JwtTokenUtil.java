@@ -2,8 +2,11 @@ package sit.int221.announcement.utils.security.jwt;
 
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import sit.int221.announcement.dtos.JwtUser;
+import sit.int221.announcement.models.User;
 import sit.int221.announcement.utils.Utils;
 import sit.int221.announcement.enumeration.Role;
 import sit.int221.announcement.enumeration.TokenType;
@@ -21,6 +24,26 @@ public class JwtTokenUtil {
 
     @Autowired
     private JwtProperties properties;
+    private String[] getAuthorities(UserDetails details) {
+        return details.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new);
+    }
+    public ClaimsMap[] getAccessTokenClaims(UserDetails details) {
+        List<ClaimsMap> maps = new ArrayList<>();
+        JwtUser jwtUser = (JwtUser) details;
+        String[] authorities = getAuthorities(details);
+        if (authorities.length > 0) maps.add(new ClaimsMap("aut", getAuthorities(details)));
+        maps.add(new ClaimsMap("name", jwtUser.getName()));
+        maps.add(new ClaimsMap("email", jwtUser.getEmail()));
+        return maps.toArray(maps.toArray(new ClaimsMap[0]));
+    }
+    public ClaimsMap[] getAccessTokenClaims(User details) {
+        List<ClaimsMap> maps = new ArrayList<>();
+        String[] authorities = new String[]{ details.getRole().toString() };
+        maps.add(new ClaimsMap("aut", authorities));
+        maps.add(new ClaimsMap("name", details.getName()));
+        maps.add(new ClaimsMap("email", details.getEmail()));
+        return maps.toArray(maps.toArray(new ClaimsMap[0]));
+    }
 
     public String getSubjectFromToken(String token) {
         if (token == null) return null;

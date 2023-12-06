@@ -12,8 +12,6 @@ const app = createApp(App)
 const pinia = createPinia()
 msal.initialize()
 
-import "@/assets/data/msalAuthenticate.js"
-
 app.use(router)
 app.use(LoadingPlugin, {
     isFullPage: false

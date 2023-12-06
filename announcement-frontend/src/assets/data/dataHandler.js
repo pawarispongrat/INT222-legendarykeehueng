@@ -10,6 +10,7 @@ const API_ANNOUNCEMENTS = `${API_HOST}/api/announcements`
 const API_USERS = `${API_HOST}/api/users`
 const API_PAGES = `${API_HOST}/api/announcements/pages`
 const API_TOKEN = `${API_HOST}/api/token`
+const API_ENTRA_TOKEN = `${API_HOST}/api/token/entra`
 const API_SUBSCRIBE = `${API_HOST}/api/subscription/subscribe`
 const API_UNSUBSCRIBE = `${API_HOST}/api/subscription/unsubscribe`
 const API_UPLOAD = `${API_HOST}/api/files`
@@ -89,8 +90,7 @@ async function deleteAnnouncement(id) {
     return new FetchHandler(`${API_ANNOUNCEMENTS}/${id}`).authorize().delete().json()
 }
 async function deleteUser(id) {
-
-    return new FetchHandler(`${API_USERS}/${id}`).authorize().delete().json()
+    return (await new FetchHandler(`${API_USERS}/${id}`).authorize().delete().response()).status
 }
  async function matchPassword(user)  {
     const response  = await new FetchHandler(`${API_USERS}/match`).authorize().post(user).response()
@@ -113,9 +113,11 @@ async function verifyOtp(Email,otp) {
 
 
 async function uploadFile(id,files){
+        if ((files?.length ?? 0) === 0) return []
         const formData = new FormData();
-        files.forEach((file) => { formData.append(`files`, file); })
+        files?.forEach((file) => { formData.append(`files`, file); })
         const response = await new FetchHandler(`${API_UPLOAD}/${id}`).authorize().post(formData).content(undefined).response(false)
+        if (response?.status !== 200) return []
         return response.json()
     }
 
@@ -124,8 +126,10 @@ async function getFileById(id){
     return await new FetchHandler(`${API_FILE}/${id}`).authorize().json()
 }    
 async function updateFile(id,files){
+    if ((files?.length ?? 0) === 0) return []
+
     const formData = new FormData();
-    files.forEach((file) => { formData.append(`files`, file); })
+    files?.forEach((file) => { formData.append(`files`, file); })
     const response = await new FetchHandler(`${API_UPLOAD}/${id}`).authorize().put(formData).content(undefined).response(false)
     return response.json()
 }
@@ -143,7 +147,19 @@ const createNewToken = async (data) => {
     }
     return response?.status
 }
-  
+export const createEntraToken = async (entraToken) => {
+    const response = await new FetchHandler(API_ENTRA_TOKEN)
+        .header("Content-Type","application/json")
+        .authorize(entraToken)
+        .response()
+    const details = await response.json()
+    if (response.ok) {
+        setAccessToken(details.token)
+        if (details.refreshToken) setRefreshToken(details.refreshToken)
+        return response.status
+    }
+    return response?.status
+}
 
 
 

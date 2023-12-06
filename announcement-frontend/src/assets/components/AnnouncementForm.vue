@@ -1,10 +1,10 @@
 <script setup>
 import DateTimeForm from "./DateTimeForm.vue";
 import { categories } from "../data/announcement.js";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import inputFile from "@/assets/components/form/inputFile.vue"
+import InputFile from "@/assets/components/form/InputFile.vue"
 
 const quilEditor = ref('')
 const validateDesc = ref(null)
@@ -127,7 +127,7 @@ const changeText = (e) => validateDesc.value = quilEditor.value.getQuill().getTe
       </div>
     </div>
 
-    <inputFile :files="files"/>
+    <InputFile :files="files"/>
     
     <div class="flex  w-full" >
       <button class="btn border-0 bg-[#C1A696] ann-button text-gray-100 w-44 hover:bg-[#E4B79D] disabled:bg-base-100"

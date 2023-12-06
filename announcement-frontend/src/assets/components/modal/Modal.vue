@@ -28,6 +28,7 @@ defineEmits(["confirm"])
                                 {{ title }}
                             </h3>
                             <p v-show="body" class="text-slate-500">{{ body }}</p>
+                            <slot name="body"></slot>
                         </div>
                         <div class="bg-slate-100 p-3 flex justify-end max-lg:flex-col gap-x-4 gap-y-4">
                             <button v-if="!isSlot" type="button" @click="setOpen(modalId),$emit('confirm', $event)"

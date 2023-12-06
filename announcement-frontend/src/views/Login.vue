@@ -50,8 +50,8 @@ const loginAzure = async () => {
                 v-model.trim="check.username" :required="true"/>
             <Input label="Password" type="password"  class-name="ann-password" placeholder="•••••••••••••" error-class-name="ann-error-password"
                 v-model.trim="check.password" :required="true"/>
-            <Button type="submit" name="Sign in to your account" class="ann-button w-full max-w-xl mt-6 pt-2  bg-orange-400 hover:bg-orange-500" />
-            <Button @click="loginAzure" name="Sign in with microsoft" class="ann-button w-full max-w-xl mt-4 bg-blue-400 hover:bg-blue-500" />
+            <Button name="Sign in to your account" class="ann-button w-full max-w-xl mt-6 pt-2  bg-orange-400 hover:bg-orange-500" />
+            <Button @click="loginAzure" type="button" name="Sign in with microsoft" class="ann-button w-full max-w-xl mt-4 bg-blue-400 hover:bg-blue-500" />
       </form>
   </div>
   </div>

@@ -29,6 +29,7 @@ public class AnnouncementController {
     @GetMapping("")
     public List<? extends AnnouncementGuestResponse> getAnnouncement(
             @RequestParam(defaultValue = "admin") Modes mode) {
+
         return service.getAnnouncement(mode);
     }
     @GetMapping("/pages")
@@ -55,7 +56,7 @@ public class AnnouncementController {
     @PreAuthorize("@security.authorizeAnnouncement(#id)")
     public AnnouncementAdminResponse deleteAnnouncement(@PathVariable Integer id) {
         AnnouncementAdminResponse response = service.deleteAnnouncement(id);
-        fileService.deleteFolder(id);
+        fileService.deleteFilesInFolder(id);
         return response;
     }
     @PutMapping("/{id}")

@@ -29,6 +29,7 @@ onBeforeMount(async () => {
         if (fileData?.fileUrl === undefined) break
         const file = await getFileFromUrl(fileData.fileUrl,fileData.fileName)
         files.value.push(file)
+        edited.value--
     }
     if (await isLoaded(fetchAnnouncement)) {
         announcement.value = new Announcement().fromJSON(fetchAnnouncement)
@@ -41,6 +42,8 @@ onBeforeMount(async () => {
 // EDITED
 let edited = ref(-1)
 watch([announcement], async () => { edited.value++; }, { deep: true })
+watch([files], async () => { edited.value++; }, { deep: true })
+
 const edit = async (announcement,validate,file) => {
     if (validate) {
         loaded.value = false

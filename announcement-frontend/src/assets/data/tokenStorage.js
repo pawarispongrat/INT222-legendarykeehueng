@@ -5,12 +5,16 @@ import {Auth} from "@/assets/data/msalAuthenticate";
 const ACCESS_TOKEN = "accessToken"
 const REFRESH_TOKEN = "refreshToken"
 
-const ROLES = ["admin","announcer","visitor"]
+const ROLES = ["admin","announcer"]
 
 export function getJwt() {
     const token = getAccessToken()
     // console.log(decoded)
-    return token && JSON.parse(atob(token?.split('.')[1]))
+    if (!token) return undefined
+    const split = token?.split('.')
+    if (!split) return undefined
+    if (!split?.[1]) return undefined
+    return JSON.parse(atob(split?.[1]))
 }
 export function getJwtName() {
     return getJwt()?.name
@@ -20,7 +24,7 @@ export function getJwtEmail() {
     return getJwt()?.email
 }
 export function getJwtRoles() {
-    return getJwt()?.aut ?? "visitor"
+    return getJwt()?.aut ?? ["visitor"]
 }
 export function isEditor() {
     return getJwtRoles() && getJwtRoles().some((element) => ROLES.includes(element))

@@ -10,6 +10,7 @@ import ModalButton from '@/assets/components/modal/ModalButton.vue';
 import { mdiAlertCircleOutline } from '@mdi/js';
 import { humanizeDate } from '@/assets/utils/dateUtils';
 import Loading from "vue-loading-overlay";
+import {toast} from "vue3-toastify";
 
 const loaded = ref(false)
 const users = ref([])
@@ -23,9 +24,13 @@ onBeforeMount(async () => {
 })
 
 const userDelete = async (id) => {
+  const status =  await deleteUser(id)
+  if (status !== 200) {
+    toast.error("You can't delete yourself.")
+    return
+  }
   users.value = users.value.filter((user) => user.id !== id)
-  await deleteUser(id)
-} 
+}
 const userSections = ["No", "Username", "Name", "Email", "Role", "CreatedOn", "UpdatedOn", "Action"]
 const userEditRoute = (id) => `/admin/user/${id}/edit`
 </script>
