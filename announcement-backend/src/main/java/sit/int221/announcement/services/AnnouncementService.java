@@ -83,7 +83,7 @@ public class AnnouncementService {
         announcement.setCategory(category);
 
         Announcement saved = repository.saveAndFlush(announcement);
-        subscription.sendSubscribeMail(saved,SubscribeNotify.ADD, category);
+        subscription.notify(saved,SubscribeNotify.ADD, category);
         return mapper.map(saved,AnnouncementAdminResponse.class);
     }
 
@@ -99,7 +99,7 @@ public class AnnouncementService {
         announcement.setCategory(category);
 
         Announcement saved = repository.saveAndFlush(announcement);
-        subscription.sendSubscribeMail(saved, SubscribeNotify.UPDATE, category);
+        subscription.notify(saved, SubscribeNotify.UPDATE, category);
         return mapper.map(saved,AnnouncementAdminResponse.class);
     }
 
@@ -129,7 +129,7 @@ public class AnnouncementService {
     public Page<Announcement> getAnnouncementByMode(Pageable pageable, Modes mode, int category) {
         Page<Announcement> announcement = new PageImpl<>(new ArrayList<>(),pageable,0);
         User user = !component.isEditor(Role.admin) ? users.getUserByUsernameOrNull(component.getSubject()) : null;
-        if (!component.isEditor()) mode = Modes.active;
+        if (!component.isEditor() && mode == Modes.admin) mode = Modes.active;
         Display show = Display.Y;
         switch (mode) {
             case admin -> announcement = repository.findAll(user, pageable);

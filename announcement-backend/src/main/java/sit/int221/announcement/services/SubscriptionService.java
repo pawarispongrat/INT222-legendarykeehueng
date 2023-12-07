@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import sit.int221.announcement.dtos.request.subscription.SubscriptionOtpRequest;
 import sit.int221.announcement.dtos.request.subscription.SubscriptionRequest;
 import sit.int221.announcement.dtos.request.subscription.UnsubscribeRequest;
+import sit.int221.announcement.enumeration.Display;
 import sit.int221.announcement.enumeration.SubscribeNotify;
 import sit.int221.announcement.exceptions.list.InvalidOtpException;
 import sit.int221.announcement.exceptions.list.ItemNotFoundException;
@@ -45,7 +46,8 @@ public class SubscriptionService {
         return request;
     }
 
-    public void sendSubscribeMail(Announcement announcement, SubscribeNotify notify, Category category) {
+    public void notify(Announcement announcement, SubscribeNotify notify, Category category) {
+        if (announcement.getAnnouncementDisplay() == Display.N) return;
         StringBuilder sb = new StringBuilder();
         String[] bodies = new String[]{
                 String.format("Description: %s",announcement.getAnnouncementDescription()), " ",
