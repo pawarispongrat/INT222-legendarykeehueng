@@ -35,10 +35,10 @@ const errors = ref({
 })
 
 onBeforeMount(async () => {
-  await fetchAnnouncement()
+  await fetch()
   loaded.value = true
 })
-const fetchAnnouncement = async () => {
+const fetch = async () => {
   announcements.value = await getUserAnnouncement(user.getMode(), user.getPage() - 1, user.category)
 }
 const sendSubscribe = async (email,categories) =>{
