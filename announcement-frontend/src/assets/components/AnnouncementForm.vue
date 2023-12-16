@@ -97,14 +97,6 @@ const changeText = (e) => validateDesc.value = quilEditor.value.getQuill().getTe
           v-model:content="announcement.description" class="rounded-b-xl bg-white h-32 ann-description" contentType="html"
           @text-change="changeText" ref="quilEditor" />
       </div>
-      <!-- <textarea
-    
-        v-model="announcement.description"
-        :maxlength="MAX_DESCRIPTION"
-        class="input input-bordered w-full h-32 py-2 ann-description placeholder:text-gray-500 resize-none"
-        placeholder="Your description details."
-        :class="{ 'outline outline-red-500' : !validates.description }">
-      </textarea> -->
     </div>
 
     <DateTimeForm date-text="Publish Date" @date="(e) => (announcement.publishDate = e.target.value)"

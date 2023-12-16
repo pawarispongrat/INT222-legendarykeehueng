@@ -28,18 +28,25 @@ const number = (selectPage) => {
 const fetchPage = () => emits('fetch',announces.getPage())
 const selectedPage = (pageIndex) => computed(() => pageIndex === announces.getPage()).value
 
+const PRIMARY_BG_CLASSES = "bg-[#E2C593]"
+const HOVER_PRIMARY_BG_CLASSES = "hover:bg-[#E2C593]"
+const HOVER_SECONDARY_BG_CLASSES = "hover:bg-[#E4B79D]"
+const DISABLED_PRIMARY_BG_CLASSES = "disabled:bg-[#E2C593]"
+const DISABLED_NAVIGATE_CLASSES = "disabled:bg-[#cdc3ad]"
 </script>
 <template>
     <div class="btn-group flex-wrap mt-8" v-if="totalElements > 5">
-        <button class="btn bg-blue-700 border-0 hover:bg-blue-800 shadow-mdann-page-prev disabled:bg-slate-500 disabled:text-white"
+        <button class="btn border-0 shadow-md ann-page-prev text-gray-100"
+            :class="`${PRIMARY_BG_CLASSES} ${HOVER_SECONDARY_BG_CLASSES} ${DISABLED_NAVIGATE_CLASSES}`"
             :disabled="announces.getPage() === 1" @click="previous()">
             <svg-icon type="mdi" :path="mdiChevronLeft" :size="24"/>
         </button>
-        <button class="btn bg-base-100 border-0 shadow-md text-base-content w-12 hover:bg-blue-700 hover:text-white"
+        <button class="btn bg-base-100 border-0 shadow-md text-base-content w-12 hover:text-white disabled:text-white"
             v-for="[index, i] of pages().entries()" @click="number(i)"
-            :class="`disabled:bg-blue-700 disabled:text-white ann-page-${index}`" :disabled="selectedPage(i)">{{ i }}
+            :class="`${HOVER_PRIMARY_BG_CLASSES} ${DISABLED_PRIMARY_BG_CLASSES}  ann-page-${index}`" :disabled="selectedPage(i)">{{ i }}
         </button>
-        <button class="btn bg-blue-700 border-0 hover:bg-blue-800 shadow-md text-gray-100 ann-page-next disabled:bg-gray"
+        <button class="btn border-0 shadow-md text-gray-100 ann-page-next"
+            :class="`${PRIMARY_BG_CLASSES} ${HOVER_SECONDARY_BG_CLASSES} ${DISABLED_NAVIGATE_CLASSES}`"
             :disabled="announces.getPage() === totalPages" @click="next()">
             <svg-icon type="mdi" :path="mdiChevronRight" :size="24"/>
         </button>
