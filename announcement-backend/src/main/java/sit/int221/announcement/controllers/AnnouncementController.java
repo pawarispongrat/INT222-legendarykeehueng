@@ -3,7 +3,6 @@ package sit.int221.announcement.controllers;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.announcement.dtos.response.announcement.AnnouncementAdminResponse;
 import sit.int221.announcement.dtos.response.announcement.AnnouncementGuestResponse;
@@ -13,7 +12,6 @@ import sit.int221.announcement.services.AnnouncementService;
 import sit.int221.announcement.enumeration.Modes;
 import sit.int221.announcement.services.FileService;
 
-import java.io.IOException;
 import java.util.List;
 
 
@@ -49,7 +47,9 @@ public class AnnouncementController {
     @GetMapping("/{id}")
     @PreAuthorize("!isAuthenticated() || @security.authorizeAnnouncement(#id)")
     public <T extends AnnouncementGuestResponse> T getAnnouncementById( @PathVariable Integer id, @RequestParam (defaultValue = "false") boolean count) {
-        return service.getAdminAnnouncementById(id,count);
+        service.isDisplay(id);
+
+        return service.getAnnouncementById(id,count);
     }
 
     @DeleteMapping("/{id}")

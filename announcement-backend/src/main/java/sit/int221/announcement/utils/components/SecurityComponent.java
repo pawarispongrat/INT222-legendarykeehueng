@@ -27,6 +27,7 @@ public class SecurityComponent {
         if (authorities.contains(new SimpleGrantedAuthority(Role.admin.toString()))) return true;
         User user = this.user.getUserByUsername(authentication.getName());
         List<Integer> announcements = user.getAnnouncements().stream().map(Announcement::getId).toList();
+
         return authorities.contains(new SimpleGrantedAuthority(Role.announcer.toString())) && announcements.contains(announcementId);
     }
 }

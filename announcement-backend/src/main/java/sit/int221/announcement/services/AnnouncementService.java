@@ -63,11 +63,11 @@ public class AnnouncementService {
 
     public void isDisplay(Integer id) {
         Announcement announcement = getAnnouncementById(id);
-        if (announcement.getAnnouncementDisplay() == Display.N) throw new ItemNotFoundException("announcementId");
+        if (!component.isEditor() && announcement.getAnnouncementDisplay() == Display.N) throw new ItemNotFoundException("announcementId");
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends AnnouncementGuestResponse> T getAdminAnnouncementById(Integer id, boolean count) {
+    public <T extends AnnouncementGuestResponse> T getAnnouncementById(Integer id, boolean count) {
         Class<? extends AnnouncementGuestResponse> response = component.isEditor(Role.admin,Role.announcer) ? AnnouncementAdminResponse.class : AnnouncementGuestResponse.class;
         if (count) return addView(id,response);
         else return (T) mapper.map(getAnnouncementById(id),response);
