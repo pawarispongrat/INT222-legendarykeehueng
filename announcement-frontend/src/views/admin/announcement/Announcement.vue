@@ -59,7 +59,7 @@ const announcementEditRoute = (id) => `/admin/announcement/${id}/details`
         <ModalButton :modal-id="`annDeleteConfirm-${id}`" name="Delete" class-name="bg-error hover:bg-red-500 px-6"/>
         <Modal :modal-id="`annDeleteConfirm-${id}`"
                @confirm="() => announcementDelete(id)" :icon="mdiAlertCircleOutline"
-               :title="`Do you want to delete announcement ${id}?`"
+               :title="`Do you want to delete announcement ${id}?`" 
         />
       </template>
     </Table>
