@@ -37,7 +37,7 @@ const handleInput = (event) => {
         <input :type="type" :placeholder="placeholder" :minlength="min" :maxlength="max"
             :value="modelValue" 
             @input="handleInput" 
-            class="input input-bordered rounded-lg w-full" 
+            class="input font input-bordered rounded-lg w-full" 
             :class="`${isError? 'border-error' : ''} ${className}`" :required="required" />
     </div>
 </template>

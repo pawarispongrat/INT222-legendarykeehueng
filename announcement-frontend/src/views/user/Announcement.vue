@@ -41,7 +41,12 @@ onBeforeMount(async () => {
 const fetch = async () => {
   announcements.value = await getUserAnnouncement(user.getMode(), user.getPage() - 1, user.category)
 }
+let previousEmail = ref("")
+let previousCategories = ref([])
+
 const sendSubscribe = async (email,categories) =>{
+  previousEmail.value = email
+  previousCategories.value = categories
   const statusValue = await subscribe(email,categories)
   verifyEmail.value = email
   if(statusValue === 200){
@@ -51,15 +56,20 @@ const sendSubscribe = async (email,categories) =>{
   }
   else { errors.value.email = "Wrong format email!" }
 }
+const resendOtp = async ()=>{
+ await subscribe(previousEmail.value,previousCategories.value)
+}
+
 const sendOtp = async (otp) => {
-  const response = await verifyOtp(verifyEmail.value,otp)
+  const response = await verifyOtp(verifyEmail.value, otp);
   if (response.status === 200) {
-      otpResponse.value = response.json()
-      setOpen('annSubscribe2')
-      setModal('annSubscribe1')
-      errors.value.otp = null
+    otpResponse.value = response.json();
+    setOpen('annSubscribe2');
+    setModal('annSubscribe1');
+    errors.value.otp = null;
+  } else {
+    errors.value.otp = "Otp is invalid or expired";
   }
-  else { errors.value.otp = "Otp is invalid or expired" }
 }
 
 const changeMode = async () => {
@@ -93,7 +103,6 @@ const onLogout = () => {
     clearToken()
     window.location.reload()
   }
-
 }
 </script>
  
@@ -126,6 +135,8 @@ const onLogout = () => {
     />
     <ModalForm :modal-id="`annSubscribe1`"
                name="Verify OTP" @confirm="sendOtp"
+               @resend="resendOtp"
+               :isResend="true"
                :error="errors?.otp"
                option="The OTP has been sent"
                :open="true"

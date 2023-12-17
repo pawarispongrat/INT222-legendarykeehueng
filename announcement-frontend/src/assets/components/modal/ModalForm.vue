@@ -12,17 +12,18 @@ const props = defineProps({
     option: String,
     status: Object,
     placeholder: String,
-  inputLabel: { type: String, default: null},
-  inputValue: { type: String, default: null},
+    inputLabel: { type: String, default: null},
+    inputValue: { type: String, default: null},
     error: { type: String, default: null },
     isSlot: { type: Boolean, default: false },
     isOption: { type: Boolean, default: false },
+    isResend: { type: Boolean, default: false },
     categories: { type: Array },
     open: { type: Boolean, default: false }
 })
+
+
 const input = ref("")
-
-
 const selectedOptions = ref([]);
 
 const isSelected = (index) => selectedOptions.value.includes(index);
@@ -41,7 +42,31 @@ const getCategoryById = (id) => {
 }
 onBeforeMount(() => input.value = props.inputValue)
 // onBeforeMount(() => setModal(props.modalId))
-const emit = defineEmits(["confirm"])
+const emit = defineEmits(["confirm","resend"])
+
+const resendButtonDisabled = ref(true)
+
+const timerOn = ref(true)
+const timerCountDown = ref()
+
+function timer(remaining) {
+    resendButtonDisabled.value = false
+    let m = Math.floor(remaining / 60);
+    let s = remaining % 60;
+
+    m = m < 10 ? '0' + m : m;
+    s = s < 10 ? '0' + s : s;
+    timerCountDown.value = m + ':' + s;
+    remaining -= 1;
+    if (remaining >= 0 && timerOn) {
+        setTimeout(function () {
+            timer(remaining);
+        }, 1000);
+        return;
+    } else {
+        resendButtonDisabled.value = true
+    }
+}
 
 </script>
 <template>
@@ -69,10 +94,12 @@ const emit = defineEmits(["confirm"])
                                             class="checkbox checkbox-error" @change="toggleSelection(index + 1)" />
                                     </div>
                                 </label>
+                                <p v-if="!resendButtonDisabled" class=" text-red-700">Time left = {{ timerCountDown }}</p>
+                                <button v-if="isResend" @click="$emit('resend'),timer(30)" :disabled="!resendButtonDisabled" class="btn btn-outline">Resend OTP</button>
                             </div>
                         </div>
                         <div class="bg-slate-100 p-3 flex justify-end max-lg:flex-col gap-x-4 gap-y-4">
-                            <button v-if="(open || (!isSlot && selectedOptions.length > 0 && input.length > 0))"
+                            <button v-if="(open || (!isSlot && selectedOptions?.length > 0 && input?.length > 0))"
                                 type="button" @click="$emit('confirm',input, selectedOptions)"
                                 class="btn btn-error text-white hover:bg-red-500">Confirm</button>
                             <button v-if="!isSlot" type="button" @click="setOpen(modalId)"
