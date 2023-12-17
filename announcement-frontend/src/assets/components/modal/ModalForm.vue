@@ -1,6 +1,6 @@
 <script setup>
 import { useModal } from '@/assets/stores/useModal.js';
-import { Teleport, ref, onBeforeMount } from 'vue';
+import {Teleport, ref, onBeforeMount} from 'vue';
 import Input from '../form/Input.vue';
 
 
@@ -12,8 +12,8 @@ const props = defineProps({
     option: String,
     status: Object,
     placeholder: String,
-    inputLabel: { type: String, default: null },
-    inputValue: { type: String, default: null },
+    inputLabel: { type: String, default: null},
+    inputValue: { type: String, default: null},
     error: { type: String, default: null },
     isSlot: { type: Boolean, default: false },
     isOption: { type: Boolean, default: false },
@@ -40,10 +40,9 @@ const getCategoryById = (id) => {
     const index = id - 1;
     return props.categories[index];
 }
-onBeforeMount(() => {input.value = props.inputValue} )
+onBeforeMount(() => input.value = props.inputValue)
 // onBeforeMount(() => setModal(props.modalId))
-
-const emit = defineEmits(["confirm"])
+const emit = defineEmits(["confirm","resend"])
 
 const resendButtonDisabled = ref(true)
 
@@ -68,6 +67,7 @@ function timer(remaining) {
         resendButtonDisabled.value = true
     }
 }
+
 </script>
 <template>
     <Teleport to="#modals">
@@ -77,17 +77,17 @@ function timer(remaining) {
                     <div
                         class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-lg">
                         <div class="bg-[#EFE2D7] p-12 space-y-4">
-                            <Input v-if="name && !inputValue" :label="name" :placeholder="placeholder"
-                                :errors="error ? [error] : null" :required="true" v-model.trim="input" :max="45" />
-                            <div class="font-bold font" v-else>{{ inputLabel }}{{ inputValue }}</div>
+                            <Input v-if="name && !inputValue" :label="name" :placeholder="placeholder" :errors="error ? [error] : null" :required="true"
+                                v-model.trim="input" :max="45" />
+                            <div v-else>{{inputLabel}}{{ inputValue }}</div>
                             <div class="form-control ">
-                                <p class="font-bold font">[ {{ option }} ]</p>
-                                <p class="font" v-if="status && status.exists" v-for="item in status.exists" :key="item.id">
+                                <p class="font-bold">[ {{ option }} ]</p>
+                                <p v-if="status && status.exists" v-for="item in status.exists" :key="item.id">
                                     {{ item.exist ? `You are already Subscribe ${getCategoryById(item.id)}` : `You are
                                     Subscribe now ${getCategoryById(item.id)}` }}
                                 </p>
-                                <label v-if="isOption" class="font cursor-pointer label"
-                                    v-for="(category, index) in categories" :key="index">
+                                <label v-if="isOption" class="cursor-pointer label" v-for="(category, index) in categories"
+                                    :key="index">
                                     <div>
                                         <span class="font mr-3">{{ category }}</span>
                                         <input type="checkbox" :checked="isSelected(index + 1)"
@@ -95,13 +95,12 @@ function timer(remaining) {
                                     </div>
                                 </label>
                                 <p v-if="!resendButtonDisabled" class=" text-red-700">Time left = {{ timerCountDown }}</p>
-                                <button v-if="isResend" :disabled="!resendButtonDisabled" @click="timer(30)"
-                                    class="btn btn-outline w-1/3 my-2 font">Resend OTP</button>
+                                <button v-if="isResend" @click="$emit('resend'),timer(30)" :disabled="!resendButtonDisabled" class="btn btn-outline">Resend OTP</button>
                             </div>
                         </div>
                         <div class="bg-slate-100 p-3 flex justify-end max-lg:flex-col gap-x-4 gap-y-4">
                             <button v-if="(open || (!isSlot && selectedOptions?.length > 0 && input?.length > 0))"
-                                type="button" @click="$emit('confirm', input, selectedOptions)"
+                                type="button" @click="$emit('confirm',input, selectedOptions)"
                                 class="btn btn-error text-white hover:bg-red-500">Confirm</button>
                             <button v-if="!isSlot" type="button" @click="setOpen(modalId)"
                                 class="btn btn-outline">Cancel</button>

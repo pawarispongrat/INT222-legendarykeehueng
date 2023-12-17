@@ -56,11 +56,10 @@ const sendSubscribe = async (email,categories) =>{
   }
   else { errors.value.email = "Wrong format email!" }
 }
-const resendOTP = async () =>{
+const resendOtp = async ()=>{
  await subscribe(previousEmail.value,previousCategories.value)
-  verifyEmail.value = previousEmail.value
- errors.value.otp = "Resend Otp already!"
 }
+
 const sendOtp = async (otp) => {
   const response = await verifyOtp(verifyEmail.value, otp);
   if (response.status === 200) {
@@ -105,7 +104,6 @@ const onLogout = () => {
     window.location.reload()
   }
 }
-
 </script>
  
 <template>
@@ -137,7 +135,7 @@ const onLogout = () => {
     />
     <ModalForm :modal-id="`annSubscribe1`"
                name="Verify OTP" @confirm="sendOtp"
-               @resend="resendOTP"
+               @resend="resendOtp"
                :isResend="true"
                :error="errors?.otp"
                option="The OTP has been sent"
