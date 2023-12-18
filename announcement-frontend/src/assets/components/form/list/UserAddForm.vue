@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router';
 import { createUser } from "@/assets/data/dataHandler.js"
 import { isUniqueUser,isEmptyUser } from '@/assets/data/validate.js';
 import { toast } from 'vue3-toastify/index';
+import { handleServerError } from '../../../data/validate';
 
 defineEmits(["submit"])
 const ROLE_ENUM = [ 'announcer','admin']
