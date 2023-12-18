@@ -20,7 +20,7 @@ const onCreate = async () => {
     if (!validateInput()) return
     const json = await createUser(user.value) 
     if (!isUniqueUser(json?.detail,errors)) router.push("/admin/user/")
-    
+    if (json?.status !== 200) handleServerError(json?.detail)
 }
 
 const validateInput = () => {

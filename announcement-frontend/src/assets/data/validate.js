@@ -1,5 +1,4 @@
 function isUniqueUser(detail,errors) {
-    handleServerError(detail)
     if (!detail) return false
     
     const uniqueMessage = "does not unique"
@@ -27,4 +26,4 @@ function handleServerError(serverErrors) {
     }
 }
 
-export { isUniqueUser,isEmptyUser }
+export { isUniqueUser,isEmptyUser, handleServerError }
