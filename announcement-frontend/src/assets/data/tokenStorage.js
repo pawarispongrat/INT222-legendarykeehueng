@@ -9,12 +9,17 @@ const ROLES = ["admin","announcer"]
 
 export function getJwt() {
     const token = getAccessToken()
-    // console.log(decoded)
     if (!token) return undefined
     const split = token?.split('.')
     if (!split) return undefined
     if (!split?.[1]) return undefined
-    return JSON.parse(atob(split?.[1]))
+    const decoded = JSON.parse(atob(split?.[1]))
+    //[CAUTION] NEED TO FETCH INCEPTOR INSTEAD (DEMO CHECK EXP NOT GOOD)
+    if (isDecodedTokenExpired(decoded)) {
+        clearToken()
+        return undefined
+    }
+    return decoded
 }
 export function getJwtName() {
     return getJwt()?.name
@@ -36,9 +41,12 @@ export function isAnnouncer() {
     return getJwtRoles() && getJwtRoles().includes(ROLES[1])
 }
 
-export function isTokenExpired() {
-    const token = getJwt()
+function isDecodedTokenExpired(token) {
     return token && (token.exp * 1000 < Date.now())
+}
+
+export function isTokenExpired() {
+    return getJwt() === undefined
 }
 
 export function getAccessToken() {
