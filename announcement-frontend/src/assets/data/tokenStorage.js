@@ -29,10 +29,13 @@ export function getJwtEmail() {
     return getJwt()?.email
 }
 export function getJwtRoles() {
-    return getJwt()?.aut ?? ["visitor"]
+    let roles = ["visitor"]
+    if (getJwt()?.aut) roles = getJwt()?.aut
+    else if (getJwt()?.roles) roles = getJwt()?.roles
+    return roles.map(role => role.toLowerCase())
 }
 export function isEditor() {
-    return getJwtRoles() && getJwtRoles().some((element) => ROLES.includes(element))
+    return getJwtRoles() && getJwtRoles().some((element) => ROLES.includes(element.toLowerCase()))
 }
 export function isAdmin() {
     return getJwtRoles() && getJwtRoles().includes(ROLES[0])

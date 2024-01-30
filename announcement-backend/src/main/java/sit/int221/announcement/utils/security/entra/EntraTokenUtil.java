@@ -4,12 +4,15 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
 import sit.int221.announcement.enumeration.Role;
+import sit.int221.announcement.exceptions.list.UserException;
 import sit.int221.announcement.models.User;
 import sit.int221.announcement.utils.security.PublicKeyExtract;
 import sit.int221.announcement.utils.security.jwt.JwtTokenUtil;
@@ -18,6 +21,7 @@ import java.io.*;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -62,21 +66,41 @@ public class EntraTokenUtil {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
+    public boolean authenticate(String entraToken) {
+        try {
+            Claims verifyClaims = isValidAadToken(entraToken);
+            if (verifyClaims == null) return false;
+            Collection<SimpleGrantedAuthority> authorities = getAuthoritiesByClaims(verifyClaims);
+            EntraUser user = new EntraUser( getEmail(verifyClaims), getName(verifyClaims) );
+            //VISITOR FOR AZURE
+            Authentication authentication = new PreAuthenticatedAuthenticationToken(user,null, authorities);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (DisabledException | BadCredentialsException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public Collection<SimpleGrantedAuthority> getAuthoritiesByClaims(Claims verifyClaims) {
+        List<String> roles = verifyClaims.get("roles",List.class); //AZURE NAME
+        if (roles == null) return new HashSet<>();
+        return roles.stream().map((role) -> new SimpleGrantedAuthority(role.toLowerCase())).collect(Collectors.toSet());
+    }
+    public String getName(Claims verifyClaims) {
+        return verifyClaims.get("name",String.class);
+    }
+    public String getEmail(Claims verifyClaims) {
+        return verifyClaims.get("upn",String.class);
+    }
     private void authenticateByUser(Claims verifyClaims) {
-        String email = verifyClaims.get("upn", String.class); //AZURE EMAIL
-        String name = verifyClaims.get("name",String.class); //AZURE NAME
+        String email = getEmail(verifyClaims); //AZURE EMAIL
+        String name = getName(verifyClaims); //AZURE NAME
+        Collection<SimpleGrantedAuthority> authorities = getAuthoritiesByClaims(verifyClaims);
         EntraUser user = new EntraUser(email, name);
         //VISITOR FOR AZURE
-        Collection<SimpleGrantedAuthority> roles = new HashSet<>();
-        roles.add(new SimpleGrantedAuthority(Role.visitor.toString()));
-        Authentication authentication = new PreAuthenticatedAuthenticationToken(user,null, roles);
+        Authentication authentication = new PreAuthenticatedAuthenticationToken(user,null, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
-
-    public String getEmail(Claims claims) {
-        return claims.get("email",String.class);
-    }
-
 
     public boolean isAadIssuer(Claims claims) {
         String issuer = claims.getIssuer();
