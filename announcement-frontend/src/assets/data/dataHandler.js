@@ -87,7 +87,7 @@ async function putUser(user)  {
 }
 
 async function deleteAnnouncement(id) {
-    return new FetchHandler(`${API_ANNOUNCEMENTS}/${id}`).authorize().delete().json()
+    return await new FetchHandler(`${API_ANNOUNCEMENTS}/${id}`).authorize().delete().response()
 }
 async function deleteUser(id) {
     return (await new FetchHandler(`${API_USERS}/${id}`).authorize().delete().response()).status

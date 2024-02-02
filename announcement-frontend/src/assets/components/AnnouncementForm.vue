@@ -66,7 +66,7 @@ const changeText = (e) => validateDesc.value = quilEditor.value.getQuill().getTe
 
 </script>
 <template>
-  <div class="space-y-1 w-1/4">
+  <div class="space-y-1 w-96">
     <div class="-mt-6">
       <p>
         Title
