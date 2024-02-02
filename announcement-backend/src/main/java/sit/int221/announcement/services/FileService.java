@@ -102,6 +102,7 @@ public class FileService {
     public void deleteFilesInFolder(Integer folderId) {
         try {
             Path target = getUploadPath(folderId);
+            if (!target.toFile().exists()) return;
             FileUtils.cleanDirectory(target.toFile());
         } catch (IOException e) {
             throw new RuntimeException(e);

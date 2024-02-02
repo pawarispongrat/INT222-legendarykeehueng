@@ -8,9 +8,6 @@ import sit.int221.announcement.models.User;
 @Getter @Setter
 public class AnnouncementAdminResponse extends AnnouncementGuestResponse {
 
-    private User announcementOwner;
+    private String announcementOwner;
 
-    public String getAnnouncementOwner() {
-        return announcementOwner.getUsername();
-    }
 }

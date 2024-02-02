@@ -73,13 +73,12 @@ public class AnnouncementService {
         else return (T) mapper.map(getAnnouncementById(id),response);
     }
     public AnnouncementAdminResponse addAnnouncement(AnnouncementRequest post){
-        String username = component.getSubject();
-        if (username == null) throw new ItemNotFoundException("username","Username not found in token");
+        String email = component.getEmail();
+        if (email == null) throw new ItemNotFoundException("email","Email not found in token");
         Announcement announcement = mapper.map(post,Announcement.class);
-        User owner = users.getUserByUsername(username);
         Category category = categories.getCategoryById(post.getCategoryId());
         announcement.setId(null);
-        announcement.setAnnouncementOwner(owner);
+        announcement.setAnnouncementOwner(email);
         announcement.setCategory(category);
 
         Announcement saved = repository.saveAndFlush(announcement);
@@ -110,12 +109,12 @@ public class AnnouncementService {
     }
 
 
-    public List<Announcement> updateAnnouncementOwnerByUserId(Integer ownerId, String newUsername){
+    public List<Announcement> updateAnnouncementOwnerByUserId(Integer ownerId, String newEmail){
         User oldUser = users.getUserById(ownerId);
-        User newUser = users.getUserByUsername(newUsername);
-        if (oldUser.equals(newUser)) return null;
-        List<Announcement> announcements = oldUser.getAnnouncements();
-        announcements.forEach((announcement -> announcement.setAnnouncementOwner(newUser)));
+        String oldEmail = oldUser.getEmail();
+        if (oldEmail.equals(newEmail)) return null;
+        List<Announcement> announcements = repository.findAllByEmail(oldEmail);
+        announcements.forEach((announcement -> announcement.setAnnouncementOwner(newEmail)));
         return repository.saveAllAndFlush(announcements);
     }
 
@@ -128,13 +127,13 @@ public class AnnouncementService {
 
     public Page<Announcement> getAnnouncementByMode(Pageable pageable, Modes mode, int category) {
         Page<Announcement> announcement = new PageImpl<>(new ArrayList<>(),pageable,0);
-        User user = !component.isEditor(Role.admin) ? users.getUserByUsernameOrNull(component.getSubject()) : null;
+        String email = !component.isEditor(Role.admin) ? component.getEmail() : null;
         if (!component.isEditor() && mode == Modes.admin) mode = Modes.active;
         Display show = Display.Y;
         switch (mode) {
-            case admin -> announcement = repository.findAll(user, pageable);
-            case active -> announcement = repository.findActive(show,category, ZonedDateTime.now(), user, pageable);
-            case close -> announcement = repository.findClose(show,category, ZonedDateTime.now(), user,pageable);
+            case admin -> announcement = repository.findAll(email, pageable);
+            case active -> announcement = repository.findActive(show,category, ZonedDateTime.now(), email, pageable);
+            case close -> announcement = repository.findClose(show,category, ZonedDateTime.now(), email,pageable);
         }
         return announcement;
     }
@@ -144,5 +143,9 @@ public class AnnouncementService {
         announcement.setViewCount(announcement.getViewCount()+1);
         repository.saveAndFlush(announcement);
         return (T) mapper.map(announcement,response);
+    }
+
+    public List<Announcement> getAnnouncementsByEmail(String email) {
+        return repository.findAllByEmail(email);
     }
 }

@@ -25,8 +25,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "announcementOwner")
-    private List<Announcement> announcements;
+//    @OneToMany(mappedBy = "announcementOwner")
+//    private List<Announcement> announcements;
 
     @Column(insertable = false,updatable = false)
     private ZonedDateTime createdOn;

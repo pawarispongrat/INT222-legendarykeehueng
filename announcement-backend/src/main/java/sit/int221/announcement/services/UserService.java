@@ -83,5 +83,8 @@ public class UserService {
     public User getUserByUsernameOrNull(String username) {
         return repository.findByUsername(username).orElse(null);
     }
+    public User getUserByEmailOrNull(String email) {
+        return repository.findByEmail(email).orElse(null);
+    }
 
 }

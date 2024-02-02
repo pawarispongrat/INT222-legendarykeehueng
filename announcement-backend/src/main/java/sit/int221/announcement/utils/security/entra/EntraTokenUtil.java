@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
+import sit.int221.announcement.dtos.JwtUser;
 import sit.int221.announcement.enumeration.Role;
 import sit.int221.announcement.exceptions.list.UserException;
 import sit.int221.announcement.models.User;
@@ -38,40 +39,21 @@ public class EntraTokenUtil {
     private static final String STS_WINDOWS_ISSUER = "https://sts.windows.net/";
     private static final String STS_CHINA_CLOUD_API_ISSUER = "https://sts.chinacloudapi.cn/";
 
-    public Claims authenticateAad(String token) throws RuntimeException {
-        Claims verifyClaims = isValidAadToken(token);
-        if (verifyClaims == null) return null;
-//      Ref:  AadAuthenticationFilter from azure active directory
-        this.authenticateByUser(verifyClaims);
-
-        return verifyClaims;
-
-    }
     public Claims isValidAadToken(String token) throws RuntimeException {
         Claims verifyClaims = verifyToken(token);
         if (verifyClaims == null) return null;
         if (!isAadIssuer(verifyClaims)) return null;
         if (!isValidToken(verifyClaims)) return null;
-//      Ref:  AadAuthenticationFilter from azure active directory
 
         return verifyClaims;
 
     }
 
-
-    public void authenticateByUser(User user) {
-        Collection<SimpleGrantedAuthority> roles = new HashSet<>();
-        roles.add(new SimpleGrantedAuthority(user.getRole().toString()));
-        Authentication authentication = new PreAuthenticatedAuthenticationToken(user,null, roles);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
-    public boolean authenticate(String entraToken) {
+    public boolean authenticate(Claims verifyClaims) {
         try {
-            Claims verifyClaims = isValidAadToken(entraToken);
             if (verifyClaims == null) return false;
             Collection<SimpleGrantedAuthority> authorities = getAuthoritiesByClaims(verifyClaims);
-            EntraUser user = new EntraUser( getEmail(verifyClaims), getName(verifyClaims) );
+            JwtUser user = new JwtUser( getName(verifyClaims), getEmail(verifyClaims), authorities);
             //VISITOR FOR AZURE
             Authentication authentication = new PreAuthenticatedAuthenticationToken(user,null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -91,15 +73,6 @@ public class EntraTokenUtil {
     }
     public String getEmail(Claims verifyClaims) {
         return verifyClaims.get("upn",String.class);
-    }
-    private void authenticateByUser(Claims verifyClaims) {
-        String email = getEmail(verifyClaims); //AZURE EMAIL
-        String name = getName(verifyClaims); //AZURE NAME
-        Collection<SimpleGrantedAuthority> authorities = getAuthoritiesByClaims(verifyClaims);
-        EntraUser user = new EntraUser(email, name);
-        //VISITOR FOR AZURE
-        Authentication authentication = new PreAuthenticatedAuthenticationToken(user,null, authorities);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     public boolean isAadIssuer(Claims claims) {

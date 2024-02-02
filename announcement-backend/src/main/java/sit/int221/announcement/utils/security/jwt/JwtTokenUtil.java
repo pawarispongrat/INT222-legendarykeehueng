@@ -49,6 +49,10 @@ public class JwtTokenUtil {
         if (token == null) return null;
         return getClaimFromToken(token, Claims::getSubject);
     }
+    public String getEmailFromToken(String token) {
+        if (token == null) return null;
+        return getClaimFromToken(token, claims -> (String) claims.get("email"));
+    }
 
     public boolean isEditor(String token,Role... roles) {
         List<String> authorities = getAuthoritiesFromToken(token);
@@ -84,9 +88,8 @@ public class JwtTokenUtil {
         Claims claims = getClaimsFromToken(token);
         return resolver.apply(claims);
     }
-    public Boolean validateToken(String token, UserDetails details) {
-        String usernameFromToken = getSubjectFromToken(token);
-        return usernameFromToken.equals(details.getUsername()) && !isTokenExpired(token);
+    public Boolean validateToken(String email, JwtUser details) {
+        return email.equals(details.getEmail());
     }
     public String generateToken(String subject, TokenType type, String... authorities) {
         Map<String, Object> claims = new HashMap<>();

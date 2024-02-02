@@ -43,9 +43,9 @@ public class UserController {
     }
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Integer id){
-        String username = component.getSubject();
-        if (username == null) return;
-        if (announce.updateAnnouncementOwnerByUserId(id,username) == null) throw new ForbiddenException("User","Cannot delete your user");
+        String email = component.getEmail();
+        if (email == null) return;
+        if (announce.updateAnnouncementOwnerByUserId(id,email) == null) throw new ForbiddenException("User","Cannot delete your user");
         service.deleteUser(id);
     }
     @PutMapping("/{id}")

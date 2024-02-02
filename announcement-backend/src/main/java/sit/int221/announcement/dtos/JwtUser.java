@@ -13,9 +13,11 @@ public class JwtUser extends User {
     private String email;
     private String name;
 
-    public JwtUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
+    public JwtUser(String username, String email, Collection<? extends GrantedAuthority> authorities) {
+        super(username, email, authorities);
+        this.email = email;
     }
+
     public JwtUser(String username, String email, String name, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
         this.email = email;

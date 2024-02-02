@@ -34,14 +34,13 @@ public class Announcement {
     @JsonIgnore
     private Category category;
 
-    @ManyToOne
-    @JoinColumn(name = "announcementOwner", referencedColumnName = "username")
-    @JsonIgnore
-    private User announcementOwner;
+//    @ManyToOne
+//    @JoinColumn(name = "announcementOwner", referencedColumnName = "username")
+//    @JsonIgnore
+    // MARK - Owner email
+    private String announcementOwner;
 
     public Integer getCategoryId() { return category.getCategoryId(); }
-
-    public String getOwnerUsername() { return announcementOwner.getUsername(); }
 
     public String getAnnouncementCategory() {
         return category.getCategoryName();

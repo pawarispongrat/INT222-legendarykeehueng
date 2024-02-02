@@ -15,20 +15,18 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import io.jsonwebtoken.ExpiredJwtException;
+import sit.int221.announcement.dtos.JwtUser;
 import sit.int221.announcement.exceptions.list.AuthorizedException;
 import sit.int221.announcement.services.authentication.JwtUserDetailsService;
 import sit.int221.announcement.enumeration.TokenType;
 import sit.int221.announcement.utils.security.entra.EntraTokenUtil;
-import sit.int221.announcement.utils.security.entra.EntraUser;
 import sit.int221.announcement.utils.security.entrypoint.JwtAuthenticationEntryPoint;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Optional;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -51,19 +49,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             String header = request.getHeader("Authorization");
             if (JwtUtil.isNotBearer(header) && filter(request, response, chain)) return;
-            SecurityContext context = SecurityContextHolder.getContext();
-            Authentication auth = context.getAuthentication();
             String token = JwtUtil.getTokenFromHeader(header);
+            String email;
             TokenType type = TokenType.NULL;
-            String username;
+            JwtUser user;
+            Claims azureClaims = entra.isValidAadToken(token);
 
             try {
-                if (auth == null && entra.authenticate(token)) {
-                    filter(request,response,chain);
-                    return;
+                if (azureClaims != null) {
+                    type = TokenType.ACCESS_TOKEN;
+                    email = entra.getEmail(azureClaims);
+                } else {
+                    type = util.getTokenType(token);
+                    email = type == TokenType.ACCESS_TOKEN ? util.getEmailFromToken(token) : null;
                 }
-                type = util.getTokenType(token);
-                username = type == TokenType.ACCESS_TOKEN ? util.getSubjectFromToken(token) : null;
+                user = service.loadUserByEmail(email);
             }
             catch (MalformedJwtException | SignatureException e) { throw new AuthorizedException("Token","Invalid form token"); }
             catch (IllegalArgumentException e) { throw new AuthorizedException(type.toString(),"Unable to get JWT Token"); }
@@ -74,12 +74,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             catch (RuntimeException e) {
                 throw new AuthorizedException(TokenType.NULL.toString(), "Expired Token");
             }
-            UserDetails user = service.loadUserByUsername(username);
-
-            if (user != null && auth == null && util.validateToken(token,user)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                context.setAuthentication(authToken);
+            //AUTHENTICATE
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (user != null && auth == null && email != null && util.validateToken(email,user)) {
+                service.authenticate(user,request);
+            } else {
+                entra.authenticate(azureClaims);
             }
 
             filter(request,response,chain);

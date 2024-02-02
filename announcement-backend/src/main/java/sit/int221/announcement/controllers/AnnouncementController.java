@@ -27,7 +27,6 @@ public class AnnouncementController {
     @GetMapping("")
     public List<? extends AnnouncementGuestResponse> getAnnouncement(
             @RequestParam(defaultValue = "admin") Modes mode) {
-
         return service.getAnnouncement(mode);
     }
     @GetMapping("/pages")
@@ -48,7 +47,6 @@ public class AnnouncementController {
     @PreAuthorize("!isAuthenticated() || @security.authorizeAnnouncement(#id)")
     public <T extends AnnouncementGuestResponse> T getAnnouncementById( @PathVariable Integer id, @RequestParam (defaultValue = "false") boolean count) {
         service.isDisplay(id);
-
         return service.getAnnouncementById(id,count);
     }
 
