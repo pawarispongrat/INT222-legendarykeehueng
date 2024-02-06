@@ -31,7 +31,7 @@ const check = ref({ username: "", password: "" })
 const msal = useMsal()
 const loginAzure = async () => {
   await msal.login()
-  await router.push("/announcement")
+  await router.push({name: 'Announcement'})
 }
 </script>
  
