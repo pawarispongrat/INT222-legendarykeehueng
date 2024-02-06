@@ -6,11 +6,16 @@ import {createNewToken} from '@/assets/data/dataHandler';
 import router from '@/router';
 import {toast} from "vue3-toastify";
 import {useMsal} from "@/assets/stores/useMsal";
+import {isEditor} from "@/assets/data/tokenStorage"
 
+const route = async () => {
+  if (isEditor) await router.push({name: 'Announcement'})
+  else await router.push("/announcement")
+}
 const submitForm = async () => {
     const status = await createNewToken(check.value); // Assign the HTTP status code
     if (status === 200) {
-      await router.push({name: 'Announcement'})
+      await route()
       await toast.success("Login Successful",{ hideProgressBar: true })
     } else {
       let message
@@ -31,8 +36,9 @@ const check = ref({ username: "", password: "" })
 const msal = useMsal()
 const loginAzure = async () => {
   await msal.login()
-  await router.push({name: 'Announcement'})
+  await route()
 }
+
 </script>
  
 <template>
