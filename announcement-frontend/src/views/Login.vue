@@ -9,7 +9,7 @@ import {useMsal} from "@/assets/stores/useMsal";
 import {isEditor} from "@/assets/data/tokenStorage"
 
 const route = async () => {
-  if (isEditor) await router.push({name: 'Announcement'})
+  if (isEditor()) await router.push({name: 'Announcement'})
   else await router.push("/announcement")
 }
 const submitForm = async () => {
